@@ -1135,7 +1135,7 @@ html.has-js .card-later{display:none}
   background:var(--void,#0D0D0E);
   opacity:1; transition:opacity .3s ease;
 }
-html.vesla-intro-run .vesla-intro{display:block}
+.vesla-intro.is-open{display:block}
 html.vesla-intro-run{overflow:hidden}
 .vesla-intro.is-going{opacity:0}
 

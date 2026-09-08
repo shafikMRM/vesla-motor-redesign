@@ -7237,73 +7237,113 @@ class Vesla_Render {
 
 	var SHOW = '<?php echo esc_js( $show ); ?>';
 	var MAX  = <?php echo (int) $max; ?> * 1000;
-	var KEY  = 'vesla-intro-seen';
+	var SEEN = 'vesla-intro-seen';
+	var LAST = 'vesla-intro-last';
+	var GAP  = 600000;   /* ten minutes, as a gap between showings */
 
-	var drop = function(){ if (box.parentNode) { box.parentNode.removeChild(box); } };
-
-	/* Somebody who has asked for less movement gets none of it. Not a
-	   shortened intro or a still -- the page, as it would be. */
+	/* Somebody who has asked for less movement gets none of it -- not a
+	   shortened film or a still, but the page as it would be. Removed
+	   outright, so neither arrival nor the Home link can revive it. */
 	var reduced = false;
 	try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
-	if (reduced) { drop(); return; }
+	if (reduced) { if (box.parentNode) { box.parentNode.removeChild(box); } return; }
 
 	/* Reading storage can throw, not only writing it: Safari with cookies
-	   blocked throws on the read. Both go in a try, and a browser that
-	   will not remember simply sees the intro again. */
-	if (SHOW === 'first') {
-		var seen = false;
-		try { seen = !!localStorage.getItem(KEY); } catch (e) { seen = false; }
-		if (seen) { drop(); return; }
-		try { localStorage.setItem(KEY, '1'); } catch (e) {}
-	}
+	   blocked throws on the read. A browser that will not remember simply
+	   sees the film again, which is the harmless way to be wrong. */
+	var read  = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+	var write = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
 
-	root.classList.add('vesla-intro-run');
+	var running = false, ceiling = null, tail = null;
 
-	var done = false;
-	var finish = function(){
-		if (done) { return; }
-		done = true;
-		/* Held, not cleared. Pausing leaves the last frame on screen while
-		   the whole overlay fades over a page that is already painted
-		   beneath it -- and both are the same ground colour, so there is no
-		   instant at which anything else is visible. Letting the element
-		   empty itself for one frame is the whole problem this avoids. */
+	var end = function () {
+		if (!running) { return; }
+		running = false;
+		clearTimeout(ceiling); clearTimeout(tail);
+		/* Held, not cleared. Pausing leaves the last frame on screen while the
+		   overlay fades over a page that is already painted beneath it, and
+		   both are the same ground colour -- so there is no instant at which
+		   anything else is visible. Letting the element empty itself for one
+		   frame is the whole problem this avoids. */
 		try { film.pause(); } catch (e) {}
 		box.classList.add('is-going');
 		root.classList.remove('vesla-intro-run');
-		setTimeout(drop, 400);   /* longer than the 300ms fade in the stylesheet */
+		setTimeout(function () {
+			box.classList.remove('is-going');
+			box.classList.remove('is-open');
+			/* Wound back rather than thrown away: the Home link shows this same
+			   element again, and a film left on its last frame would open on
+			   the end of itself. */
+			try { film.currentTime = 0; } catch (e) {}
+		}, 400);   /* longer than the 300ms fade in the stylesheet */
 	};
 
-	if (skip) { skip.addEventListener('click', finish); }
-	document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { finish(); } });
-	film.addEventListener('ended', finish);
-	film.addEventListener('error', finish);
+	var start = function (lock) {
+		if (running) { return; }
+		running = true;
+		write(LAST, String(Date.now()));
+		box.classList.add('is-open');
+		if (lock) { root.classList.add('vesla-intro-run'); }
+		try { film.currentTime = 0; } catch (e) {}
 
-	/* The ceiling. Nobody waits on a video that will not start. Cleared
-	   the moment it actually does, and replaced with one measured from
-	   the clip's own length in case it stalls half way and never ends. */
-	var ceiling = setTimeout(finish, MAX);
-	film.addEventListener('playing', function(){
+		/* The ceiling. Nobody waits on a film that will not start. */
+		ceiling = setTimeout(end, MAX);
+
+		/* Autoplay can simply be refused -- iOS in Low Power Mode does it even
+		   for muted video. The poster is the first frame, so what is on screen
+		   is already right; it is held a moment and handed over as a finished
+		   film would be, rather than sitting there for the whole ceiling. */
+		var attempt;
+		try { attempt = film.play(); } catch (e) { attempt = null; }
+		if (attempt && attempt.catch) {
+			attempt.catch(function () { clearTimeout(ceiling); tail = setTimeout(end, 600); });
+		}
+	};
+
+	film.addEventListener('ended', end);
+	film.addEventListener('error', end);
+	film.addEventListener('playing', function () {
 		clearTimeout(ceiling);
-		var left = (isFinite(film.duration) && film.duration > 0)
-			? (film.duration - film.currentTime) * 1000
-			: MAX;
-		setTimeout(finish, left + 1500);
+		/* A second ceiling measured from the clip's own length, in case it
+		   stalls half way and 'ended' never arrives. */
+		var left = (isFinite(film.duration) && film.duration > 0) ? (film.duration - film.currentTime) * 1000 : MAX;
+		tail = setTimeout(end, left + 1500);
 	});
+	if (skip) { skip.addEventListener('click', end); }
+	document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { end(); } });
 
-	/* Autoplay can simply be refused -- iOS in Low Power Mode refuses even
-	   a muted clip. The poster is the first frame, so what is on screen is
-	   already right; it is held for a moment and then handed over exactly
-	   as a finished film would be, rather than sitting there for the whole
-	   ceiling while nothing happens. */
-	var attempt;
-	try { attempt = film.play(); } catch (e) { attempt = null; }
-	if (attempt && attempt.catch) {
-		attempt.catch(function(){
-			clearTimeout(ceiling);
-			setTimeout(finish, 600);
-		});
+	/* ── one: arrival ── */
+	var arriving = true;
+	if (SHOW === 'first') {
+		if (read(SEEN)) { arriving = false; }
+		write(SEEN, '1');
 	}
+	if (arriving) { start(true); }
+
+	/* ── two: the Home link, from somewhere down the page ──
+
+	   Deliberately NOT prevented, and deliberately not locking the page.
+	   Home is an ordinary same-page anchor and the browser's own jump is
+	   what puts the reader at the top; the overlay simply covers it while
+	   it happens. Calling preventDefault, or setting overflow:hidden on
+	   the way in, would swallow that jump -- which is exactly how the
+	   loading screen used to lose it. The router is left alone. */
+	document.addEventListener('click', function (e) {
+		var a = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
+		if (!a || !/#top$/.test(a.getAttribute('href') || '')) { return; }
+		if (running) { return; }
+
+		/* Already up here: a film between the click and the same view is not
+		   an introduction, it is a delay. One screen down is the bar. */
+		var y = window.scrollY || window.pageYOffset || 0;
+		if (y <= window.innerHeight) { return; }
+
+		/* And not twice in ten minutes, however often Home is pressed. */
+		var last = parseInt(read(LAST) || '0', 10);
+		if (last && (Date.now() - last) < GAP) { return; }
+
+		start(false);
+	});
 })();
 </script>
 		<?php
