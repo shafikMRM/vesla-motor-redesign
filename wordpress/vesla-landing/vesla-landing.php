@@ -419,11 +419,41 @@ class Vesla_Schema {
 				'title'  => __( 'Opening section', 'vesla-landing' ),
 				'blurb'  => __( 'The first thing a visitor sees: the big heading, a short paragraph, two buttons, and the row of figures underneath.', 'vesla-landing' ),
 				'fields' => array(
+					'style' => array(
+						'type'    => 'select',
+						'label'   => __( 'Opening section style', 'vesla-landing' ),
+						'default' => 'classic',
+						'options' => array(
+							'classic' => __( 'Classic — heading, paragraph and the shield', 'vesla-landing' ),
+							'video'   => __( 'Film — the same words over a film', 'vesla-landing' ),
+						),
+						'help'    => __( 'Both use the wording below. Changing this changes how it is presented, not what it says — there is one set of words and it is edited in one place. The film style needs a film and a poster picture before it will turn on.', 'vesla-landing' ),
+					),
+					'video' => array(
+						'type'      => 'video',
+						'label'     => __( 'Film for the opening section', 'vesla-landing' ),
+						'mimes'     => array( 'video/mp4' ),
+						'max_bytes' => 10485760,   // 10 MB
+						'warn_bytes' => 4194304,   // 4 MB
+						'help'      => __( 'MP4, no larger than 10MB. It is decoration: it plays muted, on a loop, with no controls, and the words sit over it. Everything a reader needs is in the text and the poster, so a film that never loads costs nothing but the film.', 'vesla-landing' ),
+					),
+					'poster' => array(
+						'type'  => 'image',
+						'label' => __( 'Poster picture for the film', 'vesla-landing' ),
+						'help'  => __( 'Shown before the film loads, and instead of it wherever it will not play — a phone saving power, a browser refusing to start it on its own, or a reader who has asked for less movement. Required: the film style will not turn on without one, because the alternative is a black box where the opening should be.', 'vesla-landing' ),
+					),
+					'overlay' => array(
+						'type'    => 'number',
+						'label'   => __( 'How dark over the film, as a percentage', 'vesla-landing' ),
+						'default' => 35,
+						'min'     => 0, 'max' => 60,
+						'help'    => __( 'A gradient, not a flat wash: heaviest behind the words and clearing toward the other side, so the film is still a film. Raise it for a bright or busy clip where the text stops being legible.', 'vesla-landing' ),
+					),
 					'eyebrow' => array(
 						'type'  => 'text',
 						'label' => __( 'Small line above the heading', 'vesla-landing' ),
 						'help'  => __( 'Set in small spaced-out capitals.', 'vesla-landing' ),
-						
+
 					),
 					'heading' => array(
 						'type'  => 'text',
@@ -3602,9 +3632,32 @@ class Vesla_Settings {
 		/* The bundled-photograph carry-over that used to live here is gone with
 		   the repeater. A car keeps its own photo_file in its own meta now, and
 		   saving the settings form does not touch it.
-		
+
 		   Vesla_Store::cars() is read straight from the Vehicles list, so this
 		   form no longer carries stock at all. */
+
+		/* One rule that no single field can enforce, because it is about two of
+		   them at once: the film style needs a poster.
+
+		   Not a warning. Without a poster there is nothing to show before the
+		   film has loaded, nothing where autoplay is refused, and nothing for a
+		   reader who has asked for less movement -- and the front page's
+		   opening section would be a black rectangle with words on it in every
+		   one of those cases. So the style falls back rather than the save
+		   failing: the words, the buttons and the shield are all still there in
+		   classic, which is a working page rather than a broken one.
+
+		   Checked against the CLEANED values, not the posted ones, so a poster
+		   that was itself rejected a moment ago counts as absent. */
+		if ( isset( $clean['hero'] ) && is_array( $clean['hero'] )
+			&& isset( $clean['hero']['style'] ) && 'video' === $clean['hero']['style']
+			&& empty( $clean['hero']['poster'] ) ) {
+			$clean['hero']['style'] = 'classic';
+			self::complain(
+				'vesla_hero_poster',
+				__( 'The opening section was left on the classic style: the film style needs a poster picture and there is not one. The poster is what is shown before the film loads, and instead of it wherever it will not play — without it the top of the front page would be a black rectangle for anybody on a slow connection, on a phone saving power, or asking for less movement. Add a poster and choose the film style again.', 'vesla-landing' )
+			);
+		}
 
 		return $clean;
 	}
@@ -3688,6 +3741,73 @@ class Vesla_Settings {
 
 			case 'image':
 				return $value ? absint( $value ) : '';
+
+			case 'video':
+				/* Refused with a reason, and the previous value dropped rather
+				   than a bad one kept. Every branch here says what to do about
+				   it: being told "invalid file" by a screen that then forgets
+				   what you chose is the worst of both.
+
+				   The ceiling lives in the field definition rather than in a
+				   constant here, because the answer is a property of the slot
+				   -- a hero backdrop and a lower band would not want the same
+				   number, and the sanitiser should not have to know which is
+				   which. */
+				$vid = $value ? absint( $value ) : 0;
+				if ( ! $vid ) {
+					return '';
+				}
+
+				$allow = ! empty( $def['mimes'] ) ? (array) $def['mimes'] : array( 'video/mp4' );
+				$mime  = (string) get_post_mime_type( $vid );
+				if ( ! in_array( $mime, $allow, true ) ) {
+					self::complain(
+						'vesla_video_type',
+						sprintf(
+							/* translators: 1: the type this field accepts. 2: the file's type. */
+							__( 'The film was not saved: this field takes %1$s and that file is %2$s. Export it in the right format and choose it again.', 'vesla-landing' ),
+							implode( ' or ', $allow ),
+							$mime ? $mime : __( 'of a type this site could not read', 'vesla-landing' )
+						)
+					);
+					return '';
+				}
+
+				$cap   = ! empty( $def['max_bytes'] ) ? (int) $def['max_bytes'] : 10485760;
+				$path  = get_attached_file( $vid );
+				$bytes = ( $path && file_exists( $path ) ) ? (int) filesize( $path ) : 0;
+				if ( $bytes > $cap ) {
+					self::complain(
+						'vesla_video_size',
+						sprintf(
+							/* translators: 1: the file's size. 2: the limit. */
+							__( 'The film was not saved: it is %1$s and the limit is %2$s. This sits at the top of the front page, so its weight is paid by every first-time visitor before they have read a word — re-export it smaller rather than raising the limit. Ten seconds at 1280 × 720, H.264, CRF about 28, no audio track, comes in well under the cap.', 'vesla-landing' ),
+							size_format( $bytes, 1 ),
+							size_format( $cap )
+						)
+					);
+					return '';
+				}
+
+				/* Above the cap it is refused; above the warning line it is kept
+				   and the cost is named. The difference matters: a four-megabyte
+				   film is a bad idea rather than a broken one, and refusing it
+				   would be this screen overruling a decision that is the
+				   administrator's to make. */
+				$warn = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
+				if ( $warn && $bytes > $warn ) {
+					self::complain(
+						'vesla_video_heavy',
+						sprintf(
+							/* translators: 1: the file's size. 2: the size above which this warns. */
+							__( 'The film was saved, but it is %1$s. Anything above %2$s at the top of the front page is felt on a phone on mobile data: it competes with the words and the pictures for the same connection. It plays muted with no controls, so quality past "recognisable" is being paid for and not seen — re-exporting at a lower bitrate costs nothing visible.', 'vesla-landing' ),
+							size_format( $bytes, 1 ),
+							size_format( $warn )
+						)
+					);
+				}
+
+				return $vid;
 
 			case 'checks':
 				/* Only what the list actually offers survives. A value posted
@@ -4447,6 +4567,58 @@ class Vesla_Admin {
 					</div>
 					<input type="hidden" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"
 					       value="<?php echo esc_attr( $img_id ? $img_id : '' ); ?>" class="vesla-image-id">
+				</div>
+				<?php
+				break;
+
+			case 'video':
+				$vid_id   = absint( $value );
+				$vid_src  = $vid_id ? wp_get_attachment_url( $vid_id ) : '';
+				$vid_path = $vid_id ? get_attached_file( $vid_id ) : '';
+				$vid_size = ( $vid_path && file_exists( $vid_path ) ) ? (int) filesize( $vid_path ) : 0;
+				$vid_warn = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
+				$vid_cap  = ! empty( $def['max_bytes'] ) ? (int) $def['max_bytes'] : 10485760;
+				?>
+				<div class="vesla-image" data-vesla-image data-vesla-media="video">
+					<div class="vesla-image-preview<?php echo $vid_src ? '' : ' is-empty'; ?>">
+						<?php if ( $vid_src ) : ?>
+							<?php /* Muted and with controls: this is the one place the film
+							         should be scrubbable, because it is the only place anybody
+							         is looking at it as a file rather than as a backdrop. */ ?>
+							<video src="<?php echo esc_url( $vid_src ); ?>" muted playsinline controls preload="metadata"></video>
+						<?php else : ?>
+							<span><?php esc_html_e( 'No film chosen', 'vesla-landing' ); ?></span>
+						<?php endif; ?>
+					</div>
+					<div class="vesla-image-act">
+						<button type="button" class="button vesla-image-pick"><?php esc_html_e( 'Choose film', 'vesla-landing' ); ?></button>
+						<button type="button" class="button-link vesla-image-clear"<?php echo $vid_id ? '' : ' hidden'; ?>>
+							<?php esc_html_e( 'Remove', 'vesla-landing' ); ?>
+						</button>
+					</div>
+					<?php if ( $vid_size ) : ?>
+						<p class="vesla-field-note<?php echo ( $vid_warn && $vid_size > $vid_warn ) ? ' is-warn' : ''; ?>">
+							<?php
+							if ( $vid_warn && $vid_size > $vid_warn ) {
+								printf(
+									/* translators: 1: the file's size. 2: the size above which this warns. */
+									esc_html__( 'This film is %1$s. Above %2$s at the top of the front page is felt on a phone on mobile data — it competes with the words and the pictures for one connection. It plays muted with no controls, so quality past "recognisable" is paid for and not seen.', 'vesla-landing' ),
+									esc_html( size_format( $vid_size, 1 ) ),
+									esc_html( size_format( $vid_warn ) )
+								);
+							} else {
+								printf(
+									/* translators: 1: the file's size. 2: the hard limit. */
+									esc_html__( 'This film is %1$s. The limit is %2$s.', 'vesla-landing' ),
+									esc_html( size_format( $vid_size, 1 ) ),
+									esc_html( size_format( $vid_cap ) )
+								);
+							}
+							?>
+						</p>
+					<?php endif; ?>
+					<input type="hidden" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"
+					       value="<?php echo esc_attr( $vid_id ? $vid_id : '' ); ?>" class="vesla-image-id">
 				</div>
 				<?php
 				break;
@@ -5887,6 +6059,15 @@ class Vesla_Render {
 				. '.stages li::before,.hero-stats li::before{transform:none!important}'
 				. '.card,.btn,.btn-line,.btn-gold{transform:none!important}'
 				. '.m-on .card-media img{opacity:1!important}'
+				/* The film hero: the words appear together rather than in
+				   sequence, and the film neither drifts nor fades in. The
+				   script has already declined to play it at all, so the poster
+				   is what is on screen and this makes sure nothing moves over
+				   it. The delays have to go too, or the staggered words would
+				   still arrive one after another, just instantly each. */
+				. '.hero-v .reveal{opacity:1!important;transform:none!important;transition:none!important}'
+				. '.hero-v .v-1,.hero-v .v-2,.hero-v .v-3,.hero-v .v-4{transition-delay:0s!important}'
+				. '.hero-v-film{transform:none!important;transition:none!important}'
 				. '}';
 		}
 		return $css;
@@ -7235,7 +7416,11 @@ class Vesla_Render {
 			beat = setTimeout(function () { root.classList.remove('vesla-open-hold'); }, BEAT);
 		} else {
 			box.classList.add('is-going');
-			root.classList.remove('vesla-open-hold');
+			/* The same beat on this path too. There is no shield to land on
+			   here, but the page still wants to arrive behind the curtain
+			   rather than under it -- and the film hero, which has no shield
+			   by definition, always takes this branch. */
+			beat = setTimeout(function () { root.classList.remove('vesla-open-hold'); }, BEAT);
 		}
 		root.classList.remove('vesla-open-run');
 
@@ -7431,28 +7616,79 @@ class Vesla_Render {
 
 	/* ── hero ──────────────────────────────────────────────────────────── */
 
+	/**
+	 * The opening section's words: eyebrow, heading, paragraph, both buttons.
+	 *
+	 * ONE COPY, PRINTED BY BOTH STYLES, and that is the whole point of it
+	 * being a function. The classic hero and the film hero are two
+	 * presentations of the same section, not two sections -- so the words are
+	 * written once here and read from one set of settings fields. Editing the
+	 * heading changes whichever style is switched on, and there is no second
+	 * place to forget.
+	 *
+	 * It also makes the search-engine guarantee structural rather than a
+	 * promise kept by hand. The h1 is a real h1 in the HTML that leaves the
+	 * server, both links are real anchors with real hrefs, and the paragraph
+	 * is text -- in BOTH styles, because there is only one piece of code that
+	 * can produce them. Nothing here is injected by script and nothing waits
+	 * on the film: the film is decoration painted behind words that are
+	 * already in the document.
+	 *
+	 * @param array $h     The hero section's settings.
+	 * @param bool  $video Whether the film style is in force. Adds the
+	 *                     stagger classes and nothing else -- never a change
+	 *                     to what is said or to the shape of the markup.
+	 */
+	private static function hero_copy( $h, $video = false ) {
+		$n1 = $video ? ' v-1' : '';
+		$n2 = $video ? ' v-2' : '';
+		$n3 = $video ? ' v-3' : '';
+		$n4 = $video ? ' v-4' : '';
+		?>
+		<?php if ( $h['eyebrow'] ) : ?>
+			<p class="eyebrow reveal<?php echo esc_attr( $n1 ); ?>"><?php echo esc_html( $h['eyebrow'] ); ?></p>
+		<?php endif; ?>
+		<h1 class="reveal<?php echo esc_attr( $n2 ); ?>"><?php echo esc_html( $h['heading'] ); ?></h1>
+		<?php if ( $h['lead'] ) : ?>
+			<p class="hero-lead reveal<?php echo esc_attr( $n3 ); ?>"><?php echo esc_html( $h['lead'] ); ?></p>
+		<?php endif; ?>
+		<div class="hero-act reveal<?php echo esc_attr( $n4 ); ?>">
+			<?php if ( $h['btn1_label'] ) : ?>
+				<a class="btn btn-gold btn-lg" href="<?php echo esc_url( $h['btn1_link'] ); ?>"><?php echo esc_html( $h['btn1_label'] ); ?></a>
+			<?php endif; ?>
+			<?php if ( $h['btn2_label'] ) : ?>
+				<a class="btn btn-line btn-lg" href="<?php echo esc_url( $h['btn2_link'] ); ?>"><?php echo esc_html( $h['btn2_label'] ); ?></a>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
 	private static function hero() {
 		$h = Vesla_Settings::get( 'hero' );
+
+		/* The film style is only ever honoured with a poster behind it. The
+		   sanitiser already refuses to store the one without the other, so
+		   this is the second of two locks rather than the only one -- settings
+		   can arrive from an import or an older database, and the failure it
+		   guards against is the top of the front page being a black rectangle. */
+		$style  = isset( $h['style'] ) ? (string) $h['style'] : 'classic';
+		$poster = isset( $h['poster'] ) ? (int) $h['poster'] : 0;
+
+		/* Resolved to a real URL here, not inside hero_video(), so that a
+		   poster whose file has been deleted from the library since falls
+		   straight through to the classic style. Deciding it there and calling
+		   back would be a loop, because this function reads the setting again. */
+		$poster_url = $poster ? wp_get_attachment_image_url( $poster, 'full' ) : '';
+		if ( 'video' === $style && $poster_url ) {
+			self::hero_video( $h, $poster, $poster_url );
+			return;
+		}
 		?>
 		<section class="hero" id="top">
 			<div class="hero-bg" aria-hidden="true"></div>
 			<div class="shell hero-in">
 				<div class="hero-copy">
-					<?php if ( $h['eyebrow'] ) : ?>
-						<p class="eyebrow reveal"><?php echo esc_html( $h['eyebrow'] ); ?></p>
-					<?php endif; ?>
-					<h1 class="reveal"><?php echo esc_html( $h['heading'] ); ?></h1>
-					<?php if ( $h['lead'] ) : ?>
-						<p class="hero-lead reveal"><?php echo esc_html( $h['lead'] ); ?></p>
-					<?php endif; ?>
-					<div class="hero-act reveal">
-						<?php if ( $h['btn1_label'] ) : ?>
-							<a class="btn btn-gold btn-lg" href="<?php echo esc_url( $h['btn1_link'] ); ?>"><?php echo esc_html( $h['btn1_label'] ); ?></a>
-						<?php endif; ?>
-						<?php if ( $h['btn2_label'] ) : ?>
-							<a class="btn btn-line btn-lg" href="<?php echo esc_url( $h['btn2_link'] ); ?>"><?php echo esc_html( $h['btn2_label'] ); ?></a>
-						<?php endif; ?>
-					</div>
+					<?php self::hero_copy( $h, false ); ?>
 				</div>
 
 				<?php if ( $h['show_logo'] ) : ?>
@@ -7487,6 +7723,127 @@ class Vesla_Render {
 				<?php endif; ?>
 			</div>
 		</section>
+		<?php
+	}
+
+	/**
+	 * The opening section as a film with the words over it.
+	 *
+	 * THE FILM IS DECORATION. Everything a reader or a crawler needs is in the
+	 * markup before the film is mentioned: the h1, the paragraph and both
+	 * links come from hero_copy(), the same function the classic style uses,
+	 * and they are in the HTML that leaves the server. If the file never
+	 * loads, if autoplay is refused, if scripting is off, if the connection
+	 * dies after the HTML -- the section is still the poster, the words and
+	 * the buttons, and it still reads. That is the order things are built in
+	 * here, and it is not an accident.
+	 *
+	 * The poster is an ordinary <img>, not the video's poster attribute, and
+	 * the film is transparent until it is genuinely playing. That way there is
+	 * never a black rectangle: the picture is painted immediately by the same
+	 * markup that would be there with no script at all, and the film fades in
+	 * over it if and when it arrives. The video's own poster attribute would
+	 * have fetched the same file a second time.
+	 *
+	 * The height is fixed in CSS -- clamp(280px, 50vh, 600px) -- so the space
+	 * is reserved before anything loads and nothing below can be pushed down.
+	 * No aspect-ratio box is needed when the box does not depend on the media.
+	 */
+	private static function hero_video( $h, $poster_id, $poster ) {
+		$src = '';
+		if ( ! empty( $h['video'] ) ) {
+			$src = (string) wp_get_attachment_url( (int) $h['video'] );
+		}
+		$poster_alt = trim( (string) get_post_meta( $poster_id, '_wp_attachment_image_alt', true ) );
+
+		/* 0-60 in the editor, carried as a fraction so the gradient can scale
+		   every stop from one number. */
+		$dark    = max( 0, min( 60, (int) ( isset( $h['overlay'] ) ? $h['overlay'] : 35 ) ) );
+		$respect = (bool) Vesla_Settings::get( 'extras', 'respect_reduced_motion', 0 );
+		?>
+		<section class="hero hero-v" id="top" style="--scrim:<?php echo esc_attr( number_format( $dark / 100, 3, '.', '' ) ); ?>">
+			<div class="hero-v-media" aria-hidden="true">
+				<img class="hero-v-poster" src="<?php echo esc_url( $poster ); ?>"
+				     alt="<?php echo esc_attr( $poster_alt ); ?>" fetchpriority="high" decoding="async">
+				<?php if ( $src ) : ?>
+					<?php /* preload="metadata", never "auto": this sits above the fold and
+					         must not race the words and the pictures for the connection.
+					         No controls, no sound, nothing clickable -- it is a backdrop. */ ?>
+					<video class="hero-v-film" id="hero-v-film" muted loop playsinline preload="metadata" tabindex="-1">
+						<source src="<?php echo esc_url( $src ); ?>" type="video/mp4">
+					</video>
+				<?php endif; ?>
+				<div class="hero-v-scrim"></div>
+			</div>
+			<div class="shell hero-v-in">
+				<div class="hero-copy">
+					<?php self::hero_copy( $h, true ); ?>
+				</div>
+			</div>
+		</section>
+		<?php if ( $src ) : ?>
+		<script id="hero-v-js">
+		(function(){
+			var sec  = document.getElementById('top');
+			var film = document.getElementById('hero-v-film');
+			if (!sec || !film) { return; }
+
+			/* Gated on the setting, exactly as everything else is. Windows
+			   answers "reduce" for its Visual effects switch and for battery
+			   saver, neither of which is a considered choice, so the browser is
+			   only consulted when the administrator has asked for it to be.
+			   When it is: the poster stays and the film is never fetched
+			   beyond its metadata. */
+			var RESPECT = <?php echo $respect ? 'true' : 'false'; ?>;
+			var reduced = false;
+			if (RESPECT) {
+				try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+			}
+			if (reduced) { return; }
+
+			var started = false, visible = true;
+
+			var attempt = function () {
+				if (!visible) { return; }
+				var p;
+				try { p = film.play(); } catch (e) { p = null; }
+				/* Refused is a normal answer, not an error: iOS in Low Power
+				   Mode refuses even a muted film. The poster is already on
+				   screen and stays there, so there is nothing to do about it
+				   and nothing to tell anybody. */
+				if (p && p.catch) { p.catch(function () {}); }
+			};
+
+			/* Playback waits for the words. The film must never be the reason
+			   the heading is late, so nothing is asked of the network for it
+			   until the page has finished loading everything that matters. */
+			var begin = function () {
+				if (started) { return; }
+				started = true;
+				attempt();
+			};
+			if (document.readyState === 'complete') { begin(); }
+			else { window.addEventListener('load', begin); }
+
+			film.addEventListener('playing', function () { sec.classList.add('is-playing'); });
+			/* A file that will not decode leaves the poster where it is. */
+			film.addEventListener('error', function () { sec.classList.remove('is-playing'); });
+
+			/* Out of view it is paused. A looping film playing to nobody is
+			   battery and bandwidth spent on nothing, and this is the top of
+			   the page -- it is out of view for most of the visit. */
+			if ('IntersectionObserver' in window) {
+				new IntersectionObserver(function (entries) {
+					entries.forEach(function (en) {
+						visible = en.isIntersecting;
+						if (!visible) { try { film.pause(); } catch (e) {} }
+						else if (started) { attempt(); }
+					});
+				}, { threshold: 0.01 }).observe(sec);
+			}
+		})();
+		</script>
+		<?php endif; ?>
 		<?php
 	}
 

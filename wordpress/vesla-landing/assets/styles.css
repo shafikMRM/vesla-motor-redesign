@@ -1118,6 +1118,121 @@ html.is-loading{overflow:hidden}
 html.has-js .card-later{display:none}
 #more{min-width:230px}
 
+/* ─ the film hero ─
+
+   The same section as the classic hero and the same words in it; only the
+   presentation differs. The film is decoration painted behind text that is
+   already in the document, which is why nothing here is required for the page
+   to read.
+
+   The height is a fixed clamp rather than an aspect ratio, and that is what
+   keeps CLS still: the box does not depend on the media, so it is the right
+   size before the poster has arrived and stays that size whatever happens to
+   the film. Bounded at both ends because a half-height band goes wrong in two
+   directions -- a sliver on a laptop, a whole screen on a tall monitor. */
+.hero-v{
+  position:relative;
+  display:grid; align-items:center;
+  width:100%;
+
+  /* min-height, not height. Half the viewport is the intent, but the words
+     are the content and they must never be cut off to keep a round number:
+     at 1366×768 this box is 384px and the eyebrow, heading, paragraph and
+     buttons together need more than that, so a fixed height clipped the
+     buttons clean off the bottom. Growing with the text is still perfectly
+     stable for CLS -- the height depends on copy that is in the HTML from the
+     first byte, not on any media that arrives later. */
+  min-height:clamp(280px, 50vh, 600px);
+
+  /* .hero's own padding is calc(var(--bar) + 90px) top, sized for a section
+     that owns the whole screen. Inside a half-height band it pushes the copy
+     straight out of the bottom. The bar still has to be cleared, so that part
+     stays and the rest is scaled down. */
+  padding:calc(var(--bar) + clamp(20px,4vh,56px)) 0 clamp(20px,4vh,56px);
+
+  overflow:hidden;
+  background:var(--void,#0D0D0E);
+}
+.hero-v-media{position:absolute; inset:0; overflow:hidden}
+
+/* The poster is an ordinary image and the film sits on top of it, transparent
+   until it is genuinely playing. So the first painted frame is the poster, by
+   the same markup that would be there with no script at all -- and if the film
+   is refused, fails or is never fetched, what stays on screen is a picture
+   rather than a black rectangle. Using the video's own poster attribute
+   instead would have fetched the same file twice. */
+.hero-v-poster,.hero-v-film{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  object-fit:cover; display:block;
+}
+.hero-v-film{
+  opacity:0;
+  transform:scale(1.03);
+  transition:opacity .6s ease;
+}
+/* A drift you feel rather than see: six seconds to travel three per cent.
+   transform only, so it is composited and cannot move anything on the page. */
+.hero-v.is-playing .hero-v-film{
+  opacity:1;
+  transform:scale(1);
+  transition:opacity .6s ease, transform 6s cubic-bezier(.22,.61,.36,1);
+}
+
+/* A gradient, not a wash. Heaviest behind the words and clearing toward the
+   far side, so the film is still a film where nothing is written over it.
+   Every stop is scaled from the one number the editor sets. */
+.hero-v-scrim{
+  position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg,
+    rgba(13,13,14,calc(var(--scrim,.35) * 1.15)) 0%,
+    rgba(13,13,14,calc(var(--scrim,.35) * .82)) 42%,
+    rgba(13,13,14,calc(var(--scrim,.35) * .20)) 100%);
+}
+/* On a narrow screen the words run the full width, so a gradient that clears
+   to the right would clear straight through them. It becomes a vertical one
+   that covers the whole measure instead. */
+@media (max-width:820px){
+  .hero-v-scrim{
+    background:linear-gradient(180deg,
+      rgba(13,13,14,calc(var(--scrim,.35) * .85)) 0%,
+      rgba(13,13,14,calc(var(--scrim,.35) * 1.30)) 55%,
+      rgba(13,13,14,calc(var(--scrim,.35) * 1.10)) 100%);
+  }
+}
+/* NO width here. .shell is width:min(100% - var(--gutter), var(--shell)) at
+   one class of specificity, and a width on this rule -- also one class, and
+   later in the file -- silently beat it: the copy went flush to the left edge
+   of the viewport with no gutter at all. This element needs a stacking
+   position and nothing else; the shell does the measuring. */
+.hero-v-in{position:relative; z-index:1}
+
+/* The classic hero puts the copy in a grid column beside the shield, which is
+   what keeps its measure sensible. There is no shield here, so the copy would
+   run the full width of the shell and the two buttons would stretch to a
+   metre apart. Held to a reading measure instead, left-aligned, which is also
+   what makes the text survive the crop: it stays over the heavy end of the
+   gradient at every width. */
+.hero-v .hero-copy{max-width:min(100%, 640px)}
+
+/* The words arrive in sequence, 90ms apart, each over half a second and
+   moving twelve pixels. Slower and smaller than the page's usual reveal,
+   because this one is read against a moving picture and a quick movement over
+   another movement reads as a flicker.
+
+   The .in rule has to be restated at a higher specificity than the base one:
+   without it the override below would win even once the element had been
+   revealed, and the words would sit twelve pixels low for ever. */
+html.m-on .hero-v .reveal{
+  transform:translateY(12px);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
+}
+html.m-on .hero-v .reveal.in{transform:none}
+.hero-v .v-1{transition-delay:0s}
+.hero-v .v-2{transition-delay:.09s}
+.hero-v .v-3{transition-delay:.18s}
+.hero-v .v-4{transition-delay:.27s}
+
 /* ─ the opening ─
 
    The shield arriving on its own, then settling into the hero's copy of
