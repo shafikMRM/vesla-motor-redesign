@@ -1139,14 +1139,23 @@ html.vesla-intro-run .vesla-intro{display:block}
 html.vesla-intro-run{overflow:hidden}
 .vesla-intro.is-going{opacity:0}
 
-/* contain, not cover. The film is one fixed size and the viewport is not,
-   and cover would crop the mark off centre on a tall phone. Contain
-   letterboxes instead — and the bars are the same colour as the film's own
-   ground, so there is nothing to see. */
+/* The film is one fixed shape and the viewport is not — a portrait clip on a
+   landscape screen has to be padded or cropped, and which one is right
+   depends on the film, so it is a setting rather than a decision made here.
+
+   contain pads: every pixel of the film is shown, and because the padding is
+   the same colour as the film's own ground there is nothing to see.
+   cover fills: the top and bottom are cropped on a wide window, which suits a
+   film whose subject stays well inside the middle.
+
+   Neither touches the film. No transform, no filter, no mask — it plays as
+   it was supplied. */
 .vesla-intro-film{
   width:100%; height:100%; display:block;
   object-fit:contain; background:var(--void,#0D0D0E);
 }
+.vesla-intro-film.is-contain{object-fit:contain}
+.vesla-intro-film.is-cover{object-fit:cover}
 
 /* Quiet, and there from the first frame. The site's own type and its own
    yellow rather than a browser default — and never absent, because somebody

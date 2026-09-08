@@ -1473,6 +1473,22 @@ class Vesla_Schema {
 						'label' => __( 'Intro video', 'vesla-landing' ),
 						'help'  => __( 'A short clip that plays once on arrival and hands over to the page, in place of the loading screen. Three seconds is the length this was built around. Leave it empty and nothing changes. What to give the editor: H.264 MP4, no larger than 1280 × 720, no audio track, CRF about 26 — at those settings three muted seconds lands well under a megabyte. The last frame should be the shield centred on the site’s own dark ground, and the encode must not add black frames at either end; one black flash is the whole illusion gone.', 'vesla-landing' ),
 					),
+					'intro_video_webm' => array(
+						'type'  => 'video',
+						'mimes' => array( 'video/webm' ),
+						'label' => __( 'Intro video — WebM version', 'vesla-landing' ),
+						'help'  => __( 'Optional, and offered first where it is understood: the same three seconds encoded as WebM is usually a good deal smaller than the MP4, and Chrome and Firefox will take it. Safari will not, and falls back to the MP4 — so the MP4 above is the one that must always be there.', 'vesla-landing' ),
+					),
+					'intro_fit' => array(
+						'type'    => 'select',
+						'label'   => __( 'How the film fills the screen', 'vesla-landing' ),
+						'default' => 'contain',
+						'choices' => array(
+							'contain' => __( 'Fit the whole frame in (nothing is cropped)', 'vesla-landing' ),
+							'cover'   => __( 'Fill the screen (the edges are cropped)', 'vesla-landing' ),
+						),
+						'help'    => __( 'A portrait film on a landscape screen has to do one or the other. “Fit the whole frame in” shows every pixel as it was made and pads the sides — and because the padding is the same colour as the film’s own ground, there is nothing to see. “Fill the screen” crops the top and bottom on a wide window, which suits a film whose subject stays well inside the middle. Neither touches the film itself.', 'vesla-landing' ),
+					),
 					'intro_poster' => array(
 						'type'  => 'image',
 						'label' => __( 'Poster — the video’s first frame', 'vesla-landing' ),
@@ -3718,13 +3734,18 @@ class Vesla_Settings {
 					return '';
 				}
 
-				$mime = (string) get_post_mime_type( $vid );
-				if ( 'video/mp4' !== $mime ) {
+				/* Which types this particular field takes. Named in the schema rather
+				   than assumed here, because the WebM companion is the same kind of
+				   field with a different answer. */
+				$allow = ! empty( $def['mimes'] ) ? (array) $def['mimes'] : array( 'video/mp4' );
+				$mime  = (string) get_post_mime_type( $vid );
+				if ( ! in_array( $mime, $allow, true ) ) {
 					self::complain(
 						'vesla_intro_type',
 						sprintf(
-							/* translators: %s: the file's type, e.g. video/quicktime. */
-							__( 'The intro video was not saved: it has to be an MP4, and that file is %s. Export it as H.264 MP4 and choose it again.', 'vesla-landing' ),
+							/* translators: 1: the type this field accepts. 2: the file's type. */
+							__( 'The intro video was not saved: this field takes %1$s and that file is %2$s. Export it in the right format and choose it again.', 'vesla-landing' ),
+							implode( ' or ', $allow ),
 							$mime ? $mime : __( 'of a type this site could not read', 'vesla-landing' )
 						)
 					);
@@ -7179,6 +7200,18 @@ class Vesla_Render {
 			return;   // the file has been deleted from the library since
 		}
 
+		/* Offered in this order on purpose: whichever the browser understands
+		   first wins, and where WebM is understood it is the smaller file.
+		   Safari skips it and takes the MP4, which is why the MP4 is the one
+		   that must always be present. */
+		$webm_id = (int) Vesla_Settings::get( 'extras', 'intro_video_webm', 0 );
+		$webm    = $webm_id ? wp_get_attachment_url( $webm_id ) : '';
+
+		/* A portrait film on a landscape screen must either be padded or
+		   cropped. Neither alters the film. */
+		$fit = (string) Vesla_Settings::get( 'extras', 'intro_fit', 'contain' );
+		$fit = ( 'cover' === $fit ) ? 'cover' : 'contain';
+
 		$poster_id = (int) Vesla_Settings::get( 'extras', 'intro_poster', 0 );
 		$poster    = $poster_id ? wp_get_attachment_image_url( $poster_id, 'full' ) : '';
 		$max       = max( 1, (int) Vesla_Settings::get( 'extras', 'intro_max', 4 ) );
@@ -7186,10 +7219,12 @@ class Vesla_Render {
 		$skip      = '' !== $skip ? $skip : __( 'Skip', 'vesla-landing' );
 		?>
 <div class="vesla-intro" id="vesla-intro">
-	<video class="vesla-intro-film" id="vesla-intro-film" aria-hidden="true"
+	<video class="vesla-intro-film is-<?php echo esc_attr( $fit ); ?>" id="vesla-intro-film" aria-hidden="true"
 	       muted playsinline autoplay preload="auto"
-	       <?php if ( $poster ) : ?>poster="<?php echo esc_url( $poster ); ?>"<?php endif; ?>
-	       src="<?php echo esc_url( $src ); ?>"></video>
+	       <?php if ( $poster ) : ?>poster="<?php echo esc_url( $poster ); ?>"<?php endif; ?>>
+		<?php if ( $webm ) : ?><source src="<?php echo esc_url( $webm ); ?>" type="video/webm"><?php endif; ?>
+		<source src="<?php echo esc_url( $src ); ?>" type="video/mp4">
+	</video>
 	<button type="button" class="vesla-intro-skip" id="vesla-intro-skip"><?php echo esc_html( $skip ); ?></button>
 </div>
 <script id="vesla-intro-js">
