@@ -73,6 +73,53 @@ doubled up. Most themes offer a template called something like "Full width",
 Press Save changes, then reload the page with Ctrl+F5 (Cmd+Shift+R on a Mac).
 If your host has caching, or you use a caching plugin, clear that too.
 
+= A car was saved hours ago and is still not on the website =
+
+This is the one thing to set up properly, and it takes five minutes.
+
+Writing the public page is carried by WordPress's scheduled tasks. Those are
+not a real timer: WordPress only checks whether anything is due when somebody
+asks it for a page. On this set-up your visitors are served plain HTML files
+and never ask WordPress for anything, so the only person whose visit can
+trigger it is whoever is logged into the admin. Save a car on a quiet
+afternoon and it can sit unpublished until someone next opens a screen.
+
+The fix is to have the server run it on a clock instead.
+
+**1. Add the cron job in cPanel**
+
+In cPanel, open **Advanced -> Cron Jobs**. Under "Add New Cron Job":
+
+* **Common Settings** - choose "Every 5 Minutes (*/5 * * * *)". That fills in
+  the five boxes for you: Minute `*/5`, and Hour, Day, Month and Weekday all `*`.
+* **Command** - paste this, then correct the path to match your account:
+
+    /usr/local/bin/php -q /home/USERNAME/public_html/cms/wp-cron.php >/dev/null 2>&1
+
+Replace `USERNAME` with your cPanel username, and make sure the path is where
+WordPress actually lives — if the site is served from public_html and
+WordPress sits in a "cms" folder inside it, the line above is already right.
+The exact line for this installation, with the path filled in, is shown on the
+Landing Page screen whenever something is waiting to be published.
+
+Press **Add New Cron Job**. cPanel will email you the output of every run
+unless you clear the notification address; the `>/dev/null 2>&1` on the end is
+what keeps those emails empty.
+
+**2. Tell WordPress to stop trying on its own**
+
+Edit `wp-config.php` (cPanel -> File Manager, in the WordPress folder) and add
+this line anywhere above the line that says "That's all, stop editing":
+
+    define( 'DISABLE_WP_CRON', true );
+
+Without this, WordPress keeps checking on every admin page load as well, which
+is wasted work and can have two publishes overlapping.
+
+**Until that is done**, nothing is lost — a save is remembered, and the Landing
+Page screen tells you plainly when something has been waiting, with a
+**Publish now** button that writes it out immediately. The **Republish** button
+always works straight away and never waits for any of this.
 = The photographs are the sample ones. How do I use mine? =
 
 Landing Page → Cars for sale → open a car → Photograph → Choose image. Upload
