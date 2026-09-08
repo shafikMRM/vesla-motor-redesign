@@ -1619,6 +1619,16 @@ class Vesla_Schema {
 					'city'          => array( 'type' => 'text', 'label' => __( 'City', 'vesla-landing' ), ),
 					'country_code'  => array( 'type' => 'text', 'label' => __( 'Country code', 'vesla-landing' ), 'help' => __( 'Two letters, e.g. AE for the United Arab Emirates.', 'vesla-landing' ), ),
 					'founded'       => array( 'type' => 'text', 'label' => __( 'Year founded', 'vesla-landing' ), ),
+					'profiles' => array(
+						'type'      => 'repeater',
+						'label'     => __( 'Where else this showroom is, officially', 'vesla-landing' ),
+						'help'      => __( 'The showroom’s own pages on other sites — Instagram, Facebook, LinkedIn, a Dubizzle dealer page, a Google Business listing. Google uses these to confirm that this website and those accounts are the same company. Only accounts this showroom controls: linking somebody else’s page tells Google the wrong thing.', 'vesla-landing' ),
+						'row_label' => __( 'Profile', 'vesla-landing' ),
+						'row_title' => array( 'url' ),
+						'fields'    => array(
+							'url' => array( 'type' => 'url', 'label' => __( 'Web address', 'vesla-landing' ), 'help' => __( 'The full address, e.g. https://www.instagram.com/veslamotors', 'vesla-landing' ) ),
+						),
+					),
 					'parent_name'   => array( 'type' => 'text', 'label' => __( 'Parent company name', 'vesla-landing' ), 'help' => __( 'Leave empty if there is none.', 'vesla-landing' ), ),
 					'parent_url'    => array( 'type' => 'url',  'label' => __( 'Parent company website', 'vesla-landing' ), ),
 				),
@@ -4729,7 +4739,7 @@ class Vesla_Render {
 									     data-src="<?php echo esc_url( $src ); ?>"
 									     alt="<?php echo esc_attr( $name . ' — ' . ( $i + 1 ) ); ?>"
 									     class="vp-shot<?php echo $now ? ' is-on' : ''; ?>"
-									     width="1200" height="800">
+									     width="1200" height="800" decoding="async">
 								<?php endforeach; ?>
 							<?php else : ?>
 								<?php /* A letter alone in a large empty frame reads as a picture that
@@ -5033,6 +5043,40 @@ class Vesla_Render {
 			$name,
 			implode( ', ', $bits )
 		);
+	}
+
+	/**
+	 * The spread of prices on the floor, as schema.org's priceRange.
+	 *
+	 * Sold cars are left out: they are not what the showroom sells for now.
+	 * One car, or several at one price, gives a single figure rather than a
+	 * range from a number to itself.
+	 *
+	 * @return string e.g. "AED 38,000 - AED 350,000", or '' when nothing is priced.
+	 */
+	public static function price_range() {
+		$prices = array();
+		foreach ( Vesla_Rest::cars() as $car ) {
+			if ( ! empty( $car['sold'] ) ) {
+				continue;
+			}
+			$price = isset( $car['price'] ) ? (int) $car['price'] : 0;
+			if ( $price > 0 ) {
+				$prices[] = $price;
+			}
+		}
+		if ( ! $prices ) {
+			return '';
+		}
+
+		$currency = trim( (string) Vesla_Settings::get( 'stock', 'currency', '' ) );
+		$money    = static function ( $n ) use ( $currency ) {
+			return trim( $currency . ' ' . number_format_i18n( $n ) );
+		};
+
+		$low  = min( $prices );
+		$high = max( $prices );
+		return $low === $high ? $money( $low ) : $money( $low ) . ' - ' . $money( $high );
 	}
 
 	/**
@@ -6376,6 +6420,38 @@ class Vesla_Render {
 		if ( $seo['founded'] ) {
 			$dealer['foundingDate'] = $seo['founded'];
 		}
+
+		/* What it costs to buy here, read off the floor rather than typed.
+
+		   Google shows this against a business listing, and a figure somebody
+		   entered once is wrong within a month -- stock turns over. Working it
+		   out from the cars actually for sale means it is right by
+		   construction, and it is recalculated on every publish because this
+		   whole node is built at render time.
+
+		   Omitted rather than guessed when nothing has a price on it. */
+		$range = self::price_range();
+		if ( '' !== $range ) {
+			$dealer['priceRange'] = $range;
+		}
+
+		/* The showroom's own accounts elsewhere.
+
+		   sameAs is how a search engine is told that this website and those
+		   profiles are one company rather than several with a similar name.
+		   Blank rows are dropped and the property is omitted entirely when
+		   there is nothing in it -- an empty sameAs is a validation error, and
+		   a wrong one is worse than none. */
+		$profiles = array();
+		foreach ( (array) Vesla_Settings::get( 'seo', 'profiles', array() ) as $row ) {
+			$url = isset( $row['url'] ) ? esc_url_raw( trim( (string) $row['url'] ) ) : '';
+			if ( '' !== $url && ! in_array( $url, $profiles, true ) ) {
+				$profiles[] = $url;
+			}
+		}
+		if ( $profiles ) {
+			$dealer['sameAs'] = $profiles;
+		}
 		/* openingHoursSpecification, one entry per day the showroom is open.
 		   This is what lets Google show "Open now" against the listing, and it
 		   has to be the machine form -- a sentence in the page saying nine to
@@ -6560,6 +6636,11 @@ class Vesla_Render {
 (function(){
 	var root = document.documentElement;
 	root.classList.add('is-loading');
+	/* Scripting is on. The stock grid renders every car into the HTML so that
+	   each one has a real link a crawler can follow and somebody without
+	   JavaScript can use; this class is what lets the stylesheet fold the
+	   later ones away again for everybody else, before they are painted. */
+	root.classList.add('has-js');
 
 	/* classList, never a string replace on className: any other classList write
 	   on <html> re-serialises the attribute, and a replace(' is-loading','')
@@ -6694,8 +6775,24 @@ class Vesla_Render {
 			return $a['price'] - $b['price'];
 		} );
 
+		/* Every car, not the first page of them.
+		
+		   The grid is rebuilt by app.js the moment it runs, so what is written
+		   here is what a crawler reads and what somebody with no JavaScript
+		   gets. Writing only the first eight meant the other sixteen had no
+		   link anywhere on the site: they were in the sitemap and described in
+		   the ItemList, but nothing linked to them, which is the one thing an
+		   internal link is for.
+		
+		   The ones past the first page are marked rather than dropped. The
+		   stylesheet folds them away where scripting is on -- so the page looks
+		   exactly as it did and app.js still owns the Show more button -- and
+		   leaves them showing where it is not, because with no script there is
+		   no way to reveal them and a hidden car is worse than a long page.
+		   display:none also means their photographs are never fetched, so this
+		   costs the markup of sixteen cards and nothing else. */
 		$limit = $limit ? (int) $limit : (int) Vesla_Settings::get( 'stock', 'per_page', 8 );
-		$cars  = array_slice( $cars, 0, max( 1, $limit ) );
+		$limit = max( 1, $limit );
 
 		$currency = (string) Vesla_Settings::get( 'stock', 'currency', '' );
 		$badge    = (string) Vesla_Settings::get( 'stock', 'badge', '' );
@@ -6725,7 +6822,8 @@ class Vesla_Render {
 			if ( $car['seats'] ) { $last[] = $car['seats'] . ' ' . $seats_w; }
 			if ( $last ) { $specs[] = implode( ' · ', $last ); }
 			?>
-			<article class="card" style="animation-delay:<?php echo (int) ( min( $i, 9 ) * 45 ); ?>ms">
+			<article class="card<?php echo $i >= $limit ? ' card-later' : ''; ?>"
+			         style="animation-delay:<?php echo (int) ( min( $i, 9 ) * 45 ); ?>ms">
 				<div class="card-media<?php echo $img && $img['url'] ? ' has-photo' : ''; ?>">
 					<?php if ( $badge ) : ?><span class="tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
 					<?php if ( $img && $img['url'] ) : ?>
@@ -10134,7 +10232,7 @@ class Vesla_Publisher {
 			if ( ! wp_mkdir_p( $folder ) ) {
 				continue;   // not worth failing the whole publish over
 			}
-			if ( false !== file_put_contents( $folder . DIRECTORY_SEPARATOR . 'index.html', self::build_sold() ) ) {
+			if ( false !== file_put_contents( $folder . DIRECTORY_SEPARATOR . 'index.html', self::build_sold( $slug ) ) ) {
 				$sold++;
 			}
 		}
@@ -10217,13 +10315,24 @@ class Vesla_Publisher {
 	 * noindex, because it is not a page anybody should find in a search; it
 	 * exists for the person who follows a link they were sent.
 	 */
-	private static function build_sold() {
+	private static function build_sold( $slug = '' ) {
 		$site = trailingslashit( self::site_url() );
 		$back = (string) Vesla_Settings::get( 'vehicle', 'back_label', __( 'All cars', 'vesla-landing' ) );
+		$here = '' !== $slug ? $site . 'cars/' . rawurlencode( $slug ) . '/' : '';
 		return self::document(
 			__( 'This car has been sold', 'vesla-landing' ),
-			static function () {
+			static function () use ( $here ) {
 				echo '<meta name="robots" content="noindex, follow">' . "\n";
+				/* And its own address, which nothing else here says.
+				
+				   Every sold car gets these same words, so without this there are as
+				   many identical documents as there have been sales, none of which
+				   names the address it belongs at. It points at itself and nowhere
+				   else: sending a noindex page's canonical somewhere else is two
+				   contradictory instructions about the same page. */
+				if ( '' !== $here ) {
+					printf( '<link rel="canonical" href="%s">' . "\n", esc_url( $here ) );
+				}
 			},
 			static function () use ( $site, $back ) {
 				?>
