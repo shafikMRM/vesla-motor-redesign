@@ -552,7 +552,7 @@
 
        The <audio> element stays as the fallback, and it is what plays until
        the buffer is ready. */
-    var actx = null, abuf = null, aoff = 0;
+    var actx = null, abuf = null, aoff = 0, asrc = null, wanted = 0;
 
     function prepare() {
       var AC = window.AudioContext || window.webkitAudioContext;
@@ -571,19 +571,48 @@
           }
           /* a hair before the first audible sample, so the attack is not clipped */
           aoff = Math.max(0, aoff - 0.01);
+
+          /* A cue that was asked for while this was still decoding.
+
+             Somebody whose first action on the page is to pick a car asks
+             for the sound before there is a buffer to play, and the wait is
+             a few hundred milliseconds at most. Playing it now is honest:
+             it is the cue they asked for, only just late. Past a second it
+             is not, so it is dropped rather than fired at somebody who has
+             moved on. */
+          if (wanted && Date.now() - wanted < 1000) { wanted = 0; cue(); }
+          wanted = 0;
         })
         .catch(function () { abuf = null; });
     }
 
     function cue() {
       if (!on || !sfx) return;
+      /* Asked for before the buffer arrived: remembered, so the decode can
+         play it the moment it finishes rather than dropping it. */
+      if (actx && !abuf) { wanted = Date.now(); }
       if (actx && abuf) {
         try {
           if (actx.state === 'suspended') actx.resume();
+          /* One cue at a time.
+
+             The cue runs about three quarters of a second. Every call used
+             to make a fresh source and start it, so picking a second car
+             while the first was still sounding left both playing over each
+             other -- which is heard as the sound repeating rather than as
+             two cues. The element path below already replaced the previous
+             cue instead of queueing behind it; this is the same rule, which
+             is what it should have been all along.
+
+             A source that has already finished throws when stopped, and a
+             cue is not worth an exception. */
+          if (asrc) { try { asrc.stop(); } catch (e) {} }
           var src = actx.createBufferSource();
           src.buffer = abuf;
           src.connect(actx.destination);
+          src.onended = function () { if (asrc === src) { asrc = null; } };
           src.start(0, aoff);
+          asrc = src;
           return;
         } catch (e) {}
       }
@@ -591,15 +620,41 @@
          Rewound rather than restarted, so picking a second car replaces the
          first cue instead of queueing behind it. */
       try {
-        sfx.currentTime = aoff || 0.26;
+        /* Only seek where the element can seek without going back to the
+           network. Setting currentTime on a element that has not buffered
+           that position drops it to readyState 1 and it plays nothing. */
+        if (sfx.readyState >= 3) { sfx.currentTime = aoff || 0.26; }
         var p = sfx.play();
         if (p && p.catch) p.catch(function () {});
       } catch (e) {}
     }
 
-    /* Decoding needs a gesture in some browsers, and costs nothing to defer. */
+    /* Decode as soon as the page is quiet, NOT on the first gesture.
+
+       It used to wait for a gesture, and the first gesture was usually the
+       click being cued -- so the buffer was still decoding at the moment it
+       was wanted and the cue fell through to the <audio> element, which is
+       exactly where it is least reliable: setting currentTime to skip the
+       leading silence drops readyState from 4 to 1 and the element has to
+       buffer again at the new position before anything is heard. On a fresh
+       page load that is most of the time, which is why the cue seemed to
+       fire once in a very long while rather than on every pick.
+
+       Decoding needs no gesture; only starting audio does. So the context is
+       built at once -- suspended, which browsers allow -- the file is
+       fetched and decoded straight away, and the first gesture only lifts
+       the suspension. By the time anybody has picked a car, the buffer is
+       there. */
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(prepare, { timeout: 2000 });
+    } else {
+      setTimeout(prepare, 400);
+    }
     ['pointerdown', 'keydown', 'touchstart'].forEach(function (ev) {
-      window.addEventListener(ev, prepare, { once: true, passive: true });
+      window.addEventListener(ev, function () {
+        prepare();   // in case the idle callback has not run yet
+        if (actx && actx.state === 'suspended') { actx.resume(); }
+      }, { once: true, passive: true });
     });
 
     grid.addEventListener('click', function (e) {
@@ -1456,8 +1511,23 @@
       });
 
       window.addEventListener('popstate', function (e) {
-        if (e.state && e.state.veh) { go(e.state.veh, false); }
-        else { back(); }
+        if (e.state && e.state.veh) { go(e.state.veh, false); return; }
+
+        /* Only when there is actually a car page to come back from.
+
+           Clicking a link to a fragment on this same page — every item in
+           the menu — is a history navigation, so it fires popstate too,
+           with no state on it. Treating that as a return from a car ran
+           back(), which restores the landing page and scrolls to the
+           position the reader was at when they left it. From a standing
+           start that position is the top, so every menu link updated the
+           address bar and then pulled the page back to the top: the anchor
+           jump worked and was immediately undone.
+
+           The host is only in the document while a car is being shown, so
+           it is the honest test for whether there is anything to undo. */
+        if (!host || host.hidden) { return; }
+        back();
       });
     }
 
