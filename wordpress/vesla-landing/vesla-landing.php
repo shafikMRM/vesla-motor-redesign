@@ -7883,8 +7883,13 @@ class Vesla_Render {
 		<section class="trust" aria-label="<?php esc_attr_e( 'Why buy from us', 'vesla-landing' ); ?>">
 			<div class="shell">
 				<ul class="trust-in">
+					<?php /* .reveal and nothing else: the stagger is worked out by
+					         position in motion.js, because .trust-in is a grid row, so
+					         four items arriving together get their own delays without
+					         any being written here. They inherit the two-way behaviour
+					         and the reduced-motion gate along with it. */ ?>
 					<?php foreach ( $items as $it ) : ?>
-						<li>
+						<li class="reveal">
 							<?php self::icon( $it['icon'] ); ?>
 							<span><b><?php echo esc_html( $it['title'] ); ?></b><?php echo esc_html( $it['text'] ); ?></span>
 						</li>
@@ -8392,7 +8397,7 @@ class Vesla_Render {
 		?>
 		<footer class="foot">
 			<div class="shell foot-in">
-				<div class="foot-brand">
+				<div class="foot-brand reveal">
 					<?php self::lockup( 'foot' ); ?>
 					<?php if ( $f['blurb'] ) : ?><p><?php Vesla_Render::t( 'footer.blurb', $f['blurb'] ); ?></p><?php endif; ?>
 					<?php if ( ! empty( $f['badges'] ) ) : ?>
@@ -8444,7 +8449,7 @@ class Vesla_Render {
 				</div>
 
 				<?php if ( ! empty( $f['nav'] ) ) : ?>
-					<nav class="foot-col" aria-labelledby="fl-explore">
+					<nav class="foot-col reveal" aria-labelledby="fl-explore">
 						<p class="foot-lbl" id="fl-explore"><?php echo esc_html( $f['nav_title'] ); ?></p>
 						<ul class="foot-nav">
 							<?php foreach ( $f['nav'] as $n ) : ?>
@@ -8455,7 +8460,7 @@ class Vesla_Render {
 				<?php endif; ?>
 
 				<?php if ( ! empty( $f['contact'] ) ) : ?>
-					<div class="foot-col">
+					<div class="foot-col reveal">
 						<p class="foot-lbl"><?php echo esc_html( $f['contact_title'] ); ?></p>
 						<ul class="foot-contact">
 							<?php foreach ( $f['contact'] as $ct ) : ?>
@@ -8475,7 +8480,7 @@ class Vesla_Render {
 					</div>
 				<?php endif; ?>
 
-				<div class="foot-col">
+				<div class="foot-col reveal">
 					<p class="foot-lbl"><?php echo esc_html( $f['where_title'] ); ?></p>
 					<p class="foot-where">
 						<?php Vesla_Render::t( 'footer.where_text', $f['where_text'] ); ?>
