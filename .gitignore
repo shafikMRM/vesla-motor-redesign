@@ -1,3 +1,21 @@
+# ── the published site ────────────────────────────────────────────────────
+# Output, not source. Republish writes every one of these files from the
+# plugin and the database, so nothing here is authored and nothing here is
+# lost by not tracking it.
+#
+# It was tracked until now, and the churn is why it stopped being: a single
+# republish moves twenty-six files whose only difference is a cache-bust
+# stamp, and merging two branches that had each republished meant resolving
+# twenty-seven conflicts that contained no content change at all.
+#
+# The trade is deliberate and worth stating plainly, because it is easy to
+# discover later and mistake for an oversight: THE REPOSITORY IS NO LONGER A
+# RECORD OF WHAT IS DEPLOYED. To know what the live site is serving, look at
+# the live site. The recovery route is the content export, which holds the
+# settings and the vehicles, plus Republish to rebuild the files from them —
+# see the backups section below, which is the other half of this.
+frontend/
+
 # ── backups ───────────────────────────────────────────────────────────────
 # Snapshots of the published site, taken by hand before risky work. They are
 # copies of frontend/ and belong on disk, not in the history.
