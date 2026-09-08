@@ -783,6 +783,7 @@
   },
   "publish": {
     "enabled": 0,
+    "export_path": "",
     "site_url": "",
     "path": ""
   },

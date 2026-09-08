@@ -1526,6 +1526,11 @@ class Vesla_Schema {
 						'help'  => __( 'Where visitors actually go — https://veslamotors.com, not the /cms address you are reading this on. Leave empty and the address one level above WordPress is used. It is needed because the published page has to point at its own stylesheet and pictures, and because search engines require full addresses in the listing data.', 'vesla-landing' ),
 						
 					),
+					'export_path' => array(
+						'type'  => 'text',
+						'label' => __( 'Folder to write the content export into', 'vesla-landing' ),
+						'help'  => __( 'The settings and every vehicle, written to content-export.json in this folder. Point it at the project folder you keep in version control and the words and the cars are versioned alongside the code — without it, a repository holds the site’s code and none of its content. Leave empty and the file is written inside the plugin’s own data folder.', 'vesla-landing' ),
+					),
 					'path' => array(
 						'type'  => 'text',
 						'label' => __( 'Folder to write index.html into', 'vesla-landing' ),
@@ -2322,6 +2327,187 @@ $cols				PRIMARY KEY  (id),
 		self::log_changes( $before );
 
 		return true;
+	}
+
+	/**
+	 * Values that never leave this database, whatever asks for them.
+	 *
+	 * A content export is meant to be committed to a repository, which is a
+	 * different audience from a backup sitting in uploads. The address
+	 * enquiries are delivered to is the showroom's internal routing, not
+	 * page copy, and it has no business in a file that gets pushed. Listed
+	 * as section.field so the rule is readable rather than inferred.
+	 *
+	 * The enquiries themselves are not here because they are not settings:
+	 * they are a private post type this export never looks at.
+	 */
+	const NEVER_EXPORT = array( 'contact.form_to' );
+
+	/**
+	 * Everything an administrator has put into this site, in one file.
+	 *
+	 * The settings table and the vehicles together — the repository holds the
+	 * code and the published pages, and without this it holds none of the
+	 * content that produced them. Rebuilt from here, a fresh install comes
+	 * back with the same words and the same cars.
+	 *
+	 * Everything is sorted on the way out. The rows arrive from MySQL in no
+	 * particular order and post meta in whatever order it was written, so an
+	 * unsorted export reshuffles itself on every run and a commit shows a
+	 * few hundred moved lines instead of the one value that changed.
+	 *
+	 * @return array
+	 */
+	public static function export_content() {
+		$rows = array();
+		foreach ( self::rows() as $r ) {
+			if ( in_array( $r['section'] . '.' . $r['field'], self::NEVER_EXPORT, true ) ) {
+				continue;
+			}
+			$rows[] = array(
+				'section'   => (string) $r['section'],
+				'field'     => (string) $r['field'],
+				'row_no'    => (int) $r['row_no'],
+				'sub_field' => (string) $r['sub_field'],
+				'value'     => (string) $r['value'],
+			);
+		}
+		usort( $rows, static function ( $a, $b ) {
+			return array( $a['section'], $a['field'], $a['row_no'], $a['sub_field'] )
+				<=> array( $b['section'], $b['field'], $b['row_no'], $b['sub_field'] );
+		} );
+
+		$cars = array();
+		foreach ( get_posts( array(
+			'post_type'   => Vesla_Vehicle::TYPE,
+			'post_status' => array( 'publish', 'draft', 'pending', 'private' ),
+			'numberposts' => -1,
+			'orderby'     => 'ID',
+			'order'       => 'ASC',
+		) ) as $post ) {
+			$meta = array();
+			foreach ( (array) get_post_meta( $post->ID ) as $key => $values ) {
+				/* Only this plugin's own fields. WordPress and any other plugin
+				   keep their bookkeeping alongside, and none of it is content. */
+				if ( 0 !== strpos( $key, Vesla_Vehicle::META ) ) {
+					continue;
+				}
+				$meta[ $key ] = isset( $values[0] ) ? (string) $values[0] : '';
+			}
+			ksort( $meta );
+
+			$cars[] = array(
+				/* The car's own number, not the post id. A restore into a fresh
+				   install gets new post ids, and every published address is built
+				   from this number — so this is what has to survive. */
+				'car_id'     => (int) get_post_meta( $post->ID, Vesla_Vehicle::ID_META, true ),
+				'slug'       => (string) $post->post_name,
+				'title'      => (string) $post->post_title,
+				'status'     => (string) $post->post_status,
+				'menu_order' => (int) $post->menu_order,
+				'meta'       => $meta,
+			);
+		}
+		usort( $cars, static function ( $a, $b ) {
+			return array( $a['car_id'], $a['slug'] ) <=> array( $b['car_id'], $b['slug'] );
+		} );
+
+		/* No timestamp, deliberately.
+
+		   This file is committed, and the repository already records when it
+		   was written and by whom. A generated timestamp inside it only means
+		   the file reports itself as changed every time it is written, so an
+		   export taken to check nothing has changed shows up as a change. */
+		return array(
+			'plugin'   => 'vesla-landing',
+			'version'  => VESLA_VERSION,
+			'site'     => home_url(),
+			'settings' => $rows,
+			'vehicles' => $cars,
+		);
+	}
+
+	/**
+	 * Put a content export back, settings and vehicles both.
+	 *
+	 * A car is matched on its own number rather than its post id, because a
+	 * fresh install hands out different post ids and every published address
+	 * is built from the car number. Match found, the car is updated in place
+	 * and keeps its id; no match, a new one is created carrying the number
+	 * from the file. Either way the URLs come out the same, which is the
+	 * whole point of restoring rather than retyping.
+	 *
+	 * @param array $data Decoded export.
+	 * @return array|WP_Error Counts, or why not.
+	 */
+	public static function import_content( $data ) {
+		if ( ! is_array( $data ) || empty( $data['settings'] ) || ! is_array( $data['settings'] ) ) {
+			return new WP_Error( 'vesla_export_unreadable', __( 'That file is not a content export this plugin can read.', 'vesla-landing' ) );
+		}
+
+		$put = self::put_rows( $data['settings'] );
+		if ( is_wp_error( $put ) ) {
+			return $put;
+		}
+
+		$made = 0;
+		$kept = 0;
+		foreach ( (array) ( isset( $data['vehicles'] ) ? $data['vehicles'] : array() ) as $car ) {
+			if ( ! is_array( $car ) || empty( $car['car_id'] ) ) {
+				continue;
+			}
+			$id = self::car_post_id( (int) $car['car_id'] );
+			$fields = array(
+				'post_type'   => Vesla_Vehicle::TYPE,
+				'post_title'  => isset( $car['title'] ) ? (string) $car['title'] : '',
+				'post_name'   => isset( $car['slug'] ) ? (string) $car['slug'] : '',
+				'post_status' => isset( $car['status'] ) ? (string) $car['status'] : 'publish',
+				'menu_order'  => isset( $car['menu_order'] ) ? (int) $car['menu_order'] : 0,
+			);
+			if ( $id ) {
+				$fields['ID'] = $id;
+				wp_update_post( $fields );
+				$kept++;
+			} else {
+				$id = wp_insert_post( $fields );
+				if ( ! $id || is_wp_error( $id ) ) {
+					continue;
+				}
+				$made++;
+			}
+
+			foreach ( (array) ( isset( $car['meta'] ) ? $car['meta'] : array() ) as $key => $value ) {
+				/* The prefix is checked again on the way in. A file is a file, and
+				   this one decides what goes into post meta. */
+				if ( 0 !== strpos( (string) $key, Vesla_Vehicle::META ) ) {
+					continue;
+				}
+				update_post_meta( $id, (string) $key, (string) $value );
+			}
+			update_post_meta( $id, Vesla_Vehicle::ID_META, (int) $car['car_id'] );
+		}
+
+		self::$cache = null;
+		do_action( 'vesla_content_saved' );
+
+		return array(
+			'settings' => count( $data['settings'] ),
+			'updated'  => $kept,
+			'created'  => $made,
+		);
+	}
+
+	/** The post holding a given car number, or 0. */
+	private static function car_post_id( $car_id ) {
+		$found = get_posts( array(
+			'post_type'   => Vesla_Vehicle::TYPE,
+			'post_status' => 'any',
+			'numberposts' => 1,
+			'fields'      => 'ids',
+			'meta_key'    => Vesla_Vehicle::ID_META,
+			'meta_value'  => (int) $car_id,
+		) );
+		return $found ? (int) $found[0] : 0;
 	}
 
 	/**
@@ -3538,6 +3724,22 @@ class Vesla_Admin {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
+		$content = isset( $_GET['vesla_content'] ) ? sanitize_key( wp_unslash( $_GET['vesla_content'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification -- reading a result, not acting on one.
+		if ( $content ) {
+			$said = array(
+				'ok'       => array( 'success', sprintf( __( 'Content export written to %s.', 'vesla-landing' ), Vesla_Publisher::export_file() ) ),
+				'nofolder' => array( 'error', __( 'That folder does not exist and could not be created. Check the path in “Publish the public page”.', 'vesla-landing' ) ),
+				'failed'   => array( 'error', __( 'The content export could not be written. Check the folder is writable.', 'vesla-landing' ) ),
+			);
+			if ( isset( $said[ $content ] ) ) {
+				printf(
+					'<div class="notice notice-%s is-dismissible"><p>%s</p></div>',
+					esc_attr( $said[ $content ][0] ),
+					esc_html( $said[ $content ][1] )
+				);
+			}
+		}
+
 		$notes = array(
 			'ok'         => array( 'success', __( 'Settings imported.', 'vesla-landing' ) ),
 			'nofile'     => array( 'error', __( 'No file was chosen.', 'vesla-landing' ) ),
@@ -3575,6 +3777,18 @@ class Vesla_Admin {
 				<a class="button" href="<?php echo esc_url( Vesla_Publisher::export_url() ); ?>">
 					<?php esc_html_e( 'Download a copy', 'vesla-landing' ); ?>
 				</a>
+				<a class="button" href="<?php echo esc_url( Vesla_Publisher::content_export_url() ); ?>">
+					<?php esc_html_e( 'Write the content export', 'vesla-landing' ); ?>
+				</a>
+			</p>
+			<p class="description">
+				<?php
+				printf(
+					/* translators: %s: a file path. */
+					esc_html__( 'The second one writes every setting and every vehicle to %s, ready to be committed alongside the code. Nothing is downloaded — it is written straight to that folder.', 'vesla-landing' ),
+					'<code>' . esc_html( Vesla_Publisher::export_file() ) . '</code>'
+				);
+				?>
 			</p>
 
 			<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -9464,6 +9678,7 @@ class Vesla_Publisher {
 		add_action( 'admin_post_vesla_export', array( __CLASS__, 'handle_export' ) );
 		add_action( 'admin_post_vesla_import', array( __CLASS__, 'handle_import' ) );
 		add_action( 'admin_post_vesla_restore', array( __CLASS__, 'handle_restore' ) );
+		add_action( 'admin_post_vesla_content_export', array( __CLASS__, 'handle_content_export' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notices' ) );
 	}
 
@@ -10099,6 +10314,54 @@ if ( 'vehicle' === $kind ) :
 
 	public static function export_url() {
 		return wp_nonce_url( admin_url( 'admin-post.php?action=vesla_export' ), 'vesla_export' );
+	}
+
+	public static function content_export_url() {
+		return wp_nonce_url( admin_url( 'admin-post.php?action=vesla_content_export' ), 'vesla_content_export' );
+	}
+
+	/** Where content-export.json is written. */
+	public static function export_file() {
+		$dir = trim( (string) Vesla_Settings::get( 'publish', 'export_path', '' ) );
+		if ( '' === $dir ) {
+			$dir = VESLA_DIR . 'data';
+		}
+		return untrailingslashit( $dir ) . '/content-export.json';
+	}
+
+	/**
+	 * Write the content export to its fixed path, for committing.
+	 *
+	 * A fixed name rather than a timestamped one, deliberately: the value of
+	 * this file is the diff between one commit and the next, and a new
+	 * filename every time gives a history of additions rather than a history
+	 * of changes.
+	 */
+	public static function handle_content_export() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to export this content.', 'vesla-landing' ) );
+		}
+		check_admin_referer( 'vesla_content_export' );
+
+		$back = admin_url( 'admin.php?page=' . Vesla_Admin::SLUG );
+		$file = self::export_file();
+		$dir  = dirname( $file );
+		if ( ! is_dir( $dir ) && ! wp_mkdir_p( $dir ) ) {
+			wp_safe_redirect( add_query_arg( 'vesla_content', 'nofolder', $back ) );
+			exit;
+		}
+
+		$body = wp_json_encode(
+			Vesla_Store::export_content(),
+			JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+		);
+		if ( ! $body || false === @file_put_contents( $file, $body . "
+" ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions, WordPress.PHP.NoSilencedErrors -- reported below rather than thrown.
+			wp_safe_redirect( add_query_arg( 'vesla_content', 'failed', $back ) );
+			exit;
+		}
+		wp_safe_redirect( add_query_arg( 'vesla_content', 'ok', $back ) );
+		exit;
 	}
 
 	/**

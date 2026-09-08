@@ -1,0 +1,3660 @@
+{
+    "plugin": "vesla-landing",
+    "version": "1.1.0",
+    "site": "http://localhost:10010",
+    "settings": [
+        {
+            "section": "brand",
+            "field": "email",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "info@veslamotors.com"
+        },
+        {
+            "section": "brand",
+            "field": "logo",
+            "row_no": -1,
+            "sub_field": "",
+            "value": ""
+        },
+        {
+            "section": "brand",
+            "field": "name_bottom",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "MOTORS"
+        },
+        {
+            "section": "brand",
+            "field": "name_top",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "VESLA"
+        },
+        {
+            "section": "brand",
+            "field": "phone_landline",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "+971 4 392 2444"
+        },
+        {
+            "section": "brand",
+            "field": "phone_landline_dial",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "+97143922444"
+        },
+        {
+            "section": "brand",
+            "field": "phone_sales",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "+971 58 106 5885"
+        },
+        {
+            "section": "brand",
+            "field": "phone_toll",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "800 – VESLA"
+        },
+        {
+            "section": "brand",
+            "field": "phone_toll_dial",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "+97180083752"
+        },
+        {
+            "section": "brand",
+            "field": "whatsapp",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "971581065885"
+        },
+        {
+            "section": "certified",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "certified",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Before it reaches the floor"
+        },
+        {
+            "section": "certified",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Five stages, every car."
+        },
+        {
+            "section": "certified",
+            "field": "lead",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "The certification route is the same whether the car is a AED 30,000 hatchback or a AED 200,000 SUV. Nothing is priced until it has been through all five."
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 0,
+            "sub_field": "text",
+            "value": "A full check of engine, transmission, brakes, suspension, electrics, air conditioning and bodywork by our own technicians."
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 0,
+            "sub_field": "title",
+            "value": "Thorough inspection"
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 1,
+            "sub_field": "text",
+            "value": "Registration, accident and service history pulled and read before the car is accepted for sale. Anything unclear is declined."
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 1,
+            "sub_field": "title",
+            "value": "History report"
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 2,
+            "sub_field": "text",
+            "value": "Wear items replaced and faults corrected at Vesla Auto Service Center using genuine parts, not the cheapest available."
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 2,
+            "sub_field": "title",
+            "value": "Reconditioning"
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 3,
+            "sub_field": "text",
+            "value": "The car is signed off under the Vesla Certified Pre Owned label, with the inspection record handed to the buyer."
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 3,
+            "sub_field": "title",
+            "value": "Certification"
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 4,
+            "sub_field": "text",
+            "value": "An extended warranty is offered on eligible cars, serviceable at our own centre rather than a third-party workshop."
+        },
+        {
+            "section": "certified",
+            "field": "stages",
+            "row_no": 4,
+            "sub_field": "title",
+            "value": "Warranty"
+        },
+        {
+            "section": "chairman",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "chairman",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Ownership"
+        },
+        {
+            "section": "chairman",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "One owner, thirty-six years."
+        },
+        {
+            "section": "chairman",
+            "field": "monogram",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "MRM"
+        },
+        {
+            "section": "chairman",
+            "field": "note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Name and title as published on veslamotors.com. No statement from the chairman and no portrait are quoted here because neither has been supplied."
+        },
+        {
+            "section": "chairman",
+            "field": "portrait",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "88"
+        },
+        {
+            "section": "chairman",
+            "field": "rows",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Chairman & Group CEO"
+        },
+        {
+            "section": "chairman",
+            "field": "rows",
+            "row_no": 0,
+            "sub_field": "value",
+            "value": "Eng. Mohammad Reza Madani"
+        },
+        {
+            "section": "chairman",
+            "field": "rows",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Investment company"
+        },
+        {
+            "section": "chairman",
+            "field": "rows",
+            "row_no": 1,
+            "sub_field": "value",
+            "value": "MRM Investment LLC"
+        },
+        {
+            "section": "chairman",
+            "field": "rows",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "Continuity"
+        },
+        {
+            "section": "chairman",
+            "field": "rows",
+            "row_no": 2,
+            "sub_field": "value",
+            "value": "Same ownership since 1988"
+        },
+        {
+            "section": "chairman",
+            "field": "text",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Vesla Motors is the retail end of the automotive platform held by MRM Investment LLC, and it has traded in Dubai under the same ownership since 1988. Service, leasing, rental and resale sit under that same roof — which is why a car bought here can be serviced, re-leased or sold back without ever leaving the group."
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Sales line"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 0,
+            "sub_field": "link",
+            "value": "tel:+971581065885"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 0,
+            "sub_field": "value",
+            "value": "+971 58 106 5885"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Toll free"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 1,
+            "sub_field": "link",
+            "value": "tel:+97180083752"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 1,
+            "sub_field": "value",
+            "value": "800 – VESLA"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "WhatsApp"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 2,
+            "sub_field": "link",
+            "value": "https://wa.me/971581065885"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 2,
+            "sub_field": "value",
+            "value": "Message the sales desk"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 3,
+            "sub_field": "label",
+            "value": "Email"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 3,
+            "sub_field": "link",
+            "value": "mailto:info@veslamotors.com"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 3,
+            "sub_field": "value",
+            "value": "info@veslamotors.com"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 4,
+            "sub_field": "label",
+            "value": "Branches"
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 4,
+            "sub_field": "link",
+            "value": ""
+        },
+        {
+            "section": "contact",
+            "field": "channels",
+            "row_no": 4,
+            "sub_field": "value",
+            "value": "Two UAE branches — street addresses to be confirmed"
+        },
+        {
+            "section": "contact",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "contact",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Talk to the showroom"
+        },
+        {
+            "section": "contact",
+            "field": "form_l_car",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Car of interest"
+        },
+        {
+            "section": "contact",
+            "field": "form_l_email",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Email"
+        },
+        {
+            "section": "contact",
+            "field": "form_l_name",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Name"
+        },
+        {
+            "section": "contact",
+            "field": "form_l_note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Message"
+        },
+        {
+            "section": "contact",
+            "field": "form_l_phone",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Phone"
+        },
+        {
+            "section": "contact",
+            "field": "form_submit",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Send enquiry"
+        },
+        {
+            "section": "contact",
+            "field": "form_success",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Thank you — we have your enquiry and will call you back shortly."
+        },
+        {
+            "section": "contact",
+            "field": "form_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Send an enquiry"
+        },
+        {
+            "section": "contact",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Come and look at it in person."
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 0,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 0,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 0,
+            "sub_field": "day",
+            "value": "Monday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 0,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 1,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 1,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 1,
+            "sub_field": "day",
+            "value": "Tuesday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 1,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 2,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 2,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 2,
+            "sub_field": "day",
+            "value": "Wednesday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 2,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 3,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 3,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 3,
+            "sub_field": "day",
+            "value": "Thursday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 3,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 4,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 4,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 4,
+            "sub_field": "day",
+            "value": "Friday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 4,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 5,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 5,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 5,
+            "sub_field": "day",
+            "value": "Saturday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 5,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 6,
+            "sub_field": "closed",
+            "value": "0"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 6,
+            "sub_field": "closes",
+            "value": "21:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 6,
+            "sub_field": "day",
+            "value": "Sunday"
+        },
+        {
+            "section": "contact",
+            "field": "hours",
+            "row_no": 6,
+            "sub_field": "opens",
+            "value": "09:00"
+        },
+        {
+            "section": "contact",
+            "field": "hours_closed_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Closed"
+        },
+        {
+            "section": "contact",
+            "field": "hours_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Opening hours"
+        },
+        {
+            "section": "contact",
+            "field": "lead",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Photographs only go so far. Call ahead and we will have the car out and ready when you arrive."
+        },
+        {
+            "section": "extras",
+            "field": "actbar_at",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "60"
+        },
+        {
+            "section": "extras",
+            "field": "actbar_call",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Call sales"
+        },
+        {
+            "section": "extras",
+            "field": "actbar_enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "extras",
+            "field": "actbar_wa",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "WhatsApp"
+        },
+        {
+            "section": "extras",
+            "field": "color_accent",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#F2ED28"
+        },
+        {
+            "section": "extras",
+            "field": "color_accent_text",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#67620C"
+        },
+        {
+            "section": "extras",
+            "field": "color_ink",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#141415"
+        },
+        {
+            "section": "extras",
+            "field": "color_paper",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#F5F5F3"
+        },
+        {
+            "section": "extras",
+            "field": "loader_enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "extras",
+            "field": "loader_max",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "6"
+        },
+        {
+            "section": "extras",
+            "field": "loader_min",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1000"
+        },
+        {
+            "section": "extras",
+            "field": "motion_enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "extras",
+            "field": "respect_reduced_motion",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "0"
+        },
+        {
+            "section": "extras",
+            "field": "tidy_admin",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "extras",
+            "field": "totop_at",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "80"
+        },
+        {
+            "section": "faq",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "faq",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Asked before buying"
+        },
+        {
+            "section": "faq",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Straight answers."
+        },
+        {
+            "section": "faq",
+            "field": "items",
+            "row_no": 0,
+            "sub_field": "a",
+            "value": "Every car passes a five-stage route: a full mechanical and bodywork inspection, a registration, accident and service history report, reconditioning with genuine parts at Vesla Auto Service Center, certification with the inspection record handed to the buyer, and an extended warranty on eligible cars."
+        },
+        {
+            "section": "faq",
+            "field": "items",
+            "row_no": 0,
+            "sub_field": "q",
+            "value": "What does a Vesla Certified Pre Owned car include?"
+        },
+        {
+            "section": "faq",
+            "field": "items",
+            "row_no": 1,
+            "sub_field": "a",
+            "value": "Yes. Bring the car to either UAE branch for a physical valuation, or use the online estimator for an indicative range first. Trade-ins can be set against any car in stock."
+        },
+        {
+            "section": "faq",
+            "field": "items",
+            "row_no": 1,
+            "sub_field": "q",
+            "value": "Does Vesla Motors buy used cars in Dubai?"
+        },
+        {
+            "section": "faq",
+            "field": "items",
+            "row_no": 2,
+            "sub_field": "a",
+            "value": "Vesla Motors has traded in Dubai since 1988 under the same ownership, and has been named a Dubizzle Top Dealer for three consecutive years."
+        },
+        {
+            "section": "faq",
+            "field": "items",
+            "row_no": 2,
+            "sub_field": "q",
+            "value": "How long has Vesla Motors been trading?"
+        },
+        {
+            "section": "features",
+            "field": "catalogue",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Anti-Lock Brakes (ABS)\nBrake Assist (BA)\nTraction Control\nHill Start Assist\nTyre Pressure Monitoring System (TPMS)\nFront Airbags\nSide Airbags\nChild Seat Anchors (ISOFIX)\nFront Wheel Drive\nPower Steering\nTilt & Telescopic Steering\nCentral Locking\nKeyless Entry\nPower Windows\nAir Conditioning\nRear AC Vents\nRear Window Defogger\nAM/FM Radio\nBluetooth\nUSB Port(s)\nSteering Wheel Audio Controls\n12V Power Outlet(s)\nFoldable Rear Seats\nRear Spoiler\nRear Wiper"
+        },
+        {
+            "section": "features",
+            "field": "offered",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Anti-Lock Brakes (ABS)\nBrake Assist (BA)\nTraction Control\nHill Start Assist\nTyre Pressure Monitoring System (TPMS)\nFront Airbags\nSide Airbags\nChild Seat Anchors (ISOFIX)\nFront Wheel Drive\nPower Steering\nTilt & Telescopic Steering\nCentral Locking\nKeyless Entry\nPower Windows\nAir Conditioning\nRear AC Vents\nRear Window Defogger\nAM/FM Radio\nBluetooth\nUSB Port(s)\nSteering Wheel Audio Controls\n12V Power Outlet(s)\nFoldable Rear Seats\nRear Spoiler\nRear Wiper"
+        },
+        {
+            "section": "footer",
+            "field": "badges",
+            "row_no": 0,
+            "sub_field": "text",
+            "value": "Since 1988"
+        },
+        {
+            "section": "footer",
+            "field": "badges",
+            "row_no": 1,
+            "sub_field": "text",
+            "value": "Dubizzle Top Dealer ×3"
+        },
+        {
+            "section": "footer",
+            "field": "badges",
+            "row_no": 2,
+            "sub_field": "text",
+            "value": "Own service centre"
+        },
+        {
+            "section": "footer",
+            "field": "blurb",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Certified pre-owned cars in Dubai since 1988 — inspected, certified and warranty-backed. Part of MRM Investment LLC."
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Sales line"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 0,
+            "sub_field": "link",
+            "value": "tel:+971581065885"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 0,
+            "sub_field": "value",
+            "value": "+971 58 106 5885"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Toll free"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 1,
+            "sub_field": "link",
+            "value": "tel:+97180083752"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 1,
+            "sub_field": "value",
+            "value": "800 – VESLA"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "Message the sales desk"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 2,
+            "sub_field": "link",
+            "value": "https://wa.me/971581065885"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 2,
+            "sub_field": "value",
+            "value": "WhatsApp"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 3,
+            "sub_field": "label",
+            "value": "Email"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 3,
+            "sub_field": "link",
+            "value": "mailto:info@veslamotors.com"
+        },
+        {
+            "section": "footer",
+            "field": "contact",
+            "row_no": 3,
+            "sub_field": "value",
+            "value": "info@veslamotors.com"
+        },
+        {
+            "section": "footer",
+            "field": "contact_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Talk to us"
+        },
+        {
+            "section": "footer",
+            "field": "copyright",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "© {year} Vesla Motors · MRM Investment LLC. All rights reserved."
+        },
+        {
+            "section": "footer",
+            "field": "cta_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Book a viewing"
+        },
+        {
+            "section": "footer",
+            "field": "cta_link",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#contact"
+        },
+        {
+            "section": "footer",
+            "field": "meta",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Dubai, United Arab Emirates · English"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Stock"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 0,
+            "sub_field": "link",
+            "value": "#stock"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Certified"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 1,
+            "sub_field": "link",
+            "value": "#certified"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "Record"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 2,
+            "sub_field": "link",
+            "value": "#record"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 3,
+            "sub_field": "label",
+            "value": "Ownership"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 3,
+            "sub_field": "link",
+            "value": "#chairman"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 4,
+            "sub_field": "label",
+            "value": "Sell your car"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 4,
+            "sub_field": "link",
+            "value": "#sell"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 5,
+            "sub_field": "label",
+            "value": "Questions"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 5,
+            "sub_field": "link",
+            "value": "#faq"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 6,
+            "sub_field": "label",
+            "value": "Contact"
+        },
+        {
+            "section": "footer",
+            "field": "nav",
+            "row_no": 6,
+            "sub_field": "link",
+            "value": "#contact"
+        },
+        {
+            "section": "footer",
+            "field": "nav_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Explore"
+        },
+        {
+            "section": "footer",
+            "field": "watermark",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "92"
+        },
+        {
+            "section": "footer",
+            "field": "where_note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Street addresses to be confirmed."
+        },
+        {
+            "section": "footer",
+            "field": "where_text",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Two branches in the UAE and one dedicated service centre."
+        },
+        {
+            "section": "footer",
+            "field": "where_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Where to find us"
+        },
+        {
+            "section": "header",
+            "field": "cta_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Enquire"
+        },
+        {
+            "section": "header",
+            "field": "cta_link",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#contact"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Stock"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 0,
+            "sub_field": "link",
+            "value": "#stock"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Certified"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 1,
+            "sub_field": "link",
+            "value": "#certified"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "Record"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 2,
+            "sub_field": "link",
+            "value": "#record"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 3,
+            "sub_field": "label",
+            "value": "Ownership"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 3,
+            "sub_field": "link",
+            "value": "#chairman"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 4,
+            "sub_field": "label",
+            "value": "Sell your car"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 4,
+            "sub_field": "link",
+            "value": "#sell"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 5,
+            "sub_field": "label",
+            "value": "Contact"
+        },
+        {
+            "section": "header",
+            "field": "menu",
+            "row_no": 5,
+            "sub_field": "link",
+            "value": "#contact"
+        },
+        {
+            "section": "hero",
+            "field": "btn1_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Browse the stock"
+        },
+        {
+            "section": "hero",
+            "field": "btn1_link",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#stock"
+        },
+        {
+            "section": "hero",
+            "field": "btn2_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Sell us your car"
+        },
+        {
+            "section": "hero",
+            "field": "btn2_link",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "#sell"
+        },
+        {
+            "section": "hero",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Dubai · Since 1988"
+        },
+        {
+            "section": "hero",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Vesla Motors."
+        },
+        {
+            "section": "hero",
+            "field": "lead",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Pre-owned cars in Dubai since 1988 — inspected, certified and priced to move. Two branches and our own service centre behind every car we sell."
+        },
+        {
+            "section": "hero",
+            "field": "show_logo",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 0,
+            "sub_field": "count",
+            "value": "0"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Founded in Dubai"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 0,
+            "sub_field": "suffix",
+            "value": ""
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 0,
+            "sub_field": "value",
+            "value": "1988"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 1,
+            "sub_field": "count",
+            "value": "1"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Years in the trade"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 1,
+            "sub_field": "suffix",
+            "value": "+"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 1,
+            "sub_field": "value",
+            "value": "38"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 2,
+            "sub_field": "count",
+            "value": "1"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "Sites in the UAE"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 2,
+            "sub_field": "suffix",
+            "value": ""
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 2,
+            "sub_field": "value",
+            "value": "3"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 3,
+            "sub_field": "count",
+            "value": "1"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 3,
+            "sub_field": "label",
+            "value": "Dubizzle Top Dealer"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 3,
+            "sub_field": "suffix",
+            "value": "×"
+        },
+        {
+            "section": "hero",
+            "field": "stats",
+            "row_no": 3,
+            "sub_field": "value",
+            "value": "3"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "address",
+            "value": "Showroom 101 (Old Market), Ras Al Khor\nAl Aweer Auto Market, Dubai, UAE"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "lat",
+            "value": "25.1733233"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "link",
+            "value": "https://www.google.com/maps/search/?api=1&query=25.1733233%2C55.3693638"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "link_label",
+            "value": "Get directions"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "lng",
+            "value": "55.3693638"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "name",
+            "value": "Al Aweer branch"
+        },
+        {
+            "section": "map",
+            "field": "branches",
+            "row_no": 0,
+            "sub_field": "phone",
+            "value": "+971 4392 2444"
+        },
+        {
+            "section": "map",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "map",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Come and see us"
+        },
+        {
+            "section": "map",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Where we are."
+        },
+        {
+            "section": "map",
+            "field": "tile_credit",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "© OpenStreetMap contributors"
+        },
+        {
+            "section": "map",
+            "field": "tile_url",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+        },
+        {
+            "section": "map",
+            "field": "zoom",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "16"
+        },
+        {
+            "section": "messages",
+            "field": "err_blocked",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Please remove any code or angle brackets from this field."
+        },
+        {
+            "section": "messages",
+            "field": "err_car_long",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Please keep this under 80 characters."
+        },
+        {
+            "section": "messages",
+            "field": "err_email_invalid",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That email address does not look right."
+        },
+        {
+            "section": "messages",
+            "field": "err_email_long",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That address is longer than an email address can be."
+        },
+        {
+            "section": "messages",
+            "field": "err_name_letters",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Please use letters only — no digits or symbols."
+        },
+        {
+            "section": "messages",
+            "field": "err_name_long",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Please keep the name under 60 characters."
+        },
+        {
+            "section": "messages",
+            "field": "err_name_required",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Please tell us your name."
+        },
+        {
+            "section": "messages",
+            "field": "err_name_short",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That looks too short — please give your full name."
+        },
+        {
+            "section": "messages",
+            "field": "err_note_long",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Please keep the message under 1000 characters."
+        },
+        {
+            "section": "messages",
+            "field": "err_phone_country",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "An international number needs its country code."
+        },
+        {
+            "section": "messages",
+            "field": "err_phone_letters",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Numbers only — letters are not part of a phone number."
+        },
+        {
+            "section": "messages",
+            "field": "err_phone_long",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That number is too long — check for extra digits."
+        },
+        {
+            "section": "messages",
+            "field": "err_phone_required",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "We need a number to call you back on."
+        },
+        {
+            "section": "messages",
+            "field": "err_phone_short",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That number is too short to dial."
+        },
+        {
+            "section": "messages",
+            "field": "err_rate_limited",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That is several enquiries in a short time. Please try again shortly, or call us — we would rather talk anyway."
+        },
+        {
+            "section": "messages",
+            "field": "err_summary_many",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "%s fields need attention — see the notes above."
+        },
+        {
+            "section": "messages",
+            "field": "err_summary_one",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "One field needs attention — see the note above."
+        },
+        {
+            "section": "messages",
+            "field": "seats_word",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "seats"
+        },
+        {
+            "section": "messages",
+            "field": "send_fail",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "That did not send — please call us instead."
+        },
+        {
+            "section": "messages",
+            "field": "sending",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Sending…"
+        },
+        {
+            "section": "messages",
+            "field": "showing",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Showing %1$s of %2$s cars"
+        },
+        {
+            "section": "messages",
+            "field": "wa_text",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Hello — I am interested in the %1$s listed at %2$s."
+        },
+        {
+            "section": "publish",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "publish",
+            "field": "export_path",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "C:/Users/hp/Documents/veslamotors/wordpress/vesla-landing/data"
+        },
+        {
+            "section": "publish",
+            "field": "path",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "C:\\Users\\hp\\Documents\\veslamotors\\frontend"
+        },
+        {
+            "section": "publish",
+            "field": "site_url",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "https://veslamotors.com"
+        },
+        {
+            "section": "record",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "record",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "The record"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 0,
+            "sub_field": "label",
+            "value": "Founded"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 0,
+            "sub_field": "value",
+            "value": "1988, Dubai"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 1,
+            "sub_field": "label",
+            "value": "Sector"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 1,
+            "sub_field": "value",
+            "value": "Automotive — retail"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 2,
+            "sub_field": "label",
+            "value": "Network"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 2,
+            "sub_field": "value",
+            "value": "Two UAE branches and one dedicated service centre"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 3,
+            "sub_field": "label",
+            "value": "Led by"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 3,
+            "sub_field": "value",
+            "value": "Eng. Mohammad Reza Madani, Chairman & Group CEO"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 4,
+            "sub_field": "label",
+            "value": "Sales enquiries"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 4,
+            "sub_field": "value",
+            "value": "800 – VESLA"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 5,
+            "sub_field": "label",
+            "value": "Part of"
+        },
+        {
+            "section": "record",
+            "field": "glance",
+            "row_no": 5,
+            "sub_field": "value",
+            "value": "MRM Investment LLC"
+        },
+        {
+            "section": "record",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Thirty-six years on the same street corner of the trade."
+        },
+        {
+            "section": "record",
+            "field": "lead",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Vesla Motors is the retail end of the group’s automotive platform. It has been trading in Dubai since 1988, and it does one thing: buy good used cars, put them right, and sell them with the paperwork to prove it."
+        },
+        {
+            "section": "record",
+            "field": "note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Founding year, branch count and the Dubizzle Top Dealer award are taken from veslamotors.com. Annual sales volume is described there as “thousands of cars annually” and is not stated as a figure, so it is not shown here."
+        },
+        {
+            "section": "sell",
+            "field": "body",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Bring the car to either branch for a physical valuation, or start with the estimator here to get a sense of the range before you drive over. Trade-ins are set against anything on the floor."
+        },
+        {
+            "section": "sell",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "sell",
+            "field": "est_depreciation",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "11"
+        },
+        {
+            "section": "sell",
+            "field": "est_enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "sell",
+            "field": "est_note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Demonstration figures based on sample stock, not a valuation of your vehicle. Confirmed only after inspection at a Vesla Motors branch."
+        },
+        {
+            "section": "sell",
+            "field": "est_out_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Indicative range"
+        },
+        {
+            "section": "sell",
+            "field": "est_residual_floor",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "18"
+        },
+        {
+            "section": "sell",
+            "field": "est_spread",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "8"
+        },
+        {
+            "section": "sell",
+            "field": "est_sub",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Indicative range only — no personal details required."
+        },
+        {
+            "section": "sell",
+            "field": "est_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Quick valuation estimator"
+        },
+        {
+            "section": "sell",
+            "field": "est_year_range",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "16"
+        },
+        {
+            "section": "sell",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Selling instead"
+        },
+        {
+            "section": "sell",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "We buy cars too."
+        },
+        {
+            "section": "sell",
+            "field": "lead",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Thirty-six years of buying means we know what a car is worth in this market, and we would rather make you a straight offer than haggle you down."
+        },
+        {
+            "section": "sell",
+            "field": "note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "The estimator is a demonstration model, not a quotation. A real valuation follows a physical inspection at a branch."
+        },
+        {
+            "section": "seo",
+            "field": "business_name",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Vesla Motors"
+        },
+        {
+            "section": "seo",
+            "field": "city",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Dubai"
+        },
+        {
+            "section": "seo",
+            "field": "country_code",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "AE"
+        },
+        {
+            "section": "seo",
+            "field": "description",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Vesla Motors has sold pre-owned cars in Dubai since 1988 — inspected, certified and warranty-backed, across two UAE branches and a dedicated service centre."
+        },
+        {
+            "section": "seo",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "seo",
+            "field": "founded",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1988"
+        },
+        {
+            "section": "seo",
+            "field": "parent_name",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "MRM Investment LLC"
+        },
+        {
+            "section": "seo",
+            "field": "parent_url",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "https://mrminvestment.com/"
+        },
+        {
+            "section": "seo",
+            "field": "share_image",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "12"
+        },
+        {
+            "section": "stock",
+            "field": "badge",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Certified"
+        },
+        {
+            "section": "stock",
+            "field": "currency",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "AED"
+        },
+        {
+            "section": "stock",
+            "field": "empty_text",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Nothing matches that combination. Try widening the filters."
+        },
+        {
+            "section": "stock",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "stock",
+            "field": "enquire_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Enquire"
+        },
+        {
+            "section": "stock",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Available now"
+        },
+        {
+            "section": "stock",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Find your next car."
+        },
+        {
+            "section": "stock",
+            "field": "lead",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Filter the floor. Every car listed here has been through the five-stage certification route."
+        },
+        {
+            "section": "stock",
+            "field": "more_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Show more"
+        },
+        {
+            "section": "stock",
+            "field": "per_page",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "8"
+        },
+        {
+            "section": "stock",
+            "field": "price_note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Cash price"
+        },
+        {
+            "section": "stock",
+            "field": "sound_enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "stock",
+            "field": "sound_off_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Sound off"
+        },
+        {
+            "section": "stock",
+            "field": "sound_on_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Sound on"
+        },
+        {
+            "section": "stock",
+            "field": "warranty_note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Warranty eligible"
+        },
+        {
+            "section": "trust",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 0,
+            "sub_field": "icon",
+            "value": "shield"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 0,
+            "sub_field": "text",
+            "value": "Trading in Dubai under the same ownership"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 0,
+            "sub_field": "title",
+            "value": "Since 1988"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 1,
+            "sub_field": "icon",
+            "value": "award"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 1,
+            "sub_field": "text",
+            "value": "Three consecutive years"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 1,
+            "sub_field": "title",
+            "value": "Dubizzle Top Dealer"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 2,
+            "sub_field": "icon",
+            "value": "spanner"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 2,
+            "sub_field": "text",
+            "value": "Reconditioned and warrantied in house"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 2,
+            "sub_field": "title",
+            "value": "Our own service centre"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 3,
+            "sub_field": "icon",
+            "value": "doc"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 3,
+            "sub_field": "text",
+            "value": "Inspection record handed to the buyer"
+        },
+        {
+            "section": "trust",
+            "field": "items",
+            "row_no": 3,
+            "sub_field": "title",
+            "value": "Five-stage certification"
+        },
+        {
+            "section": "vehicle",
+            "field": "about_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "About this car"
+        },
+        {
+            "section": "vehicle",
+            "field": "back_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "All cars"
+        },
+        {
+            "section": "vehicle",
+            "field": "base",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "cars"
+        },
+        {
+            "section": "vehicle",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "vehicle",
+            "field": "features_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Features"
+        },
+        {
+            "section": "vehicle",
+            "field": "finance_down_pct",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "20"
+        },
+        {
+            "section": "vehicle",
+            "field": "finance_enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "vehicle",
+            "field": "finance_note",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "An estimate only. The monthly figure depends on the finance approved for you — ask us for a quote."
+        },
+        {
+            "section": "vehicle",
+            "field": "finance_rate",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "2.79"
+        },
+        {
+            "section": "vehicle",
+            "field": "finance_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Finance calculator"
+        },
+        {
+            "section": "vehicle",
+            "field": "finance_years",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "5"
+        },
+        {
+            "section": "vehicle",
+            "field": "no_photo_text",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Photographs of this car are being taken — ask us for them and we will send them today."
+        },
+        {
+            "section": "vehicle",
+            "field": "overview_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Car overview"
+        },
+        {
+            "section": "vehicle",
+            "field": "seats_label",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "seats"
+        },
+        {
+            "section": "vehicle",
+            "field": "spec_title",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Specification"
+        },
+        {
+            "section": "vehicle",
+            "field": "transition_ms",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "500"
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 0,
+            "sub_field": "text",
+            "value": "Every major system is checked and recorded before a price goes on the windscreen. You are handed the inspection, not asked to trust it."
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 0,
+            "sub_field": "title",
+            "value": "Inspected, not just cleaned"
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 1,
+            "sub_field": "text",
+            "value": "Registration, accident and service records are pulled and read. If the history is unclear, the car does not join the stock."
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 1,
+            "sub_field": "title",
+            "value": "A documented history"
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 2,
+            "sub_field": "text",
+            "value": "Reconditioning and warranty work is done at Vesla Auto Service Center by technicians who work on these cars daily, using genuine parts."
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 2,
+            "sub_field": "title",
+            "value": "Genuine parts, our technicians"
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 3,
+            "sub_field": "text",
+            "value": "Service, leasing, rental and resale all sit under the same owner. When your needs change, you move companies rather than suppliers."
+        },
+        {
+            "section": "why",
+            "field": "cards",
+            "row_no": 3,
+            "sub_field": "title",
+            "value": "The rest of the group behind it"
+        },
+        {
+            "section": "why",
+            "field": "enabled",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "1"
+        },
+        {
+            "section": "why",
+            "field": "eyebrow",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "Why buy here"
+        },
+        {
+            "section": "why",
+            "field": "heading",
+            "row_no": -1,
+            "sub_field": "",
+            "value": "What a certified car actually buys you."
+        }
+    ],
+    "vehicles": [
+        {
+            "car_id": 601,
+            "slug": "2018-audi-tt-rs",
+            "title": "Ford Figo Trend",
+            "status": "publish",
+            "menu_order": 0,
+            "meta": {
+                "_vesla_auto_title": "2018 Audi TT RS",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "601",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "4",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "Anti-Lock Brakes (ABS)\nAir Conditioning\nBluetooth",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "88,87,86,85,84,83,82,81,80",
+                "_vesla_km": "68000",
+                "_vesla_make": "Ford",
+                "_vesla_model": "Figo",
+                "_vesla_owners": "",
+                "_vesla_photo": "87",
+                "_vesla_photo_alt": "Find Ford Figo 1.5L Trend H/B Price, Images, Specs & Features in UAE. Discover used & new Figo 1.5L Trend H/B for sale on DubiCars.",
+                "_vesla_photo_file": "assets/cars/audi-tt-rs.jpg",
+                "_vesla_power": "",
+                "_vesla_price": "148000",
+                "_vesla_ref": "",
+                "_vesla_seats": "4",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2018"
+            }
+        },
+        {
+            "car_id": 602,
+            "slug": "2021-audi-s5-sportback",
+            "title": "2021 Audi S5 Sportback",
+            "status": "publish",
+            "menu_order": 1,
+            "meta": {
+                "_vesla_auto_title": "2021 Audi S5 Sportback",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "602",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "46000",
+                "_vesla_make": "Audi",
+                "_vesla_model": "S5 Sportback",
+                "_vesla_owners": "",
+                "_vesla_photo": "12",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "http://localhost:10010/wp-content/uploads/2026/09/The-Lamborghini-Urus-S-redefines-the-SUV-experience-with-its-657-HP-twinturbo-V8-roaring-from-0–100-km_h-in-just-3_5-seconds.-A-masterpiece-of-power-lux.jpg.jpeg",
+                "_vesla_power": "",
+                "_vesla_price": "205000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2021"
+            }
+        },
+        {
+            "car_id": 603,
+            "slug": "2019-audi-a6-quattro",
+            "title": "2019 Audi A6 quattro",
+            "status": "publish",
+            "menu_order": 2,
+            "meta": {
+                "_vesla_auto_title": "2019 Audi A6 quattro",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "603",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "74000",
+                "_vesla_make": "Audi",
+                "_vesla_model": "A6 quattro",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "assets/cars/audi-a6-quattro.jpg",
+                "_vesla_power": "",
+                "_vesla_price": "112000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2019"
+            }
+        },
+        {
+            "car_id": 604,
+            "slug": "2017-porsche-cayenne-gts",
+            "title": "2017 Porsche Cayenne GTS",
+            "status": "publish",
+            "menu_order": 3,
+            "meta": {
+                "_vesla_auto_title": "2017 Porsche Cayenne GTS",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "604",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "92000",
+                "_vesla_make": "Porsche",
+                "_vesla_model": "Cayenne GTS",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "assets/cars/porsche-cayenne-gts.jpg",
+                "_vesla_power": "",
+                "_vesla_price": "195000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2017"
+            }
+        },
+        {
+            "car_id": 605,
+            "slug": "2021-ford-explorer-limited",
+            "title": "2021 Ford Explorer Limited",
+            "status": "publish",
+            "menu_order": 4,
+            "meta": {
+                "_vesla_auto_title": "2021 Ford Explorer Limited",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "605",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "58000",
+                "_vesla_make": "Ford",
+                "_vesla_model": "Explorer Limited",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "assets/cars/ford-explorer-limited.jpg",
+                "_vesla_power": "",
+                "_vesla_price": "129000",
+                "_vesla_ref": "",
+                "_vesla_seats": "7",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2021"
+            }
+        },
+        {
+            "car_id": 606,
+            "slug": "2022-mazda-cx-5",
+            "title": "2022 Mazda CX-5",
+            "status": "publish",
+            "menu_order": 5,
+            "meta": {
+                "_vesla_auto_title": "2022 Mazda CX-5",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "606",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "39000",
+                "_vesla_make": "Mazda",
+                "_vesla_model": "CX-5",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "assets/cars/mazda-cx5.jpg",
+                "_vesla_power": "",
+                "_vesla_price": "82000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2022"
+            }
+        },
+        {
+            "car_id": 607,
+            "slug": "2020-ford-ecosport",
+            "title": "2020 Ford EcoSport",
+            "status": "publish",
+            "menu_order": 6,
+            "meta": {
+                "_vesla_auto_title": "2020 Ford EcoSport",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "607",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "5",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "Anti-Lock Brakes (ABS)\nBrake Assist (BA)\nTraction Control\nFront Airbags\nChild Seat Anchors (ISOFIX)\nPower Steering\nCentral Locking\nPower Windows\nAir Conditioning\nBluetooth\nUSB Port(s)\nRear Wiper",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "77,76,75,74,73,70,72,71,69,68",
+                "_vesla_km": "71000",
+                "_vesla_make": "Ford",
+                "_vesla_model": "EcoSport",
+                "_vesla_owners": "",
+                "_vesla_photo": "77",
+                "_vesla_photo_alt": "1First generation (BV226; 2003) Toggle First generation (BV226; 2003) subsection. 1.1Versions and engines. 1.2Restyling. 1.3Mexico. 2Second generation (B515; 2012)",
+                "_vesla_photo_file": "assets/cars/ford-ecosport.jpg",
+                "_vesla_power": "",
+                "_vesla_price": "42000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "GCC",
+                "_vesla_steering": "Left Hand",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2020"
+            }
+        },
+        {
+            "car_id": 608,
+            "slug": "2019-audi-q7-quattro",
+            "title": "2019 Audi Q7 quattro",
+            "status": "publish",
+            "menu_order": 7,
+            "meta": {
+                "_vesla_auto_title": "2019 Audi Q7 quattro",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "608",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "96000",
+                "_vesla_make": "Audi",
+                "_vesla_model": "Q7 quattro",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "165000",
+                "_vesla_ref": "",
+                "_vesla_seats": "7",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2019"
+            }
+        },
+        {
+            "car_id": 609,
+            "slug": "2020-audi-q5-quattro",
+            "title": "2020 Audi Q5 quattro",
+            "status": "publish",
+            "menu_order": 8,
+            "meta": {
+                "_vesla_auto_title": "2020 Audi Q5 quattro",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "609",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "71000",
+                "_vesla_make": "Audi",
+                "_vesla_model": "Q5 quattro",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "135000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2020"
+            }
+        },
+        {
+            "car_id": 610,
+            "slug": "2021-audi-a4-quattro",
+            "title": "2021 Audi A4 quattro",
+            "status": "publish",
+            "menu_order": 9,
+            "meta": {
+                "_vesla_auto_title": "2021 Audi A4 quattro",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "610",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "52000",
+                "_vesla_make": "Audi",
+                "_vesla_model": "A4 quattro",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "98000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2021"
+            }
+        },
+        {
+            "car_id": 611,
+            "slug": "2018-porsche-panamera",
+            "title": "2018 Porsche Panamera",
+            "status": "publish",
+            "menu_order": 10,
+            "meta": {
+                "_vesla_auto_title": "2018 Porsche Panamera",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "611",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "88000",
+                "_vesla_make": "Porsche",
+                "_vesla_model": "Panamera",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "215000",
+                "_vesla_ref": "",
+                "_vesla_seats": "4",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2018"
+            }
+        },
+        {
+            "car_id": 612,
+            "slug": "2019-porsche-718-cayman",
+            "title": "2019 Porsche 718 Cayman",
+            "status": "publish",
+            "menu_order": 11,
+            "meta": {
+                "_vesla_auto_title": "2019 Porsche 718 Cayman",
+                "_vesla_body": "Coupe",
+                "_vesla_car_id": "612",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "41000",
+                "_vesla_make": "Porsche",
+                "_vesla_model": "718 Cayman",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "198000",
+                "_vesla_ref": "",
+                "_vesla_seats": "2",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2019"
+            }
+        },
+        {
+            "car_id": 613,
+            "slug": "2019-porsche-macan",
+            "title": "2019 Porsche Macan",
+            "status": "publish",
+            "menu_order": 12,
+            "meta": {
+                "_vesla_auto_title": "2019 Porsche Macan",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "613",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "78000",
+                "_vesla_make": "Porsche",
+                "_vesla_model": "Macan",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "178000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2019"
+            }
+        },
+        {
+            "car_id": 614,
+            "slug": "2022-ford-bronco",
+            "title": "2022 Ford Bronco",
+            "status": "publish",
+            "menu_order": 13,
+            "meta": {
+                "_vesla_auto_title": "2022 Ford Bronco",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "614",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "37000",
+                "_vesla_make": "Ford",
+                "_vesla_model": "Bronco",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "195000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2022"
+            }
+        },
+        {
+            "car_id": 615,
+            "slug": "2019-ford-mustang-ecoboost",
+            "title": "2019 Ford Mustang EcoBoost",
+            "status": "publish",
+            "menu_order": 14,
+            "meta": {
+                "_vesla_auto_title": "2019 Ford Mustang EcoBoost",
+                "_vesla_body": "Coupe",
+                "_vesla_car_id": "615",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "61000",
+                "_vesla_make": "Ford",
+                "_vesla_model": "Mustang EcoBoost",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "105000",
+                "_vesla_ref": "",
+                "_vesla_seats": "4",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2019"
+            }
+        },
+        {
+            "car_id": 616,
+            "slug": "2021-ford-ranger-xlt",
+            "title": "2021 Ford Ranger XLT",
+            "status": "publish",
+            "menu_order": 15,
+            "meta": {
+                "_vesla_auto_title": "2021 Ford Ranger XLT",
+                "_vesla_body": "Pickup",
+                "_vesla_car_id": "616",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Diesel",
+                "_vesla_gallery": "",
+                "_vesla_km": "79000",
+                "_vesla_make": "Ford",
+                "_vesla_model": "Ranger XLT",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "88000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2021"
+            }
+        },
+        {
+            "car_id": 617,
+            "slug": "2021-mazda-cx-9",
+            "title": "2021 Mazda CX-9",
+            "status": "publish",
+            "menu_order": 16,
+            "meta": {
+                "_vesla_auto_title": "2021 Mazda CX-9",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "617",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "67000",
+                "_vesla_make": "Mazda",
+                "_vesla_model": "CX-9",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "96000",
+                "_vesla_ref": "",
+                "_vesla_seats": "7",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2021"
+            }
+        },
+        {
+            "car_id": 618,
+            "slug": "2022-mazda-mazda-3",
+            "title": "2022 Mazda Mazda 3",
+            "status": "publish",
+            "menu_order": 17,
+            "meta": {
+                "_vesla_auto_title": "2022 Mazda Mazda 3",
+                "_vesla_body": "Hatchback",
+                "_vesla_car_id": "618",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "29000",
+                "_vesla_make": "Mazda",
+                "_vesla_model": "Mazda 3",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "62000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2022"
+            }
+        },
+        {
+            "car_id": 619,
+            "slug": "2021-nissan-patrol-se",
+            "title": "2021 Nissan Patrol SE",
+            "status": "publish",
+            "menu_order": 18,
+            "meta": {
+                "_vesla_auto_title": "2021 Nissan Patrol SE",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "619",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "62000",
+                "_vesla_make": "Nissan",
+                "_vesla_model": "Patrol SE",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "158000",
+                "_vesla_ref": "",
+                "_vesla_seats": "7",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2021"
+            }
+        },
+        {
+            "car_id": 620,
+            "slug": "2020-nissan-x-trail-s",
+            "title": "2020 Nissan X-Trail S",
+            "status": "publish",
+            "menu_order": 19,
+            "meta": {
+                "_vesla_auto_title": "2020 Nissan X-Trail S",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "620",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "74000",
+                "_vesla_make": "Nissan",
+                "_vesla_model": "X-Trail S",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "62000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2020"
+            }
+        },
+        {
+            "car_id": 621,
+            "slug": "2022-nissan-sunny-sv",
+            "title": "2022 Nissan Sunny SV",
+            "status": "publish",
+            "menu_order": 20,
+            "meta": {
+                "_vesla_auto_title": "2022 Nissan Sunny SV",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "621",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "41000",
+                "_vesla_make": "Nissan",
+                "_vesla_model": "Sunny SV",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "38000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2022"
+            }
+        },
+        {
+            "car_id": 622,
+            "slug": "2019-toyota-land-cruiser-gxr",
+            "title": "2019 Toyota Land Cruiser GXR",
+            "status": "publish",
+            "menu_order": 21,
+            "meta": {
+                "_vesla_auto_title": "2019 Toyota Land Cruiser GXR",
+                "_vesla_body": "SUV",
+                "_vesla_car_id": "622",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "118000",
+                "_vesla_make": "Toyota",
+                "_vesla_model": "Land Cruiser GXR",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "189000",
+                "_vesla_ref": "",
+                "_vesla_seats": "7",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2019"
+            }
+        },
+        {
+            "car_id": 623,
+            "slug": "2022-toyota-corolla-xli",
+            "title": "2022 Toyota Corolla XLI",
+            "status": "publish",
+            "menu_order": 22,
+            "meta": {
+                "_vesla_auto_title": "2022 Toyota Corolla XLI",
+                "_vesla_body": "Sedan",
+                "_vesla_car_id": "623",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Petrol",
+                "_vesla_gallery": "",
+                "_vesla_km": "36000",
+                "_vesla_make": "Toyota",
+                "_vesla_model": "Corolla XLI",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "52000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Automatic",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2022"
+            }
+        },
+        {
+            "car_id": 626,
+            "slug": "2020-toyota-hilux-glx",
+            "title": "2020 Toyota Hilux GLX",
+            "status": "publish",
+            "menu_order": 23,
+            "meta": {
+                "_vesla_auto_title": "2020 Toyota Hilux GLX",
+                "_vesla_body": "Pickup",
+                "_vesla_car_id": "626",
+                "_vesla_colour_in": "",
+                "_vesla_colour_out": "",
+                "_vesla_cylinders": "",
+                "_vesla_doors": "",
+                "_vesla_drive": "",
+                "_vesla_engine": "",
+                "_vesla_engine_cc": "",
+                "_vesla_features": "",
+                "_vesla_fuel": "Diesel",
+                "_vesla_gallery": "",
+                "_vesla_km": "126000",
+                "_vesla_make": "Toyota",
+                "_vesla_model": "Hilux GLX",
+                "_vesla_owners": "",
+                "_vesla_photo": "",
+                "_vesla_photo_alt": "",
+                "_vesla_photo_file": "",
+                "_vesla_power": "",
+                "_vesla_price": "79000",
+                "_vesla_ref": "",
+                "_vesla_seats": "5",
+                "_vesla_service": "",
+                "_vesla_spec": "",
+                "_vesla_steering": "",
+                "_vesla_summary": "",
+                "_vesla_target_market": "",
+                "_vesla_trans": "Manual",
+                "_vesla_trim": "",
+                "_vesla_v_about_title": "",
+                "_vesla_v_back_label": "",
+                "_vesla_v_enabled": "",
+                "_vesla_v_features_title": "",
+                "_vesla_v_finance_down_pct": "",
+                "_vesla_v_finance_enabled": "",
+                "_vesla_v_finance_note": "",
+                "_vesla_v_finance_rate": "",
+                "_vesla_v_finance_title": "",
+                "_vesla_v_finance_years": "",
+                "_vesla_v_overview_title": "",
+                "_vesla_v_seats_label": "",
+                "_vesla_v_spec_title": "",
+                "_vesla_warranty_until": "",
+                "_vesla_year": "2020"
+            }
+        }
+    ]
+}

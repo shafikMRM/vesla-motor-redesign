@@ -130,6 +130,64 @@ Yes. If you use Yoast, Rank Math or similar, switch off "Let this plugin write
 the search-engine information" under "Search engines & sharing" so the two do
 not both write it.
 
+== Backing up and moving the content ==
+
+The database holds everything an administrator has typed: the settings and
+every vehicle. The code and the published pages can be kept in version
+control; the content cannot, unless it is written out as a file. Three
+different things do that, and they are not interchangeable.
+
+**A copy for safe keeping.** Landing Page -> Backups -> "Download a copy".
+Every stored setting as JSON, including the address enquiries are sent to.
+This is a recovery file. Keep it somewhere private and do NOT commit it.
+
+**Automatic backups.** One is taken before every save, into
+wp-content/uploads/vesla-backups/, and the last ten are kept. Put one back
+from the same panel. These also hold the enquiry address, and the uploads
+folder is not for committing.
+
+**The content export.** Landing Page -> Backups -> "Write the content
+export". This writes every setting and every vehicle to content-export.json
+in the folder named under "Publish the public page" -> "Folder to write the
+content export into". Unlike the two above, this one is meant to be
+committed: the address enquiries are delivered to is left out of it, and so
+is everything under Enquiries. It is sorted the same way every time, so a
+commit shows the values that changed rather than a reshuffled file.
+
+= Restoring content into a fresh install =
+
+1. Install and activate the plugin. It will seed itself with the starter
+   copy; that is expected and about to be replaced.
+
+2. Copy content-export.json into the folder the export setting points at, or
+   anywhere the site can read.
+
+3. Import it. Either from Landing Page -> Backups -> "Load a copy back in",
+   or, with WP-CLI:
+
+       wp eval '$d = json_decode( file_get_contents( "content-export.json" ), true );
+                $r = Vesla_Store::import_content( $d );
+                echo is_wp_error( $r ) ? $r->get_error_message() : print_r( $r, true );'
+
+   Settings are replaced wholesale. Vehicles are matched on the car's own
+   number rather than the WordPress post id, so a car that already exists is
+   updated in place and one that does not is created carrying the same
+   number. That is what keeps every car's web address the same after a
+   restore -- the addresses are built from the car number, not the post id.
+
+4. Two things the export deliberately does not carry, because neither is
+   content:
+
+   * The address enquiries are sent to. Set it again under "Contact section
+     & enquiry form".
+   * Pictures. The export records which picture each field points at, by its
+     media library id, and those ids only mean something in the install they
+     came from. Move the uploads folder and the media library across as
+     well, or set the pictures again.
+
+5. Press Save once. That rebuilds the taxonomies behind the vehicle list and
+   writes the public pages out again.
+
 == Changelog ==
 
 = 1.1.0 =
