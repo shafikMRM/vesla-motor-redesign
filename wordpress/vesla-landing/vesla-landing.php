@@ -419,11 +419,41 @@ class Vesla_Schema {
 				'title'  => __( 'Opening section', 'vesla-landing' ),
 				'blurb'  => __( 'The first thing a visitor sees: the big heading, a short paragraph, two buttons, and the row of figures underneath.', 'vesla-landing' ),
 				'fields' => array(
+					'style' => array(
+						'type'    => 'select',
+						'label'   => __( 'Opening section style', 'vesla-landing' ),
+						'default' => 'classic',
+						'options' => array(
+							'classic' => __( 'Classic — heading, paragraph and the shield', 'vesla-landing' ),
+							'video'   => __( 'Film — the same words over a film', 'vesla-landing' ),
+						),
+						'help'    => __( 'Both use the wording and the figures below. Changing this changes how they are presented, not what they say — there is one set of words and it is edited in one place. The film style needs a film and a poster picture before it will turn on. One thing it also gives up: the film style has no shield beside the heading, so the opening animation has nothing to settle onto and ends in a plain cross-fade instead. That is the trade, and it is the honest behaviour rather than a fault.', 'vesla-landing' ),
+					),
+					'video' => array(
+						'type'      => 'video',
+						'label'     => __( 'Film for the opening section', 'vesla-landing' ),
+						'mimes'     => array( 'video/mp4' ),
+						'max_bytes' => 10485760,   // 10 MB
+						'warn_bytes' => 4194304,   // 4 MB
+						'help'      => __( 'MP4, no larger than 10MB. It is decoration: it plays muted, on a loop, with no controls, and the words sit over it. Everything a reader needs is in the text and the poster, so a film that never loads costs nothing but the film.', 'vesla-landing' ),
+					),
+					'poster' => array(
+						'type'  => 'image',
+						'label' => __( 'Poster picture for the film', 'vesla-landing' ),
+						'help'  => __( 'Shown before the film loads, and instead of it wherever it will not play — a phone saving power, a browser refusing to start it on its own, or a reader who has asked for less movement. Required: the film style will not turn on without one, because the alternative is a black box where the opening should be.', 'vesla-landing' ),
+					),
+					'overlay' => array(
+						'type'    => 'number',
+						'label'   => __( 'How dark over the film, as a percentage', 'vesla-landing' ),
+						'default' => 35,
+						'min'     => 0, 'max' => 60,
+						'help'    => __( 'A gradient, not a flat wash: heaviest behind the words and clearing toward the other side, so the film is still a film. Raise it for a bright or busy clip where the text stops being legible.', 'vesla-landing' ),
+					),
 					'eyebrow' => array(
 						'type'  => 'text',
 						'label' => __( 'Small line above the heading', 'vesla-landing' ),
 						'help'  => __( 'Set in small spaced-out capitals.', 'vesla-landing' ),
-						
+
 					),
 					'heading' => array(
 						'type'  => 'text',
@@ -1468,51 +1498,25 @@ class Vesla_Schema {
 						'min' => 1, 'max' => 10,
 					),
 
-					'intro_video' => array(
-						'type'  => 'video',
-						'label' => __( 'Intro video', 'vesla-landing' ),
-						'help'  => __( 'A short clip that plays once on arrival and hands over to the page, in place of the loading screen. Three seconds is the length this was built around. Leave it empty and nothing changes. What to give the editor: H.264 MP4, no larger than 1280 × 720, no audio track, CRF about 26 — at those settings three muted seconds lands well under a megabyte. The last frame should be the shield centred on the site’s own dark ground, and the encode must not add black frames at either end; one black flash is the whole illusion gone.', 'vesla-landing' ),
-					),
-					'intro_video_webm' => array(
-						'type'  => 'video',
-						'mimes' => array( 'video/webm' ),
-						'label' => __( 'Intro video — WebM version', 'vesla-landing' ),
-						'help'  => __( 'Optional, and offered first where it is understood: the same three seconds encoded as WebM is usually a good deal smaller than the MP4, and Chrome and Firefox will take it. Safari will not, and falls back to the MP4 — so the MP4 above is the one that must always be there.', 'vesla-landing' ),
-					),
-					'intro_fit' => array(
+					'opening_show' => array(
 						'type'    => 'select',
-						'label'   => __( 'How the film fills the screen', 'vesla-landing' ),
-						'default' => 'contain',
-						'choices' => array(
-							'contain' => __( 'Fit the whole frame in (nothing is cropped)', 'vesla-landing' ),
-							'cover'   => __( 'Fill the screen (the edges are cropped)', 'vesla-landing' ),
-						),
-						'help'    => __( 'A portrait film on a landscape screen has to do one or the other. “Fit the whole frame in” shows every pixel as it was made and pads the sides — and because the padding is the same colour as the film’s own ground, there is nothing to see. “Fill the screen” crops the top and bottom on a wide window, which suits a film whose subject stays well inside the middle. Neither touches the film itself.', 'vesla-landing' ),
-					),
-					'intro_poster' => array(
-						'type'  => 'image',
-						'label' => __( 'Poster — the video’s first frame', 'vesla-landing' ),
-						'help'  => __( 'Shown in the moment before playback starts, and it is what a visitor sees if their browser refuses to autoplay. It must be the video’s FIRST frame and nothing else: any other picture and the clip visibly jumps the instant it starts.', 'vesla-landing' ),
-					),
-					'intro_show' => array(
-						'type'    => 'select',
-						'label'   => __( 'Show the intro', 'vesla-landing' ),
+						'label'   => __( 'Show the opening', 'vesla-landing' ),
 						'default' => 'first',
-						'choices' => array(
+						'options' => array(
 							'never' => __( 'Never', 'vesla-landing' ),
-							'first' => __( 'On a visitor’s first visit only', 'vesla-landing' ),
+							'first' => __( 'On somebody’s first visit only', 'vesla-landing' ),
 							'every' => __( 'Every visit', 'vesla-landing' ),
 						),
-						'help'    => __( '“First visit only” is remembered in the visitor’s own browser, so it is per browser rather than per person, and clearing their history shows it again. That is the most it can promise without following anybody around.', 'vesla-landing' ),
+						'help'    => __( 'The shield arriving on its own before the page, built from the logo already on this site — no video file, nothing to upload and nothing extra to download. Off means the markup is not printed at all.', 'vesla-landing' ),
 					),
-					'intro_max' => array(
-						'type'    => 'number',
-						'label'   => __( 'Show the page regardless after this many seconds', 'vesla-landing' ),
+					'opening_max' => array(
+						'type'  => 'number',
+						'label' => __( 'Longest the opening may stay, in seconds', 'vesla-landing' ),
 						'default' => 4,
-						'help'    => __( 'A ceiling, not a duration. If the video has not begun playing by then the intro is abandoned and the page is shown — nobody should be kept waiting by a video that will not play.', 'vesla-landing' ),
-						'min' => 1, 'max' => 15,
+						'help'  => __( 'A ceiling, not a duration. The opening runs about 1.7 seconds and clears itself; this only matters if something goes wrong, and it makes sure nobody is ever held behind it.', 'vesla-landing' ),
+						'min' => 1, 'max' => 10,
 					),
-					'intro_skip_label' => array(
+					'opening_skip_label' => array(
 						'type'    => 'text',
 						'label'   => __( 'Wording on the skip button', 'vesla-landing' ),
 						'default' => 'Skip',
@@ -3171,15 +3175,6 @@ Deny from all
 class Vesla_Settings {
 	const OPTION = 'vesla_landing';
 
-	/**
-	 * The largest intro video that may be stored, in bytes.
-	 *
-	 * Enforced in the sanitiser rather than described in help text, because
-	 * a limit nobody enforces is a suggestion. Three muted seconds at 720p
-	 * and CRF 26 is a few hundred kilobytes; five megabytes is already
-	 * something that went wrong in the export.
-	 */
-	const INTRO_MAX_BYTES = 5242880;   // 5 MB
 	const GROUP  = 'vesla_landing_group';
 
 	/* The merged array for this request. Cleared on save, so the editor redraws
@@ -3637,9 +3632,32 @@ class Vesla_Settings {
 		/* The bundled-photograph carry-over that used to live here is gone with
 		   the repeater. A car keeps its own photo_file in its own meta now, and
 		   saving the settings form does not touch it.
-		
+
 		   Vesla_Store::cars() is read straight from the Vehicles list, so this
 		   form no longer carries stock at all. */
+
+		/* One rule that no single field can enforce, because it is about two of
+		   them at once: the film style needs a poster.
+
+		   Not a warning. Without a poster there is nothing to show before the
+		   film has loaded, nothing where autoplay is refused, and nothing for a
+		   reader who has asked for less movement -- and the front page's
+		   opening section would be a black rectangle with words on it in every
+		   one of those cases. So the style falls back rather than the save
+		   failing: the words, the buttons and the shield are all still there in
+		   classic, which is a working page rather than a broken one.
+
+		   Checked against the CLEANED values, not the posted ones, so a poster
+		   that was itself rejected a moment ago counts as absent. */
+		if ( isset( $clean['hero'] ) && is_array( $clean['hero'] )
+			&& isset( $clean['hero']['style'] ) && 'video' === $clean['hero']['style']
+			&& empty( $clean['hero']['poster'] ) ) {
+			$clean['hero']['style'] = 'classic';
+			self::complain(
+				'vesla_hero_poster',
+				__( 'The opening section was left on the classic style: the film style needs a poster picture and there is not one. The poster is what is shown before the film loads, and instead of it wherever it will not play — without it the top of the front page would be a black rectangle for anybody on a slow connection, on a phone saving power, or asking for less movement. Add a poster and choose the film style again.', 'vesla-landing' )
+			);
+		}
 
 		return $clean;
 	}
@@ -3725,26 +3743,29 @@ class Vesla_Settings {
 				return $value ? absint( $value ) : '';
 
 			case 'video':
-				/* Refused with a reason, and the previous value dropped rather than
-				   a bad one kept. Every branch here says what to do about it: being
-				   told "invalid file" by a screen that then forgets what you chose
-				   is the worst of both. */
+				/* Refused with a reason, and the previous value dropped rather
+				   than a bad one kept. Every branch here says what to do about
+				   it: being told "invalid file" by a screen that then forgets
+				   what you chose is the worst of both.
+
+				   The ceiling lives in the field definition rather than in a
+				   constant here, because the answer is a property of the slot
+				   -- a hero backdrop and a lower band would not want the same
+				   number, and the sanitiser should not have to know which is
+				   which. */
 				$vid = $value ? absint( $value ) : 0;
 				if ( ! $vid ) {
 					return '';
 				}
 
-				/* Which types this particular field takes. Named in the schema rather
-				   than assumed here, because the WebM companion is the same kind of
-				   field with a different answer. */
 				$allow = ! empty( $def['mimes'] ) ? (array) $def['mimes'] : array( 'video/mp4' );
 				$mime  = (string) get_post_mime_type( $vid );
 				if ( ! in_array( $mime, $allow, true ) ) {
 					self::complain(
-						'vesla_intro_type',
+						'vesla_video_type',
 						sprintf(
 							/* translators: 1: the type this field accepts. 2: the file's type. */
-							__( 'The intro video was not saved: this field takes %1$s and that file is %2$s. Export it in the right format and choose it again.', 'vesla-landing' ),
+							__( 'The film was not saved: this field takes %1$s and that file is %2$s. Export it in the right format and choose it again.', 'vesla-landing' ),
 							implode( ' or ', $allow ),
 							$mime ? $mime : __( 'of a type this site could not read', 'vesla-landing' )
 						)
@@ -3752,35 +3773,38 @@ class Vesla_Settings {
 					return '';
 				}
 
+				$cap   = ! empty( $def['max_bytes'] ) ? (int) $def['max_bytes'] : 10485760;
 				$path  = get_attached_file( $vid );
 				$bytes = ( $path && file_exists( $path ) ) ? (int) filesize( $path ) : 0;
-				if ( $bytes > self::INTRO_MAX_BYTES ) {
+				if ( $bytes > $cap ) {
 					self::complain(
-						'vesla_intro_size',
+						'vesla_video_size',
 						sprintf(
 							/* translators: 1: the file's size. 2: the limit. */
-							__( 'The intro video was not saved: it is %1$s and the limit is %2$s. Three muted seconds at 1280 × 720, H.264, CRF about 26 comes to well under a megabyte — this wants re-exporting rather than the limit raising.', 'vesla-landing' ),
+							__( 'The film was not saved: it is %1$s and the limit is %2$s. This sits at the top of the front page, so its weight is paid by every first-time visitor before they have read a word — re-export it smaller rather than raising the limit. Ten seconds at 1280 × 720, H.264, CRF about 28, no audio track, comes in well under the cap.', 'vesla-landing' ),
 							size_format( $bytes, 1 ),
-							size_format( self::INTRO_MAX_BYTES )
+							size_format( $cap )
 						)
 					);
 					return '';
 				}
 
-				/* An audio track on a clip that is played muted is weight nobody can
-				   ever hear. Stripping it here would need ffmpeg, which cannot be
-				   assumed on shared hosting, so it is refused and the export is asked
-				   for again. WordPress reads the file with getID3 on upload, so this
-				   reads a stored fact rather than parsing the file afresh -- and when
-				   that reading found nothing, silence is not proof of absence, so the
-				   file is allowed through rather than refused on a guess. */
-				$meta = wp_get_attachment_metadata( $vid );
-				if ( is_array( $meta ) && ! empty( $meta['audio'] ) ) {
+				/* Above the cap it is refused; above the warning line it is kept
+				   and the cost is named. The difference matters: a four-megabyte
+				   film is a bad idea rather than a broken one, and refusing it
+				   would be this screen overruling a decision that is the
+				   administrator's to make. */
+				$warn = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
+				if ( $warn && $bytes > $warn ) {
 					self::complain(
-						'vesla_intro_audio',
-						__( 'The intro video was not saved: it carries an audio track. The clip is played muted, so nobody ever hears it and it only makes the file bigger. Export it again with the audio removed — in ffmpeg that is -an — and choose it once more.', 'vesla-landing' )
+						'vesla_video_heavy',
+						sprintf(
+							/* translators: 1: the file's size. 2: the size above which this warns. */
+							__( 'The film was saved, but it is %1$s. Anything above %2$s at the top of the front page is felt on a phone on mobile data: it competes with the words and the pictures for the same connection. It plays muted with no controls, so quality past "recognisable" is being paid for and not seen — re-exporting at a lower bitrate costs nothing visible.', 'vesla-landing' ),
+							size_format( $bytes, 1 ),
+							size_format( $warn )
+						)
 					);
-					return '';
 				}
 
 				return $vid;
@@ -4519,51 +4543,6 @@ class Vesla_Admin {
 				<?php
 				break;
 
-			case 'video':
-				$vid_id = absint( $value );
-				$vid_src = $vid_id ? wp_get_attachment_url( $vid_id ) : '';
-				$vid_path = $vid_id ? get_attached_file( $vid_id ) : '';
-				$vid_bytes = ( $vid_path && file_exists( $vid_path ) ) ? (int) filesize( $vid_path ) : 0;
-				?>
-				<div class="vesla-image" data-vesla-image data-vesla-media="video">
-					<div class="vesla-image-preview<?php echo $vid_src ? '' : ' is-empty'; ?>">
-						<?php if ( $vid_src ) : ?>
-							<video src="<?php echo esc_url( $vid_src ); ?>" muted playsinline preload="metadata"></video>
-						<?php else : ?>
-							<span><?php esc_html_e( 'No video chosen', 'vesla-landing' ); ?></span>
-						<?php endif; ?>
-					</div>
-					<?php if ( $vid_bytes ) : ?>
-						<p class="vesla-help<?php echo $vid_bytes > 2097152 ? ' vesla-help--warn' : ''; ?>">
-							<?php
-							if ( $vid_bytes > 2097152 ) {
-								printf(
-									/* translators: %s: the file's size. */
-									esc_html__( 'This file is %s, which is larger than an intro of this kind should need. Three muted seconds ought to be well under two megabytes: H.264 MP4, no larger than 1280 × 720, no audio track, CRF about 26. Anything over five megabytes is refused outright.', 'vesla-landing' ),
-									esc_html( size_format( $vid_bytes, 1 ) )
-								);
-							} else {
-								printf(
-									/* translators: %s: the file's size. */
-									esc_html__( 'This file is %s.', 'vesla-landing' ),
-									esc_html( size_format( $vid_bytes, 1 ) )
-								);
-							}
-							?>
-						</p>
-					<?php endif; ?>
-					<div class="vesla-image-act">
-						<button type="button" class="button vesla-image-pick"><?php esc_html_e( 'Choose video', 'vesla-landing' ); ?></button>
-						<button type="button" class="button-link vesla-image-clear"<?php echo $vid_id ? '' : ' hidden'; ?>>
-							<?php esc_html_e( 'Remove', 'vesla-landing' ); ?>
-						</button>
-					</div>
-					<input type="hidden" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"
-						       value="<?php echo esc_attr( $vid_id ? $vid_id : '' ); ?>" class="vesla-image-id">
-				</div>
-				<?php
-				break;
-
 			case 'image':
 				$img_id  = absint( $value );
 				$preview = $img_id ? wp_get_attachment_image_url( $img_id, 'medium' ) : '';
@@ -4588,6 +4567,58 @@ class Vesla_Admin {
 					</div>
 					<input type="hidden" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"
 					       value="<?php echo esc_attr( $img_id ? $img_id : '' ); ?>" class="vesla-image-id">
+				</div>
+				<?php
+				break;
+
+			case 'video':
+				$vid_id   = absint( $value );
+				$vid_src  = $vid_id ? wp_get_attachment_url( $vid_id ) : '';
+				$vid_path = $vid_id ? get_attached_file( $vid_id ) : '';
+				$vid_size = ( $vid_path && file_exists( $vid_path ) ) ? (int) filesize( $vid_path ) : 0;
+				$vid_warn = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
+				$vid_cap  = ! empty( $def['max_bytes'] ) ? (int) $def['max_bytes'] : 10485760;
+				?>
+				<div class="vesla-image" data-vesla-image data-vesla-media="video">
+					<div class="vesla-image-preview<?php echo $vid_src ? '' : ' is-empty'; ?>">
+						<?php if ( $vid_src ) : ?>
+							<?php /* Muted and with controls: this is the one place the film
+							         should be scrubbable, because it is the only place anybody
+							         is looking at it as a file rather than as a backdrop. */ ?>
+							<video src="<?php echo esc_url( $vid_src ); ?>" muted playsinline controls preload="metadata"></video>
+						<?php else : ?>
+							<span><?php esc_html_e( 'No film chosen', 'vesla-landing' ); ?></span>
+						<?php endif; ?>
+					</div>
+					<div class="vesla-image-act">
+						<button type="button" class="button vesla-image-pick"><?php esc_html_e( 'Choose film', 'vesla-landing' ); ?></button>
+						<button type="button" class="button-link vesla-image-clear"<?php echo $vid_id ? '' : ' hidden'; ?>>
+							<?php esc_html_e( 'Remove', 'vesla-landing' ); ?>
+						</button>
+					</div>
+					<?php if ( $vid_size ) : ?>
+						<p class="vesla-field-note<?php echo ( $vid_warn && $vid_size > $vid_warn ) ? ' is-warn' : ''; ?>">
+							<?php
+							if ( $vid_warn && $vid_size > $vid_warn ) {
+								printf(
+									/* translators: 1: the file's size. 2: the size above which this warns. */
+									esc_html__( 'This film is %1$s. Above %2$s at the top of the front page is felt on a phone on mobile data — it competes with the words and the pictures for one connection. It plays muted with no controls, so quality past "recognisable" is paid for and not seen.', 'vesla-landing' ),
+									esc_html( size_format( $vid_size, 1 ) ),
+									esc_html( size_format( $vid_warn ) )
+								);
+							} else {
+								printf(
+									/* translators: 1: the file's size. 2: the hard limit. */
+									esc_html__( 'This film is %1$s. The limit is %2$s.', 'vesla-landing' ),
+									esc_html( size_format( $vid_size, 1 ) ),
+									esc_html( size_format( $vid_cap ) )
+								);
+							}
+							?>
+						</p>
+					<?php endif; ?>
+					<input type="hidden" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"
+					       value="<?php echo esc_attr( $vid_id ? $vid_id : '' ); ?>" class="vesla-image-id">
 				</div>
 				<?php
 				break;
@@ -6028,6 +6059,15 @@ class Vesla_Render {
 				. '.stages li::before,.hero-stats li::before{transform:none!important}'
 				. '.card,.btn,.btn-line,.btn-gold{transform:none!important}'
 				. '.m-on .card-media img{opacity:1!important}'
+				/* The film hero: the words appear together rather than in
+				   sequence, and the film neither drifts nor fades in. The
+				   script has already declined to play it at all, so the poster
+				   is what is on screen and this makes sure nothing moves over
+				   it. The delays have to go too, or the staggered words would
+				   still arrive one after another, just instantly each. */
+				. '.hero-v .reveal{opacity:1!important;transform:none!important;transition:none!important}'
+				. '.hero-v .v-1,.hero-v .v-2,.hero-v .v-3,.hero-v .v-4,.hero-v .v-5{transition-delay:0s!important}'
+				. '.hero-v-film{transform:none!important;transition:none!important}'
 				. '}';
 		}
 		return $css;
@@ -6518,6 +6558,19 @@ class Vesla_Render {
 			);
 		}
 
+		/* The opening's mark, fetched with the fonts rather than after them.
+
+		   The whole point of the opening is that it is the first thing on
+		   screen, and an opening that starts on an empty frame is worse than
+		   no opening at all. The script will not begin until the image is
+		   really there, so without this the curtain sits blank for as long as
+		   the fetch takes. The same file is the hero's shield and the loading
+		   screen's mark, so this is one request that three things wait on --
+		   it would be worth preloading even if the opening were off, which is
+		   why it is not conditional on the setting. */
+		printf( '<link rel="preload" as="image" fetchpriority="high" href="%s">' . "
+", esc_url( self::logo_url() ) );
+
 		printf( '<meta name="theme-color" content="%s">' . "
 ", esc_attr( Vesla_Settings::get( 'extras', 'color_ink', '#141415' ) ) );
 
@@ -6918,7 +6971,7 @@ class Vesla_Render {
 
 	public static function shortcode() {
 		ob_start();
-		self::intro();
+		self::opening();
 		self::loader();
 		self::header_bar();
 		self::hero();
@@ -7189,115 +7242,84 @@ class Vesla_Render {
 	public static $static_build = false;
 
 	/**
-	 * The arrival film, and the handover to the page underneath it.
+	 * The opening: the shield arrives on its own, then settles into the hero.
 	 *
-	 * Printed here rather than hooked to wp_head, because a published file
-	 * never runs wp_head at all -- its head is written by the publisher. A
-	 * boot script hung on that hook works in the WordPress preview and is
-	 * silently missing from the site visitors actually get.
+	 * What replaced the film, and cheaper in every direction: no upload, no
+	 * encode, no megabyte to fetch before anything can happen. It is the logo
+	 * the site already loads, on the site's own ground, moved with transform
+	 * and opacity and nothing else.
 	 *
-	 * Everything about it is arranged so that the page beneath is never
-	 * waiting on the film:
+	 * Three movements. It fades up from 0.94 over 900ms; it drifts on to 1.04
+	 * over 400ms so it is never quite still; then over 450ms it scales and
+	 * translates on to the hero shield while the ground fades out from under
+	 * it, and the hero's own copy rises a beat behind. About 1.75s in total.
 	 *
-	 *  - the markup is an overlay, so the page loads and lays out behind it
-	 *    the whole time and is finished by the time the film ends;
-	 *  - it is display:none until the script decides otherwise, so with
-	 *    scripting off it is not merely skipped, it is never shown;
-	 *  - the container paints the ground colour itself. Inheriting it would
-	 *    mean a white body showing through for one frame, which is the
-	 *    single worst thing that can happen here.
+	 * The ground is var(--void) flat throughout -- there is no colour walk to
+	 * do any more, because a transparent PNG on the page's own ground has
+	 * nothing to reconcile. The film needed one; this does not.
 	 *
-	 * The colour is var(--void), not a hex: the palette is computed from the
-	 * admin's ink colour at render time, so hard-coding it here would drift
-	 * the moment somebody changed the theme. The film itself cannot follow
-	 * -- its ground is baked in when it is encoded -- so the field help says
-	 * which colour to encode against.
+	 * Nothing is printed at all when it is switched off, and with scripting
+	 * off the markup is inert: the overlay is display:none until the script
+	 * opens it, so a reader without JavaScript gets the page and no curtain.
 	 */
-	private static function intro() {
-		$vid  = (int) Vesla_Settings::get( 'extras', 'intro_video', 0 );
-		$show = (string) Vesla_Settings::get( 'extras', 'intro_show', 'first' );
-		if ( ! $vid || 'never' === $show ) {
+	private static function opening() {
+		$show = (string) Vesla_Settings::get( 'extras', 'opening_show', 'first' );
+		if ( 'never' === $show ) {
 			return;
 		}
-		$src = wp_get_attachment_url( $vid );
-		if ( ! $src ) {
-			return;   // the file has been deleted from the library since
+		$logo = self::logo_url();
+		if ( ! $logo ) {
+			return;
 		}
+		$max  = max( 1, (int) Vesla_Settings::get( 'extras', 'opening_max', 4 ) );
+		$skip = trim( (string) Vesla_Settings::get( 'extras', 'opening_skip_label', '' ) );
+		$skip = '' !== $skip ? $skip : __( 'Skip', 'vesla-landing' );
 
-		/* Offered in this order on purpose: whichever the browser understands
-		   first wins, and where WebM is understood it is the smaller file.
-		   Safari skips it and takes the MP4, which is why the MP4 is the one
-		   that must always be present. */
-		$webm_id = (int) Vesla_Settings::get( 'extras', 'intro_video_webm', 0 );
-		$webm    = $webm_id ? wp_get_attachment_url( $webm_id ) : '';
-
-		/* A portrait film on a landscape screen must either be padded or
-		   cropped. Neither alters the film. */
-		$fit = (string) Vesla_Settings::get( 'extras', 'intro_fit', 'contain' );
-		$fit = ( 'cover' === $fit ) ? 'cover' : 'contain';
-
-		$poster_id = (int) Vesla_Settings::get( 'extras', 'intro_poster', 0 );
-		$poster    = $poster_id ? wp_get_attachment_image_url( $poster_id, 'full' ) : '';
-		$max       = max( 1, (int) Vesla_Settings::get( 'extras', 'intro_max', 4 ) );
-		$skip      = trim( (string) Vesla_Settings::get( 'extras', 'intro_skip_label', '' ) );
-		$skip      = '' !== $skip ? $skip : __( 'Skip', 'vesla-landing' );
-
-		/* Whether prefers-reduced-motion is consulted at all. The same setting
-		   that gates the reduced-motion CSS block this class prints, so the
-		   film and the stylesheet answer the toggle together instead of
-		   separately. See the note beside the check itself. */
+		/* Whether prefers-reduced-motion is consulted at all -- the same gate
+		   the rest of the site answers to, so the setting governs this too
+		   rather than the browser deciding on its own. See the long note
+		   beside the check itself. */
 		$respect = (bool) Vesla_Settings::get( 'extras', 'respect_reduced_motion', 0 );
 		?>
-<div class="vesla-intro" id="vesla-intro">
-	<video class="vesla-intro-film is-<?php echo esc_attr( $fit ); ?>" id="vesla-intro-film" aria-hidden="true"
-	       muted playsinline autoplay preload="auto"
-	       <?php if ( $poster ) : ?>poster="<?php echo esc_url( $poster ); ?>"<?php endif; ?>>
-		<?php if ( $webm ) : ?><source src="<?php echo esc_url( $webm ); ?>" type="video/webm"><?php endif; ?>
-		<source src="<?php echo esc_url( $src ); ?>" type="video/mp4">
-	</video>
-	<button type="button" class="vesla-intro-skip" id="vesla-intro-skip"><?php echo esc_html( $skip ); ?></button>
+<div class="vesla-open" id="vesla-open">
+	<img class="vesla-open-mark" id="vesla-open-mark" src="<?php echo esc_url( $logo ); ?>" alt=""
+	     decoding="async" fetchpriority="high">
+	<button type="button" class="vesla-open-skip" id="vesla-open-skip"><?php echo esc_html( $skip ); ?></button>
 </div>
-<script id="vesla-intro-js">
+<script id="vesla-open-js">
 (function(){
 	var root = document.documentElement;
-	var box  = document.getElementById('vesla-intro');
-	var film = document.getElementById('vesla-intro-film');
-	var skip = document.getElementById('vesla-intro-skip');
-	if (!box || !film) { return; }
+	var box  = document.getElementById('vesla-open');
+	var mark = document.getElementById('vesla-open-mark');
+	var skip = document.getElementById('vesla-open-skip');
+	if (!box || !mark) { return; }
 
 	var SHOW = '<?php echo esc_js( $show ); ?>';
 	var MAX  = <?php echo (int) $max; ?> * 1000;
-	var SEEN = 'vesla-intro-seen';
-	var LAST = 'vesla-intro-last';
+	var SEEN = 'vesla-open-seen';
+	var LAST = 'vesla-open-last';
 	var GAP  = 600000;   /* ten minutes, as a gap between showings */
 
-	/* Somebody who has asked for less movement gets none of it -- not a
-	   shortened film or a still, but the page as it would be. Removed
-	   outright, so neither arrival nor the Home link can revive it.
+	/* Timings, in one place so the sequence can be read as a whole:
+	   900 in, 400 drifting, 450 settling -- about 1.75s door to door. */
+	var IN = 900, HOLD = 400, OUT = 450, BEAT = 120;
 
-	   ASKED FOR is the whole difficulty, and why this is behind a setting
+	/* ASKED FOR is the whole difficulty, and why this is behind a setting
 	   rather than read straight from the browser. Windows reports
 	   "prefers-reduced-motion: reduce" from the Visual effects switch and
 	   from battery saver, neither of which is a considered accessibility
 	   choice -- SPI_GETCLIENTAREAANIMATION is what Chrome, Edge and Firefox
 	   all map the query to on Windows, so an ordinary laptop with animations
-	   dimmed reports the same thing as somebody with vestibular illness. On
-	   this project that false positive was deleting the film on the very
-	   machine it was being built on, while the loading screen -- whose own
-	   reduced-motion rule is parked -- stayed up in its place.
+	   dimmed reports the same thing as somebody with vestibular illness.
 
 	   So the query is only consulted when the administrator has switched
-	   "Respect reduced motion" on. Off, the film plays for everyone; on, it
-	   is removed for anyone whose browser asks, and the reduced-motion CSS
+	   "Respect reduced motion" on. Off, the opening plays for everyone; on,
+	   it is removed for anyone whose browser asks, and the reduced-motion CSS
 	   block Vesla_Render prints is emitted by the same setting, so the two
 	   cannot disagree.
 
 	   DO NOT replace this with a bare matchMedia call. That is the bug this
-	   comment exists to prevent, and it looks like a fix. app.js, motion.js
-	   and the parked blocks in the two stylesheets hold their own flag at
-	   false for the same reason; they do not yet follow this setting, so
-	   turning it on reaches the film and the printed CSS but not those four.
-	   Moving them is a separate change and they must all move at once. */
+	   comment exists to prevent, and it looks like a fix. */
 	var RESPECT = <?php echo $respect ? 'true' : 'false'; ?>;
 	var reduced = false;
 	if (RESPECT) {
@@ -7307,59 +7329,113 @@ class Vesla_Render {
 
 	/* Reading storage can throw, not only writing it: Safari with cookies
 	   blocked throws on the read. A browser that will not remember simply
-	   sees the film again, which is the harmless way to be wrong. */
+	   sees the opening again, which is the harmless way to be wrong. */
 	var read  = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
 	var write = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
 
-	var running = false, ceiling = null, tail = null;
+	var running = false, arrival = false;
+	var ceiling = null, phase = null, beat = null;
 
-	/* Whether the showing now on screen is the one that replaces the
-	   loading screen. A replay from the Home link is not: by then the
-	   page has long since loaded and the curtain is not up. */
-	var arrival = false;
+	/* Where the mark is going, measured from the DOM at the moment of asking.
+
+	   Nothing is hard-coded and nothing can be: .hero-logo img is
+	   width:min(100%,clamp(200px,26vw,340px)), so its size AND its centre
+	   both move with the viewport. Returns null when there is nothing to land
+	   on -- under 821px .hero-logo is display:none and reports a zero-sized
+	   rectangle -- and the caller cross-fades instead of inventing a target.
+
+	   Both pictures are the SAME image file, so whatever padding the artwork
+	   carries is carried identically at both ends and cancels. That is the
+	   whole reason this is a ratio of two rectangles and not a table of
+	   measured constants: the film needed those, this does not. */
+	var landing = function () {
+		var img = document.querySelector('.hero-logo img');
+		if (!img) { return null; }
+		var s = img.getBoundingClientRect();
+		if (!s.width || !s.height) { return null; }   // display:none under 821px
+
+		/* The mark's own UNTRANSFORMED box. offsetWidth rather than a
+		   rectangle, because by this point the mark is carrying the drift and
+		   getBoundingClientRect would measure 1.04 of itself. */
+		var mw = mark.offsetWidth, mh = mark.offsetHeight;
+		if (!mw || !mh) { return null; }
+		var mr = mark.getBoundingClientRect();
+		var cx = mr.left + mr.width / 2, cy = mr.top + mr.height / 2;
+
+		var k  = s.width / mw;
+		var tx = (s.left + s.width / 2) - cx;
+		var ty = (s.top + s.height / 2) - cy;
+
+		/* translate before scale, origin at the centre: the centre lands on
+		   the shield's centre and the mark scales about that point. The other
+		   way round the translation would itself be scaled. */
+		return 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) scale(' + k.toFixed(4) + ')';
+	};
+
+	var closed = false, onFade = null;
+	var shut = function () {
+		if (closed) { return; }
+		closed = true;
+		box.removeEventListener('transitionend', onFade);
+		box.classList.remove('is-entering');
+		box.classList.remove('is-holding');
+		box.classList.remove('is-settling');
+		box.classList.remove('is-going');
+		box.classList.remove('is-open');
+		mark.style.transform = '';
+		root.classList.remove('vesla-open-hold');
+		root.classList.remove('vesla-open-run');
+	};
 
 	var end = function () {
 		if (!running) { return; }
 		running = false;
-		clearTimeout(ceiling); clearTimeout(tail);
-		/* Held, not cleared. Pausing leaves the last frame on screen while the
-		   overlay fades over a page that is already painted beneath it, and
-		   both are the same ground colour -- so there is no instant at which
-		   anything else is visible. Letting the element empty itself for one
-		   frame is the whole problem this avoids. */
-		try { film.pause(); } catch (e) {}
-		box.classList.add('is-going');
-		root.classList.remove('vesla-intro-run');
+		clearTimeout(ceiling); clearTimeout(phase); clearTimeout(beat);
 
-		/* Taken away when the fade has actually finished, not on a timer.
+		/* Two ways out, and which is available is a question about the page
+		   rather than a setting: a shield on screen to land on, or not. */
+		/* is-entering and is-holding STAY ON, deliberately. is-entering is what
+		   makes the mark visible at all -- taking it off here dropped the mark
+		   straight back to the base rule's opacity:0 and scale(.94), so it
+		   blinked out of existence at the exact moment it was supposed to
+		   travel. The settle overrides what it needs to: the transform comes
+		   from the inline style, which beats both, and is-settling is later in
+		   the stylesheet than either, so its transition wins on equal
+		   specificity. */
+		var target = landing();
 
-		   A fixed 400ms was wrong here, and measurably so. With the film
-		   still decoding, the transition did not begin for about 290ms after
-		   the class was set -- so the tidy-up arrived while the overlay was
-		   still a third opaque and took it away mid-dissolve, which the eye
-		   reads as the page jumping the last of the way. The event knows
-		   when it is really over and a clock does not.
+		if (target) {
+			box.classList.add('is-settling');
+			mark.style.transform = target;
+			/* The beat. The hero is let go 120ms in so it rises behind the
+			   mark rather than with it. This is a timer and is meant to be
+			   one -- it is choreography, an offset between two movements, not
+			   a test for whether anything has finished. The thing that must
+			   never go back to a clock, deciding the overlay is done, is on
+			   transitionend below. */
+			beat = setTimeout(function () { root.classList.remove('vesla-open-hold'); }, BEAT);
+		} else {
+			box.classList.add('is-going');
+			/* The same beat on this path too. There is no shield to land on
+			   here, but the page still wants to arrive behind the curtain
+			   rather than under it -- and the film hero, which has no shield
+			   by definition, always takes this branch. */
+			beat = setTimeout(function () { root.classList.remove('vesla-open-hold'); }, BEAT);
+		}
+		root.classList.remove('vesla-open-run');
 
-		   The timer stays as a backstop, long enough for a busy main thread:
-		   a transition that never fires at all -- because the tab was
-		   backgrounded, say -- must not strand anybody behind the curtain. */
-		var closed = false;
-		var shut = function () {
-			if (closed) { return; }
-			closed = true;
-			box.removeEventListener('transitionend', onFade);
-			box.classList.remove('is-going');
-			box.classList.remove('is-open');
-			/* Wound back rather than thrown away: the Home link shows this same
-			   element again, and a film left on its last frame would open on
-			   the end of itself. */
-			try { film.currentTime = 0; } catch (e) {}
-		};
-		var onFade = function (e) {
+		/* Taken away when the fade has actually finished, not on a timer. A
+		   fixed delay was wrong here once already: with the browser busy the
+		   transition did not begin for nearly 300ms after the class was set,
+		   and the tidy-up arrived mid-dissolve. The event knows when it is
+		   really over and a clock does not. The timer stays only as a
+		   backstop, for a transition that never fires at all -- a backgrounded
+		   tab, say -- so nobody is stranded behind the curtain. */
+		onFade = function (e) {
 			if (e.target === box && e.propertyName === 'opacity') { shut(); }
 		};
 		box.addEventListener('transitionend', onFade);
-		setTimeout(shut, 1500);
+		setTimeout(shut, OUT + 1200);
 	};
 
 	var start = function (lock) {
@@ -7367,88 +7443,88 @@ class Vesla_Render {
 		running = true;
 		arrival = !!lock;
 		write(LAST, String(Date.now()));
-		box.classList.add('is-open');
-		if (lock) { root.classList.add('vesla-intro-run'); }
-		try { film.currentTime = 0; } catch (e) {}
 
-		/* The ceiling. Nobody waits on a film that will not start. */
+		box.classList.add('is-open');
+		if (lock) { root.classList.add('vesla-open-run'); }
+		/* Hold the hero down while the mark is over it, so there is something
+		   left to rise when it lands. */
+		root.classList.add('vesla-open-hold');
+
+		/* The ceiling. Whatever happens, nobody is kept here. */
 		ceiling = setTimeout(end, MAX);
 
-		/* Autoplay can simply be refused -- iOS in Low Power Mode does it even
-		   for muted video. The poster is the first frame, so what is on screen
-		   is already right; it is held a moment and handed over as a finished
-		   film would be, rather than sitting there for the whole ceiling. */
-		var attempt;
-		try { attempt = film.play(); } catch (e) { attempt = null; }
-		if (attempt && attempt.catch) {
-			attempt.catch(function () { clearTimeout(ceiling); tail = setTimeout(end, 600); });
-		}
+		/* One frame between the element being shown and the class that moves
+		   it, or the browser resolves both together and there is no
+		   transition to run at all -- the mark would simply appear. */
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () {
+				box.classList.add('is-entering');
+				phase = setTimeout(function () {
+					box.classList.add('is-holding');
+					phase = setTimeout(end, HOLD);
+				}, IN);
+			});
+		});
 	};
 
-	film.addEventListener('ended', end);
-	film.addEventListener('error', end);
-	film.addEventListener('playing', function () {
-		clearTimeout(ceiling);
+	/* The loading screen comes off when the opening has ACTUALLY started, not
+	   when it was asked to.
 
-		/* Now, and not a moment earlier, the loading screen can go.
-
-		   This hangs on 'playing' rather than on the decision to play,
-		   because those are not the same event and the difference is the
-		   only failure that really matters here: a suppressed loader with
-		   no film behind it is a blank arrival. Every path where the film
-		   does not actually start -- a repeat visit, reduced motion, no
-		   scripting, autoplay refused, the ceiling expiring, Skip pressed
-		   before the first frame -- never reaches this line, and the
-		   loading screen carries on doing its job untouched.
-
-		   Only the class comes off. The curtain element itself is left
-		   alone: the stylesheet hides it without the class, and moving to a
-		   car reuses that same node. */
+	   transitionstart is the honest signal, and it is the same distinction
+	   the film drew with 'playing': a suppressed loader with nothing behind
+	   it is a blank arrival. If the image never decodes, or the transition
+	   never runs, this never fires and the loading screen carries on doing
+	   its job untouched. */
+	mark.addEventListener('transitionstart', function once (e) {
+		if (e.propertyName !== 'opacity' && e.propertyName !== 'transform') { return; }
+		mark.removeEventListener('transitionstart', once);
 		if (arrival) { root.classList.remove('is-loading'); }
-		/* A second ceiling measured from the clip's own length, in case it
-		   stalls half way and 'ended' never arrives. */
-		var left = (isFinite(film.duration) && film.duration > 0) ? (film.duration - film.currentTime) * 1000 : MAX;
-		tail = setTimeout(end, left + 1500);
 	});
+
 	if (skip) { skip.addEventListener('click', end); }
 	document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { end(); } });
 
-	/* ── one: arrival ── */
+	/* ── one: arrival ──
+	   Started only once the mark is really there. Opening on an empty frame
+	   is the one thing a curtain must not do, and a cached image is complete
+	   before this line runs, so the common path costs nothing. */
 	var arriving = true;
 	if (SHOW === 'first') {
 		if (read(SEEN)) { arriving = false; }
 		write(SEEN, '1');
 	}
-	if (arriving) { start(true); }
+	if (arriving) {
+		if (mark.complete && mark.naturalWidth) { start(true); }
+		else {
+			mark.addEventListener('load', function () { start(true); });
+			mark.addEventListener('error', function () {
+				if (box.parentNode) { box.parentNode.removeChild(box); }
+			});
+		}
+	}
 
 	/* ── two: the Home link, from somewhere down the page ──
-
-	   Deliberately NOT prevented, and deliberately not locking the page.
-	   Home is an ordinary same-page anchor and the browser's own jump is
-	   what puts the reader at the top; the overlay simply covers it while
-	   it happens. Calling preventDefault, or setting overflow:hidden on
-	   the way in, would swallow that jump -- which is exactly how the
-	   loading screen used to lose it. The router is left alone. */
+	   Deliberately NOT prevented and deliberately not locking the page. Home
+	   is an ordinary same-page anchor and the browser's own jump is what puts
+	   the reader at the top; the overlay simply covers it while it happens. */
 	document.addEventListener('click', function (e) {
 		var a = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
 		if (!a || !/#top$/.test(a.getAttribute('href') || '')) { return; }
 		if (running) { return; }
-
-		/* Already up here: a film between the click and the same view is not
-		   an introduction, it is a delay. One screen down is the bar. */
+		/* Already up here: an opening between the click and the same view is
+		   not an introduction, it is a delay. One screen down is the bar. */
 		var y = window.scrollY || window.pageYOffset || 0;
 		if (y <= window.innerHeight) { return; }
-
 		/* And not twice in ten minutes, however often Home is pressed. */
 		var last = parseInt(read(LAST) || '0', 10);
 		if (last && (Date.now() - last) < GAP) { return; }
-
-		start(false);
+		if (mark.complete && mark.naturalWidth) { start(false); }
 	});
 })();
 </script>
 		<?php
 	}
+
 	private static function loader() {
 		/* A published file arrives with its content already in it, so there is
 		   nothing to cover up while waiting. */
@@ -7540,28 +7616,114 @@ class Vesla_Render {
 
 	/* ── hero ──────────────────────────────────────────────────────────── */
 
+	/**
+	 * The opening section's words: eyebrow, heading, paragraph, both buttons.
+	 *
+	 * ONE COPY, PRINTED BY BOTH STYLES, and that is the whole point of it
+	 * being a function. The classic hero and the film hero are two
+	 * presentations of the same section, not two sections -- so the words are
+	 * written once here and read from one set of settings fields. Editing the
+	 * heading changes whichever style is switched on, and there is no second
+	 * place to forget.
+	 *
+	 * It also makes the search-engine guarantee structural rather than a
+	 * promise kept by hand. The h1 is a real h1 in the HTML that leaves the
+	 * server, both links are real anchors with real hrefs, and the paragraph
+	 * is text -- in BOTH styles, because there is only one piece of code that
+	 * can produce them. Nothing here is injected by script and nothing waits
+	 * on the film: the film is decoration painted behind words that are
+	 * already in the document.
+	 *
+	 * @param array $h     The hero section's settings.
+	 * @param bool  $video Whether the film style is in force. Adds the
+	 *                     stagger classes and nothing else -- never a change
+	 *                     to what is said or to the shape of the markup.
+	 */
+	private static function hero_copy( $h, $video = false ) {
+		$n1 = $video ? ' v-1' : '';
+		$n2 = $video ? ' v-2' : '';
+		$n3 = $video ? ' v-3' : '';
+		$n4 = $video ? ' v-4' : '';
+		?>
+		<?php if ( $h['eyebrow'] ) : ?>
+			<p class="eyebrow reveal<?php echo esc_attr( $n1 ); ?>"><?php echo esc_html( $h['eyebrow'] ); ?></p>
+		<?php endif; ?>
+		<h1 class="reveal<?php echo esc_attr( $n2 ); ?>"><?php echo esc_html( $h['heading'] ); ?></h1>
+		<?php if ( $h['lead'] ) : ?>
+			<p class="hero-lead reveal<?php echo esc_attr( $n3 ); ?>"><?php echo esc_html( $h['lead'] ); ?></p>
+		<?php endif; ?>
+		<div class="hero-act reveal<?php echo esc_attr( $n4 ); ?>">
+			<?php if ( $h['btn1_label'] ) : ?>
+				<a class="btn btn-gold btn-lg" href="<?php echo esc_url( $h['btn1_link'] ); ?>"><?php echo esc_html( $h['btn1_label'] ); ?></a>
+			<?php endif; ?>
+			<?php if ( $h['btn2_label'] ) : ?>
+				<a class="btn btn-line btn-lg" href="<?php echo esc_url( $h['btn2_link'] ); ?>"><?php echo esc_html( $h['btn2_label'] ); ?></a>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * The row of figures under the opening section.
+	 *
+	 * Shared by both styles for the same reason the words are: these four are
+	 * the showroom's credibility and they sit above the fold, so which
+	 * presentation is switched on must not decide whether they exist. They
+	 * were briefly absent from the film style and that was a content
+	 * regression, not a design choice.
+	 *
+	 * @param array $h     The hero section's settings.
+	 * @param bool  $video Whether the film style is in force. Adds the last
+	 *                     step of the stagger, so the figures arrive after the
+	 *                     buttons rather than with them.
+	 */
+	private static function hero_stats( $h, $video = false ) {
+		if ( empty( $h['stats'] ) ) {
+			return;
+		}
+		?>
+		<ul class="hero-stats reveal<?php echo $video ? ' v-5' : ''; ?>">
+			<?php foreach ( $h['stats'] as $s ) : ?>
+				<li>
+					<?php if ( $s['count'] && is_numeric( $s['value'] ) ) : ?>
+						<b data-count="<?php echo esc_attr( $s['value'] ); ?>"
+						   <?php echo $s['suffix'] ? 'data-suffix="' . esc_attr( $s['suffix'] ) . '"' : ''; ?>>0</b>
+					<?php else : ?>
+						<b><?php echo esc_html( $s['value'] . $s['suffix'] ); ?></b>
+					<?php endif; ?>
+					<span><?php echo esc_html( $s['label'] ); ?></span>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+		<?php
+	}
+
 	private static function hero() {
 		$h = Vesla_Settings::get( 'hero' );
+
+		/* The film style is only ever honoured with a poster behind it. The
+		   sanitiser already refuses to store the one without the other, so
+		   this is the second of two locks rather than the only one -- settings
+		   can arrive from an import or an older database, and the failure it
+		   guards against is the top of the front page being a black rectangle. */
+		$style  = isset( $h['style'] ) ? (string) $h['style'] : 'classic';
+		$poster = isset( $h['poster'] ) ? (int) $h['poster'] : 0;
+
+		/* Resolved to a real URL here, not inside hero_video(), so that a
+		   poster whose file has been deleted from the library since falls
+		   straight through to the classic style. Deciding it there and calling
+		   back would be a loop, because this function reads the setting again. */
+		$poster_url = $poster ? wp_get_attachment_image_url( $poster, 'full' ) : '';
+		if ( 'video' === $style && $poster_url ) {
+			self::hero_video( $h, $poster, $poster_url );
+			return;
+		}
 		?>
 		<section class="hero" id="top">
 			<div class="hero-bg" aria-hidden="true"></div>
 			<div class="shell hero-in">
 				<div class="hero-copy">
-					<?php if ( $h['eyebrow'] ) : ?>
-						<p class="eyebrow reveal"><?php echo esc_html( $h['eyebrow'] ); ?></p>
-					<?php endif; ?>
-					<h1 class="reveal"><?php echo esc_html( $h['heading'] ); ?></h1>
-					<?php if ( $h['lead'] ) : ?>
-						<p class="hero-lead reveal"><?php echo esc_html( $h['lead'] ); ?></p>
-					<?php endif; ?>
-					<div class="hero-act reveal">
-						<?php if ( $h['btn1_label'] ) : ?>
-							<a class="btn btn-gold btn-lg" href="<?php echo esc_url( $h['btn1_link'] ); ?>"><?php echo esc_html( $h['btn1_label'] ); ?></a>
-						<?php endif; ?>
-						<?php if ( $h['btn2_label'] ) : ?>
-							<a class="btn btn-line btn-lg" href="<?php echo esc_url( $h['btn2_link'] ); ?>"><?php echo esc_html( $h['btn2_label'] ); ?></a>
-						<?php endif; ?>
-					</div>
+					<?php self::hero_copy( $h, false ); ?>
 				</div>
 
 				<?php if ( $h['show_logo'] ) : ?>
@@ -7579,23 +7741,131 @@ class Vesla_Render {
 					</div>
 				<?php endif; ?>
 
-				<?php if ( ! empty( $h['stats'] ) ) : ?>
-					<ul class="hero-stats reveal">
-						<?php foreach ( $h['stats'] as $s ) : ?>
-							<li>
-								<?php if ( $s['count'] && is_numeric( $s['value'] ) ) : ?>
-									<b data-count="<?php echo esc_attr( $s['value'] ); ?>"
-									   <?php echo $s['suffix'] ? 'data-suffix="' . esc_attr( $s['suffix'] ) . '"' : ''; ?>>0</b>
-								<?php else : ?>
-									<b><?php echo esc_html( $s['value'] . $s['suffix'] ); ?></b>
-								<?php endif; ?>
-								<span><?php echo esc_html( $s['label'] ); ?></span>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php endif; ?>
+				<?php self::hero_stats( $h, false ); ?>
 			</div>
 		</section>
+		<?php
+	}
+
+	/**
+	 * The opening section as a film with the words over it.
+	 *
+	 * THE FILM IS DECORATION. Everything a reader or a crawler needs is in the
+	 * markup before the film is mentioned: the h1, the paragraph and both
+	 * links come from hero_copy(), the same function the classic style uses,
+	 * and they are in the HTML that leaves the server. If the file never
+	 * loads, if autoplay is refused, if scripting is off, if the connection
+	 * dies after the HTML -- the section is still the poster, the words and
+	 * the buttons, and it still reads. That is the order things are built in
+	 * here, and it is not an accident.
+	 *
+	 * The poster is an ordinary <img>, not the video's poster attribute, and
+	 * the film is transparent until it is genuinely playing. That way there is
+	 * never a black rectangle: the picture is painted immediately by the same
+	 * markup that would be there with no script at all, and the film fades in
+	 * over it if and when it arrives. The video's own poster attribute would
+	 * have fetched the same file a second time.
+	 *
+	 * The height is fixed in CSS -- clamp(280px, 50vh, 600px) -- so the space
+	 * is reserved before anything loads and nothing below can be pushed down.
+	 * No aspect-ratio box is needed when the box does not depend on the media.
+	 */
+	private static function hero_video( $h, $poster_id, $poster ) {
+		$src = '';
+		if ( ! empty( $h['video'] ) ) {
+			$src = (string) wp_get_attachment_url( (int) $h['video'] );
+		}
+		$poster_alt = trim( (string) get_post_meta( $poster_id, '_wp_attachment_image_alt', true ) );
+
+		/* 0-60 in the editor, carried as a fraction so the gradient can scale
+		   every stop from one number. */
+		$dark    = max( 0, min( 60, (int) ( isset( $h['overlay'] ) ? $h['overlay'] : 35 ) ) );
+		$respect = (bool) Vesla_Settings::get( 'extras', 'respect_reduced_motion', 0 );
+		?>
+		<section class="hero hero-v" id="top" style="--scrim:<?php echo esc_attr( number_format( $dark / 100, 3, '.', '' ) ); ?>">
+			<div class="hero-v-media" aria-hidden="true">
+				<img class="hero-v-poster" src="<?php echo esc_url( $poster ); ?>"
+				     alt="<?php echo esc_attr( $poster_alt ); ?>" fetchpriority="high" decoding="async">
+				<?php if ( $src ) : ?>
+					<?php /* preload="metadata", never "auto": this sits above the fold and
+					         must not race the words and the pictures for the connection.
+					         No controls, no sound, nothing clickable -- it is a backdrop. */ ?>
+					<video class="hero-v-film" id="hero-v-film" muted loop playsinline preload="metadata" tabindex="-1">
+						<source src="<?php echo esc_url( $src ); ?>" type="video/mp4">
+					</video>
+				<?php endif; ?>
+				<div class="hero-v-scrim"></div>
+			</div>
+			<div class="shell hero-v-in">
+				<div class="hero-copy">
+					<?php self::hero_copy( $h, true ); ?>
+				</div>
+				<?php self::hero_stats( $h, true ); ?>
+			</div>
+		</section>
+		<?php if ( $src ) : ?>
+		<script id="hero-v-js">
+		(function(){
+			var sec  = document.getElementById('top');
+			var film = document.getElementById('hero-v-film');
+			if (!sec || !film) { return; }
+
+			/* Gated on the setting, exactly as everything else is. Windows
+			   answers "reduce" for its Visual effects switch and for battery
+			   saver, neither of which is a considered choice, so the browser is
+			   only consulted when the administrator has asked for it to be.
+			   When it is: the poster stays and the film is never fetched
+			   beyond its metadata. */
+			var RESPECT = <?php echo $respect ? 'true' : 'false'; ?>;
+			var reduced = false;
+			if (RESPECT) {
+				try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+			}
+			if (reduced) { return; }
+
+			var started = false, visible = true;
+
+			var attempt = function () {
+				if (!visible) { return; }
+				var p;
+				try { p = film.play(); } catch (e) { p = null; }
+				/* Refused is a normal answer, not an error: iOS in Low Power
+				   Mode refuses even a muted film. The poster is already on
+				   screen and stays there, so there is nothing to do about it
+				   and nothing to tell anybody. */
+				if (p && p.catch) { p.catch(function () {}); }
+			};
+
+			/* Playback waits for the words. The film must never be the reason
+			   the heading is late, so nothing is asked of the network for it
+			   until the page has finished loading everything that matters. */
+			var begin = function () {
+				if (started) { return; }
+				started = true;
+				attempt();
+			};
+			if (document.readyState === 'complete') { begin(); }
+			else { window.addEventListener('load', begin); }
+
+			film.addEventListener('playing', function () { sec.classList.add('is-playing'); });
+			/* A file that will not decode leaves the poster where it is. */
+			film.addEventListener('error', function () { sec.classList.remove('is-playing'); });
+
+			/* Out of view it is paused. A looping film playing to nobody is
+			   battery and bandwidth spent on nothing, and this is the top of
+			   the page -- it is out of view for most of the visit. */
+			if ('IntersectionObserver' in window) {
+				new IntersectionObserver(function (entries) {
+					entries.forEach(function (en) {
+						visible = en.isIntersecting;
+						if (!visible) { try { film.pause(); } catch (e) {} }
+						else if (started) { attempt(); }
+					});
+				}, { threshold: 0.01 }).observe(sec);
+			}
+		})();
+		</script>
+		<?php endif; ?>
 		<?php
 	}
 
@@ -7613,8 +7883,13 @@ class Vesla_Render {
 		<section class="trust" aria-label="<?php esc_attr_e( 'Why buy from us', 'vesla-landing' ); ?>">
 			<div class="shell">
 				<ul class="trust-in">
+					<?php /* .reveal and nothing else: the stagger is worked out by
+					         position in motion.js, because .trust-in is a grid row, so
+					         four items arriving together get their own delays without
+					         any being written here. They inherit the two-way behaviour
+					         and the reduced-motion gate along with it. */ ?>
 					<?php foreach ( $items as $it ) : ?>
-						<li>
+						<li class="reveal">
 							<?php self::icon( $it['icon'] ); ?>
 							<span><b><?php echo esc_html( $it['title'] ); ?></b><?php echo esc_html( $it['text'] ); ?></span>
 						</li>
@@ -8122,7 +8397,7 @@ class Vesla_Render {
 		?>
 		<footer class="foot">
 			<div class="shell foot-in">
-				<div class="foot-brand">
+				<div class="foot-brand reveal">
 					<?php self::lockup( 'foot' ); ?>
 					<?php if ( $f['blurb'] ) : ?><p><?php Vesla_Render::t( 'footer.blurb', $f['blurb'] ); ?></p><?php endif; ?>
 					<?php if ( ! empty( $f['badges'] ) ) : ?>
@@ -8174,7 +8449,7 @@ class Vesla_Render {
 				</div>
 
 				<?php if ( ! empty( $f['nav'] ) ) : ?>
-					<nav class="foot-col" aria-labelledby="fl-explore">
+					<nav class="foot-col reveal" aria-labelledby="fl-explore">
 						<p class="foot-lbl" id="fl-explore"><?php echo esc_html( $f['nav_title'] ); ?></p>
 						<ul class="foot-nav">
 							<?php foreach ( $f['nav'] as $n ) : ?>
@@ -8185,7 +8460,7 @@ class Vesla_Render {
 				<?php endif; ?>
 
 				<?php if ( ! empty( $f['contact'] ) ) : ?>
-					<div class="foot-col">
+					<div class="foot-col reveal">
 						<p class="foot-lbl"><?php echo esc_html( $f['contact_title'] ); ?></p>
 						<ul class="foot-contact">
 							<?php foreach ( $f['contact'] as $ct ) : ?>
@@ -8205,7 +8480,7 @@ class Vesla_Render {
 					</div>
 				<?php endif; ?>
 
-				<div class="foot-col">
+				<div class="foot-col reveal">
 					<p class="foot-lbl"><?php echo esc_html( $f['where_title'] ); ?></p>
 					<p class="foot-where">
 						<?php Vesla_Render::t( 'footer.where_text', $f['where_text'] ); ?>
