@@ -1468,6 +1468,31 @@ class Vesla_Schema {
 						'min' => 1, 'max' => 10,
 					),
 
+					'opening_show' => array(
+						'type'    => 'select',
+						'label'   => __( 'Show the opening', 'vesla-landing' ),
+						'default' => 'first',
+						'options' => array(
+							'never' => __( 'Never', 'vesla-landing' ),
+							'first' => __( 'On somebody’s first visit only', 'vesla-landing' ),
+							'every' => __( 'Every visit', 'vesla-landing' ),
+						),
+						'help'    => __( 'The shield arriving on its own before the page, built from the logo already on this site — no video file, nothing to upload and nothing extra to download. Off means the markup is not printed at all.', 'vesla-landing' ),
+					),
+					'opening_max' => array(
+						'type'  => 'number',
+						'label' => __( 'Longest the opening may stay, in seconds', 'vesla-landing' ),
+						'default' => 4,
+						'help'  => __( 'A ceiling, not a duration. The opening runs about 1.7 seconds and clears itself; this only matters if something goes wrong, and it makes sure nobody is ever held behind it.', 'vesla-landing' ),
+						'min' => 1, 'max' => 10,
+					),
+					'opening_skip_label' => array(
+						'type'    => 'text',
+						'label'   => __( 'Wording on the skip button', 'vesla-landing' ),
+						'default' => 'Skip',
+						'help'    => __( 'Visible from the first frame. Somebody who does not want to watch must never have to wait to say so.', 'vesla-landing' ),
+					),
+
 					'motion_enabled' => array(
 						'type'  => 'toggle',
 						'label' => __( 'Use the animations', 'vesla-landing' ),
@@ -6352,6 +6377,19 @@ class Vesla_Render {
 			);
 		}
 
+		/* The opening's mark, fetched with the fonts rather than after them.
+
+		   The whole point of the opening is that it is the first thing on
+		   screen, and an opening that starts on an empty frame is worse than
+		   no opening at all. The script will not begin until the image is
+		   really there, so without this the curtain sits blank for as long as
+		   the fetch takes. The same file is the hero's shield and the loading
+		   screen's mark, so this is one request that three things wait on --
+		   it would be worth preloading even if the opening were off, which is
+		   why it is not conditional on the setting. */
+		printf( '<link rel="preload" as="image" fetchpriority="high" href="%s">' . "
+", esc_url( self::logo_url() ) );
+
 		printf( '<meta name="theme-color" content="%s">' . "
 ", esc_attr( Vesla_Settings::get( 'extras', 'color_ink', '#141415' ) ) );
 
@@ -6752,6 +6790,7 @@ class Vesla_Render {
 
 	public static function shortcode() {
 		ob_start();
+		self::opening();
 		self::loader();
 		self::header_bar();
 		self::hero();
@@ -7020,6 +7059,286 @@ class Vesla_Render {
 
 	/** Set while Vesla_Publisher is writing the static file. */
 	public static $static_build = false;
+
+	/**
+	 * The opening: the shield arrives on its own, then settles into the hero.
+	 *
+	 * What replaced the film, and cheaper in every direction: no upload, no
+	 * encode, no megabyte to fetch before anything can happen. It is the logo
+	 * the site already loads, on the site's own ground, moved with transform
+	 * and opacity and nothing else.
+	 *
+	 * Three movements. It fades up from 0.94 over 900ms; it drifts on to 1.04
+	 * over 400ms so it is never quite still; then over 450ms it scales and
+	 * translates on to the hero shield while the ground fades out from under
+	 * it, and the hero's own copy rises a beat behind. About 1.75s in total.
+	 *
+	 * The ground is var(--void) flat throughout -- there is no colour walk to
+	 * do any more, because a transparent PNG on the page's own ground has
+	 * nothing to reconcile. The film needed one; this does not.
+	 *
+	 * Nothing is printed at all when it is switched off, and with scripting
+	 * off the markup is inert: the overlay is display:none until the script
+	 * opens it, so a reader without JavaScript gets the page and no curtain.
+	 */
+	private static function opening() {
+		$show = (string) Vesla_Settings::get( 'extras', 'opening_show', 'first' );
+		if ( 'never' === $show ) {
+			return;
+		}
+		$logo = self::logo_url();
+		if ( ! $logo ) {
+			return;
+		}
+		$max  = max( 1, (int) Vesla_Settings::get( 'extras', 'opening_max', 4 ) );
+		$skip = trim( (string) Vesla_Settings::get( 'extras', 'opening_skip_label', '' ) );
+		$skip = '' !== $skip ? $skip : __( 'Skip', 'vesla-landing' );
+
+		/* Whether prefers-reduced-motion is consulted at all -- the same gate
+		   the rest of the site answers to, so the setting governs this too
+		   rather than the browser deciding on its own. See the long note
+		   beside the check itself. */
+		$respect = (bool) Vesla_Settings::get( 'extras', 'respect_reduced_motion', 0 );
+		?>
+<div class="vesla-open" id="vesla-open">
+	<img class="vesla-open-mark" id="vesla-open-mark" src="<?php echo esc_url( $logo ); ?>" alt=""
+	     decoding="async" fetchpriority="high">
+	<button type="button" class="vesla-open-skip" id="vesla-open-skip"><?php echo esc_html( $skip ); ?></button>
+</div>
+<script id="vesla-open-js">
+(function(){
+	var root = document.documentElement;
+	var box  = document.getElementById('vesla-open');
+	var mark = document.getElementById('vesla-open-mark');
+	var skip = document.getElementById('vesla-open-skip');
+	if (!box || !mark) { return; }
+
+	var SHOW = '<?php echo esc_js( $show ); ?>';
+	var MAX  = <?php echo (int) $max; ?> * 1000;
+	var SEEN = 'vesla-open-seen';
+	var LAST = 'vesla-open-last';
+	var GAP  = 600000;   /* ten minutes, as a gap between showings */
+
+	/* Timings, in one place so the sequence can be read as a whole:
+	   900 in, 400 drifting, 450 settling -- about 1.75s door to door. */
+	var IN = 900, HOLD = 400, OUT = 450, BEAT = 120;
+
+	/* ASKED FOR is the whole difficulty, and why this is behind a setting
+	   rather than read straight from the browser. Windows reports
+	   "prefers-reduced-motion: reduce" from the Visual effects switch and
+	   from battery saver, neither of which is a considered accessibility
+	   choice -- SPI_GETCLIENTAREAANIMATION is what Chrome, Edge and Firefox
+	   all map the query to on Windows, so an ordinary laptop with animations
+	   dimmed reports the same thing as somebody with vestibular illness.
+
+	   So the query is only consulted when the administrator has switched
+	   "Respect reduced motion" on. Off, the opening plays for everyone; on,
+	   it is removed for anyone whose browser asks, and the reduced-motion CSS
+	   block Vesla_Render prints is emitted by the same setting, so the two
+	   cannot disagree.
+
+	   DO NOT replace this with a bare matchMedia call. That is the bug this
+	   comment exists to prevent, and it looks like a fix. */
+	var RESPECT = <?php echo $respect ? 'true' : 'false'; ?>;
+	var reduced = false;
+	if (RESPECT) {
+		try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+	}
+	if (reduced) { if (box.parentNode) { box.parentNode.removeChild(box); } return; }
+
+	/* Reading storage can throw, not only writing it: Safari with cookies
+	   blocked throws on the read. A browser that will not remember simply
+	   sees the opening again, which is the harmless way to be wrong. */
+	var read  = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } };
+	var write = function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} };
+
+	var running = false, arrival = false;
+	var ceiling = null, phase = null, beat = null;
+
+	/* Where the mark is going, measured from the DOM at the moment of asking.
+
+	   Nothing is hard-coded and nothing can be: .hero-logo img is
+	   width:min(100%,clamp(200px,26vw,340px)), so its size AND its centre
+	   both move with the viewport. Returns null when there is nothing to land
+	   on -- under 821px .hero-logo is display:none and reports a zero-sized
+	   rectangle -- and the caller cross-fades instead of inventing a target.
+
+	   Both pictures are the SAME image file, so whatever padding the artwork
+	   carries is carried identically at both ends and cancels. That is the
+	   whole reason this is a ratio of two rectangles and not a table of
+	   measured constants: the film needed those, this does not. */
+	var landing = function () {
+		var img = document.querySelector('.hero-logo img');
+		if (!img) { return null; }
+		var s = img.getBoundingClientRect();
+		if (!s.width || !s.height) { return null; }   // display:none under 821px
+
+		/* The mark's own UNTRANSFORMED box. offsetWidth rather than a
+		   rectangle, because by this point the mark is carrying the drift and
+		   getBoundingClientRect would measure 1.04 of itself. */
+		var mw = mark.offsetWidth, mh = mark.offsetHeight;
+		if (!mw || !mh) { return null; }
+		var mr = mark.getBoundingClientRect();
+		var cx = mr.left + mr.width / 2, cy = mr.top + mr.height / 2;
+
+		var k  = s.width / mw;
+		var tx = (s.left + s.width / 2) - cx;
+		var ty = (s.top + s.height / 2) - cy;
+
+		/* translate before scale, origin at the centre: the centre lands on
+		   the shield's centre and the mark scales about that point. The other
+		   way round the translation would itself be scaled. */
+		return 'translate(' + tx.toFixed(2) + 'px,' + ty.toFixed(2) + 'px) scale(' + k.toFixed(4) + ')';
+	};
+
+	var closed = false, onFade = null;
+	var shut = function () {
+		if (closed) { return; }
+		closed = true;
+		box.removeEventListener('transitionend', onFade);
+		box.classList.remove('is-entering');
+		box.classList.remove('is-holding');
+		box.classList.remove('is-settling');
+		box.classList.remove('is-going');
+		box.classList.remove('is-open');
+		mark.style.transform = '';
+		root.classList.remove('vesla-open-hold');
+		root.classList.remove('vesla-open-run');
+	};
+
+	var end = function () {
+		if (!running) { return; }
+		running = false;
+		clearTimeout(ceiling); clearTimeout(phase); clearTimeout(beat);
+
+		/* Two ways out, and which is available is a question about the page
+		   rather than a setting: a shield on screen to land on, or not. */
+		/* is-entering and is-holding STAY ON, deliberately. is-entering is what
+		   makes the mark visible at all -- taking it off here dropped the mark
+		   straight back to the base rule's opacity:0 and scale(.94), so it
+		   blinked out of existence at the exact moment it was supposed to
+		   travel. The settle overrides what it needs to: the transform comes
+		   from the inline style, which beats both, and is-settling is later in
+		   the stylesheet than either, so its transition wins on equal
+		   specificity. */
+		var target = landing();
+
+		if (target) {
+			box.classList.add('is-settling');
+			mark.style.transform = target;
+			/* The beat. The hero is let go 120ms in so it rises behind the
+			   mark rather than with it. This is a timer and is meant to be
+			   one -- it is choreography, an offset between two movements, not
+			   a test for whether anything has finished. The thing that must
+			   never go back to a clock, deciding the overlay is done, is on
+			   transitionend below. */
+			beat = setTimeout(function () { root.classList.remove('vesla-open-hold'); }, BEAT);
+		} else {
+			box.classList.add('is-going');
+			root.classList.remove('vesla-open-hold');
+		}
+		root.classList.remove('vesla-open-run');
+
+		/* Taken away when the fade has actually finished, not on a timer. A
+		   fixed delay was wrong here once already: with the browser busy the
+		   transition did not begin for nearly 300ms after the class was set,
+		   and the tidy-up arrived mid-dissolve. The event knows when it is
+		   really over and a clock does not. The timer stays only as a
+		   backstop, for a transition that never fires at all -- a backgrounded
+		   tab, say -- so nobody is stranded behind the curtain. */
+		onFade = function (e) {
+			if (e.target === box && e.propertyName === 'opacity') { shut(); }
+		};
+		box.addEventListener('transitionend', onFade);
+		setTimeout(shut, OUT + 1200);
+	};
+
+	var start = function (lock) {
+		if (running) { return; }
+		running = true;
+		arrival = !!lock;
+		write(LAST, String(Date.now()));
+
+		box.classList.add('is-open');
+		if (lock) { root.classList.add('vesla-open-run'); }
+		/* Hold the hero down while the mark is over it, so there is something
+		   left to rise when it lands. */
+		root.classList.add('vesla-open-hold');
+
+		/* The ceiling. Whatever happens, nobody is kept here. */
+		ceiling = setTimeout(end, MAX);
+
+		/* One frame between the element being shown and the class that moves
+		   it, or the browser resolves both together and there is no
+		   transition to run at all -- the mark would simply appear. */
+		requestAnimationFrame(function () {
+			requestAnimationFrame(function () {
+				box.classList.add('is-entering');
+				phase = setTimeout(function () {
+					box.classList.add('is-holding');
+					phase = setTimeout(end, HOLD);
+				}, IN);
+			});
+		});
+	};
+
+	/* The loading screen comes off when the opening has ACTUALLY started, not
+	   when it was asked to.
+
+	   transitionstart is the honest signal, and it is the same distinction
+	   the film drew with 'playing': a suppressed loader with nothing behind
+	   it is a blank arrival. If the image never decodes, or the transition
+	   never runs, this never fires and the loading screen carries on doing
+	   its job untouched. */
+	mark.addEventListener('transitionstart', function once (e) {
+		if (e.propertyName !== 'opacity' && e.propertyName !== 'transform') { return; }
+		mark.removeEventListener('transitionstart', once);
+		if (arrival) { root.classList.remove('is-loading'); }
+	});
+
+	if (skip) { skip.addEventListener('click', end); }
+	document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { end(); } });
+
+	/* ── one: arrival ──
+	   Started only once the mark is really there. Opening on an empty frame
+	   is the one thing a curtain must not do, and a cached image is complete
+	   before this line runs, so the common path costs nothing. */
+	var arriving = true;
+	if (SHOW === 'first') {
+		if (read(SEEN)) { arriving = false; }
+		write(SEEN, '1');
+	}
+	if (arriving) {
+		if (mark.complete && mark.naturalWidth) { start(true); }
+		else {
+			mark.addEventListener('load', function () { start(true); });
+			mark.addEventListener('error', function () {
+				if (box.parentNode) { box.parentNode.removeChild(box); }
+			});
+		}
+	}
+
+	/* ── two: the Home link, from somewhere down the page ──
+	   Deliberately NOT prevented and deliberately not locking the page. Home
+	   is an ordinary same-page anchor and the browser's own jump is what puts
+	   the reader at the top; the overlay simply covers it while it happens. */
+	document.addEventListener('click', function (e) {
+		var a = (e.target && e.target.closest) ? e.target.closest('a[href]') : null;
+		if (!a || !/#top$/.test(a.getAttribute('href') || '')) { return; }
+		if (running) { return; }
+		/* Already up here: an opening between the click and the same view is
+		   not an introduction, it is a delay. One screen down is the bar. */
+		var y = window.scrollY || window.pageYOffset || 0;
+		if (y <= window.innerHeight) { return; }
+		/* And not twice in ten minutes, however often Home is pressed. */
+		var last = parseInt(read(LAST) || '0', 10);
+		if (last && (Date.now() - last) < GAP) { return; }
+		if (mark.complete && mark.naturalWidth) { start(false); }
+	});
+})();
+</script>
+		<?php
+	}
 
 	private static function loader() {
 		/* A published file arrives with its content already in it, so there is

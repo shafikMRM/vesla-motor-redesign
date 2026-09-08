@@ -1117,6 +1117,111 @@ html.is-loading{overflow:hidden}
    the browser from fetching their photographs. */
 html.has-js .card-later{display:none}
 #more{min-width:230px}
+
+/* ─ the opening ─
+
+   The shield arriving on its own, then settling into the hero's copy of
+   itself. Everything here moves on transform and opacity and nothing else:
+   both are composited, neither can move anything on the page, and neither is
+   visible to CLS. width/height or top/left would put a full-screen element on
+   the layout path every frame, which is the cost this is written to avoid.
+
+   The ground is flat var(--void) throughout. The film needed a colour walk
+   because its own black was ten levels darker than the page's; a transparent
+   PNG on the page's own ground has nothing to reconcile, so that whole
+   mechanism is gone rather than carried over.
+
+   display:none until the script opens it: with scripting off there is no
+   curtain at all and the page is simply the page. */
+.vesla-open{
+  position:fixed; inset:0; z-index:9999; display:none;
+  place-items:center;
+  background:var(--void,#0D0D0E);
+  opacity:1;
+  /* Weighted late on purpose. An ease-out here would dissolve the ground away
+     while the mark is still halfway to the hero; ease-in holds it opaque
+     through most of the move and then goes. */
+  transition:opacity .45s cubic-bezier(.5,0,.85,.5);
+  overflow:hidden;
+}
+.vesla-open.is-open{display:grid}
+html.vesla-open-run{overflow:hidden}
+
+/* Larger than the hero's shield so the settle has somewhere to travel from,
+   and capped so it does not become a wall on a big monitor. */
+.vesla-open-mark{
+  width:min(64vw,440px); height:auto; display:block;
+  opacity:0;
+  transform:translate(0,0) scale(.94);
+  transform-origin:50% 50%;
+}
+
+/* one: it arrives */
+.vesla-open.is-entering .vesla-open-mark{
+  opacity:1;
+  transform:translate(0,0) scale(1);
+  transition:opacity .9s ease-out, transform .9s cubic-bezier(.22,.61,.36,1);
+}
+
+/* two: it drifts, so it is never quite still. Linear rather than eased --
+   an eased drift reads as another entrance, and this is meant to be a thing
+   you feel rather than watch. */
+.vesla-open.is-holding .vesla-open-mark{
+  transform:translate(0,0) scale(1.04);
+  transition:transform .4s linear;
+}
+
+/* three: it settles on to the hero shield. The transform is written inline by
+   JS from the shield's measured rectangle -- it cannot live here, because the
+   shield is fluid and its size and centre both move with the viewport.
+   Slight overshoot, damped, so it settles rather than stops dead. */
+.vesla-open.is-settling{opacity:0}
+.vesla-open.is-settling .vesla-open-mark{
+  /* Stated rather than inherited. The mark is only visible because
+     is-entering says so, and this rule must not depend on that class still
+     being present for its own correctness. */
+  opacity:1;
+  transition:transform .45s cubic-bezier(.22,1.16,.36,1);
+}
+.vesla-open.is-going .vesla-open-mark{opacity:1}
+
+/* and the way out where there is nothing to land on, under 821px */
+.vesla-open.is-going{opacity:0}
+
+/* Quiet, and there from the first frame -- somebody who does not want to
+   watch should never have to wait to say so. */
+.vesla-open-skip{
+  position:absolute; right:clamp(16px,4vw,40px); bottom:clamp(16px,4vw,40px);
+  font-family:var(--body,inherit); font-size:13px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--paper,#fff);
+  background:transparent; border:1px solid rgba(255,255,255,.28);
+  border-radius:999px; padding:9px 18px; cursor:pointer;
+  opacity:.75; transition:opacity .2s,border-color .2s,color .2s;
+}
+.vesla-open-skip:hover,.vesla-open-skip:focus-visible{
+  opacity:1; color:var(--amber,#F2ED28); border-color:var(--amber,#F2ED28);
+}
+
+/* ─ the hero rises behind it ─
+
+   Held while the mark is over it, released a beat into the settle so the page
+   arrives behind the shield rather than being switched on underneath it. Only
+   the page's own reveal state is borrowed; nothing new is animated.
+
+   .hero-logo is deliberately NOT held. It is the thing being landed on, so it
+   must be at its final size and position before the mark is measured against
+   it -- and a held .reveal carries a translate and a scale, which
+   getBoundingClientRect reports. Holding the shield would land the mark on a
+   target 2% small and 14px low.
+
+   Scoped to html.m-on because that is what puts .reveal into a hidden state in
+   the first place. With motion off there is nothing held and nothing to rise,
+   and this must not invent either. */
+html.m-on.vesla-open-hold .hero .reveal:not(.hero-logo){
+  opacity:0;
+  transform:translateY(14px) scale(.98);
+  transition:none;
+}
 .more-n{opacity:.6;letter-spacing:.08em;text-transform:none;font-size:12px}
 /* the card focused after a batch is revealed should not draw a focus ring —
    it is taking focus programmatically, not because anyone tabbed to it */
