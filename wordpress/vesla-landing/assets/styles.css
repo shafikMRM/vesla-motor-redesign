@@ -1131,13 +1131,34 @@ html.has-js .card-later{display:none}
    display:none until the script says otherwise: with scripting off there is
    no overlay at all and the page is simply the page. */
 .vesla-intro{
+  /* The film's OWN black, not the page's.
+
+     These are not the same colour: the supplied clip sits on #030303 and
+     the page's ground is #0D0D0E, about ten levels apart. Painting the
+     container in the page's colour would put a lighter panel either side of
+     a darker film for the whole three seconds — with contain on a desktop
+     window that is some 467px of it down each edge, and the join is plainly
+     visible. So while the film plays, the container is the film's colour and
+     there is no join at all.
+
+     Named here so that a different film needs one value changed rather than
+     a rule rewritten. It must match whatever the clip sits on. */
+  --film-ground:#030303;
+
   position:fixed; inset:0; z-index:9999; display:none;
-  background:var(--void,#0D0D0E);
-  opacity:1; transition:opacity .3s ease;
+  background:var(--film-ground);
+  opacity:1;
+  transition:opacity .3s ease, background-color .3s ease;
 }
 .vesla-intro.is-open{display:block}
 html.vesla-intro-run{overflow:hidden}
-.vesla-intro.is-going{opacity:0}
+
+/* And on the way out it becomes the page's ground, over the same 300ms as
+   the fade. The film is dissolving toward a page that is already painted
+   underneath in #0D0D0E, so moving the ground with it means the two arrive
+   at the same colour together and there is no step at the end. Nothing is
+   done to the film itself. */
+.vesla-intro.is-going{opacity:0; background:var(--void,#0D0D0E)}
 
 /* The film is one fixed shape and the viewport is not — a portrait clip on a
    landscape screen has to be padded or cropped, and which one is right
@@ -1152,7 +1173,7 @@ html.vesla-intro-run{overflow:hidden}
    it was supplied. */
 .vesla-intro-film{
   width:100%; height:100%; display:block;
-  object-fit:contain; background:var(--void,#0D0D0E);
+  object-fit:contain; background:var(--film-ground,#030303);
 }
 .vesla-intro-film.is-contain{object-fit:contain}
 .vesla-intro-film.is-cover{object-fit:cover}

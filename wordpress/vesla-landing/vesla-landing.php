@@ -7268,14 +7268,36 @@ class Vesla_Render {
 		try { film.pause(); } catch (e) {}
 		box.classList.add('is-going');
 		root.classList.remove('vesla-intro-run');
-		setTimeout(function () {
+
+		/* Taken away when the fade has actually finished, not on a timer.
+
+		   A fixed 400ms was wrong here, and measurably so. With the film
+		   still decoding, the transition did not begin for about 290ms after
+		   the class was set -- so the tidy-up arrived while the overlay was
+		   still a third opaque and took it away mid-dissolve, which the eye
+		   reads as the page jumping the last of the way. The event knows
+		   when it is really over and a clock does not.
+
+		   The timer stays as a backstop, long enough for a busy main thread:
+		   a transition that never fires at all -- because the tab was
+		   backgrounded, say -- must not strand anybody behind the curtain. */
+		var closed = false;
+		var shut = function () {
+			if (closed) { return; }
+			closed = true;
+			box.removeEventListener('transitionend', onFade);
 			box.classList.remove('is-going');
 			box.classList.remove('is-open');
 			/* Wound back rather than thrown away: the Home link shows this same
 			   element again, and a film left on its last frame would open on
 			   the end of itself. */
 			try { film.currentTime = 0; } catch (e) {}
-		}, 400);   /* longer than the 300ms fade in the stylesheet */
+		};
+		var onFade = function (e) {
+			if (e.target === box && e.propertyName === 'opacity') { shut(); }
+		};
+		box.addEventListener('transitionend', onFade);
+		setTimeout(shut, 1500);
 	};
 
 	var start = function (lock) {
