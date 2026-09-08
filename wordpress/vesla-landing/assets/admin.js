@@ -91,10 +91,15 @@
 			e.preventDefault();
 			if ( ! window.wp || ! window.wp.media ) { return; }
 
+			/* Same control, two kinds of file. The intro film is chosen through
+			   this picker as well, and offering it the whole image library would
+			   be a picker that cannot pick the thing it is for. */
+			var kind = box.getAttribute( 'data-vesla-media' ) === 'video' ? 'video' : 'image';
+
 			var frame = window.wp.media( {
-				title: L.chooseImage || 'Choose image',
-				button: { text: L.useImage || 'Use this image' },
-				library: { type: 'image' },
+				title: kind === 'video' ? ( L.chooseVideo || 'Choose video' ) : ( L.chooseImage || 'Choose image' ),
+				button: { text: kind === 'video' ? ( L.useVideo || 'Use this video' ) : ( L.useImage || 'Use this image' ) },
+				library: { type: kind },
 				multiple: false
 			} );
 			frame.on( 'select', function () {
