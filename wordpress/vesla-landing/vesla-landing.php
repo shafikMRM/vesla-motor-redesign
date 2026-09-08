@@ -8180,9 +8180,25 @@ final class Vesla_Vehicle {
 			return;
 		}
 		/* The same stylesheet and script the settings screen uses, because the
-			   panel is drawn by the same field renderer — the gallery picker, the
-			   tick lists and the rich editors are all that code. */
+		   panel is drawn by the same field renderer -- the gallery picker, the
+		   tick lists and the rich editors are all that code. */
 		wp_enqueue_media();
+
+		/* And the editor, which this screen was missing.
+
+		   admin.js upgrades a 'rich' field to TinyMCE the first time it is
+		   clicked, but it checks for wp.editor first and quietly does nothing
+		   when it is absent -- which is honest degradation, and also why this
+		   went unnoticed: "About this car" looked like a plain textarea and
+		   behaved like one, on the screen where the longest prose on the site
+		   is written. The settings screen loaded this and the car screen did
+		   not, so the same field type behaved differently depending on where
+		   you met it.
+
+		   This is the bootstrap only. No editor starts until a field is
+		   clicked, and where user_can_richedit() fails WordPress serves the
+		   plain half and the field still saves the same markup. */
+		wp_enqueue_editor();
 		wp_enqueue_style( 'vesla-admin', VESLA_URL . 'assets/admin.css', array(), vesla_asset_ver( 'assets/admin.css' ) );
 		wp_enqueue_script( 'vesla-admin', VESLA_URL . 'assets/admin.js', array( 'jquery' ), vesla_asset_ver( 'assets/admin.js' ), true );
 	}
