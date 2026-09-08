@@ -7256,6 +7256,11 @@ class Vesla_Render {
 
 	var running = false, ceiling = null, tail = null;
 
+	/* Whether the showing now on screen is the one that replaces the
+	   loading screen. A replay from the Home link is not: by then the
+	   page has long since loaded and the curtain is not up. */
+	var arrival = false;
+
 	var end = function () {
 		if (!running) { return; }
 		running = false;
@@ -7303,6 +7308,7 @@ class Vesla_Render {
 	var start = function (lock) {
 		if (running) { return; }
 		running = true;
+		arrival = !!lock;
 		write(LAST, String(Date.now()));
 		box.classList.add('is-open');
 		if (lock) { root.classList.add('vesla-intro-run'); }
@@ -7326,6 +7332,22 @@ class Vesla_Render {
 	film.addEventListener('error', end);
 	film.addEventListener('playing', function () {
 		clearTimeout(ceiling);
+
+		/* Now, and not a moment earlier, the loading screen can go.
+
+		   This hangs on 'playing' rather than on the decision to play,
+		   because those are not the same event and the difference is the
+		   only failure that really matters here: a suppressed loader with
+		   no film behind it is a blank arrival. Every path where the film
+		   does not actually start -- a repeat visit, reduced motion, no
+		   scripting, autoplay refused, the ceiling expiring, Skip pressed
+		   before the first frame -- never reaches this line, and the
+		   loading screen carries on doing its job untouched.
+
+		   Only the class comes off. The curtain element itself is left
+		   alone: the stylesheet hides it without the class, and moving to a
+		   car reuses that same node. */
+		if (arrival) { root.classList.remove('is-loading'); }
 		/* A second ceiling measured from the clip's own length, in case it
 		   stalls half way and 'ended' never arrives. */
 		var left = (isFinite(film.duration) && film.duration > 0) ? (film.duration - film.currentTime) * 1000 : MAX;
