@@ -9913,11 +9913,34 @@ class Vesla_Rest {
 /* ========================================================================== */
 
 class Vesla_Publisher {
+	/** The scheduled job that writes the site. */
+	const EVENT = 'vesla_publish';
+
+	/**
+	 * How close together two automatic publishes may run, in seconds.
+	 *
+	 * Long enough that saving a car, then its price, then its photograph
+	 * costs one publish rather than three; short enough that nobody sits
+	 * looking at a stale page wondering whether it worked. The manual
+	 * Republish button ignores this entirely -- somebody who has just asked
+	 * for it is waiting for it.
+	 */
+	const DEBOUNCE = 30;
+
+	/** Whether this request has already arranged to publish when it ends. */
+	private static $after_response = false;
+
 	public static function init() {
 		/* Every save republishes. An editor who changes the phone number and
 		   sees the live page unchanged has, reasonably, concluded the plugin
 		   is broken — so publishing is not a thing to remember to do. */
 		add_action( 'vesla_content_saved', array( __CLASS__, 'on_save' ), 20 );
+
+		/* The same writing, reached the other way: WP-Cron runs this when a
+		   request ended before it could publish, or when the throttle deferred
+		   it. Registered always, so an event left due by an older version is
+		   still picked up rather than firing into nothing. */
+		add_action( self::EVENT, array( __CLASS__, 'run_queued' ) );
 
 		add_action( 'admin_post_vesla_republish', array( __CLASS__, 'handle_republish' ) );
 		add_action( 'admin_post_vesla_export', array( __CLASS__, 'handle_export' ) );
@@ -10056,14 +10079,125 @@ class Vesla_Publisher {
 	   PUBLISH
 	   ═══════════════════════════════════════════════════════════════════════ */
 
+	/**
+	 * Something a visitor can see has changed. Note it; do not write it yet.
+	 *
+	 * This used to publish inline, which put twenty-six files between the
+	 * editor and their own save -- about seven tenths of a second on this
+	 * machine, longer on shared hosting, and paid again every time the hook
+	 * fired twice in one request. Saving a car is not the moment to rebuild
+	 * the site; it is the moment to remember that the site needs rebuilding.
+	 *
+	 * So the work is marked as owing and picked up once the response has
+	 * gone. Nothing is dropped on the way: a publish that cannot run now
+	 * leaves the mark in place and a job due to come back for it.
+	 */
 	public static function on_save() {
 		if ( ! self::enabled() ) {
 			return;
 		}
-		$result = self::publish();
-		/* Stored rather than thrown: this runs inside a settings save, where a
-		   wp_die() would lose the editor's work. The notice is raised on the
-		   next screen instead — see notices(). */
+
+		update_option( 'vesla_publish_pending', time(), false );
+
+		/* Once per request, however many times this hook fires -- and it does
+		   fire more than once, from the settings write and from a car save. */
+		if ( ! self::$after_response ) {
+			self::$after_response = true;
+			add_action( 'shutdown', array( __CLASS__, 'run_after_response' ), 999 );
+		}
+
+		/* Due a little way out, deliberately not now.
+
+		   An event that is already due gets picked up inside this very
+		   request -- measured at about a second added to the save, which is
+		   the whole thing being avoided. Dated forward, nothing here finds
+		   work to do and the save leaves at once; the next request that comes
+		   along after the window carries it instead.
+
+		   Left standing whatever happens next, because without it an edit
+		   could sit owing forever with nothing due to come back for it. */
+		if ( ! wp_next_scheduled( self::EVENT ) ) {
+			wp_schedule_single_event( time() + self::DEBOUNCE, self::EVENT );
+		}
+	}
+
+	/**
+	 * Publish once the browser has its answer.
+	 *
+	 * Under PHP-FPM the response can be handed back and PHP kept running
+	 * underneath it, so the writing happens here, behind a save that has
+	 * already returned.
+	 *
+	 * Everywhere else -- plain CGI, which is what this was first tested on,
+	 * and mod_php -- there is no way to release the response early, and
+	 * doing the work here would put it back in front of the editor: the
+	 * exact thing this change exists to stop. So it is not done here at
+	 * all, and the event is left standing for another request to carry.
+	 */
+	public static function run_after_response() {
+		if ( function_exists( 'fastcgi_finish_request' ) ) {
+			fastcgi_finish_request();
+			self::run_queued();
+			return;
+		}
+		/* Nothing else happens here, on purpose.
+
+		   The obvious move is to poke wp-cron.php so the writing starts at
+		   once. It was written that way and then measured: the spawn cost
+		   about a second on the machine this was built on -- longer than the
+		   publish it was trying to get out of the way of, and paid by the
+		   editor, which is the exact thing being fixed here.
+
+		   WordPress already spawns cron by itself on the next request that
+		   finds work due, and after a save there is always a next request:
+		   the redirect back to the screen. So the event is left standing and
+		   somebody else's request carries it. A moment later, and free. */
+	}
+
+
+	/**
+	 * Write the site, if it is owed and not too soon after the last time.
+	 *
+	 * Reached from both directions -- the end of the request that saved, and
+	 * the scheduled job -- so it must be safe to call with nothing to do and
+	 * safe to call twice. The pending mark is what makes it so: whichever
+	 * arrives first clears it and does the work, and the other finds nothing
+	 * owing and leaves.
+	 */
+	public static function run_queued() {
+		if ( ! self::enabled() || ! get_option( 'vesla_publish_pending' ) ) {
+			return;   // nothing owing, or publishing is switched off
+		}
+
+		$last = (int) get_option( 'vesla_publish_last_run', 0 );
+		if ( $last && time() - $last < self::DEBOUNCE ) {
+			/* Too soon after the last one. The mark stays, and a job is left due
+			   for when the window closes, so this delays a publish rather than
+			   dropping one. */
+			if ( ! wp_next_scheduled( self::EVENT ) ) {
+				wp_schedule_single_event( $last + self::DEBOUNCE, self::EVENT );
+			}
+			return;
+		}
+
+		/* Cleared before the work, not after. A publish that dies half way
+		   through must not leave a mark that starts it again on every request
+		   from now on; the failure is reported instead. */
+		delete_option( 'vesla_publish_pending' );
+		update_option( 'vesla_publish_last_run', time(), false );
+
+		self::record( self::publish() );
+	}
+
+	/**
+	 * Remember how the last write went.
+	 *
+	 * Stored rather than thrown. Nothing is watching an automatic run, and
+	 * by the time it happens the editor's save has already been answered --
+	 * so a failure has to wait somewhere until somebody is looking. The
+	 * notice is raised on the next screen; see notices().
+	 */
+	private static function record( $result ) {
 		update_option(
 			'vesla_publish_status',
 			is_wp_error( $result )
@@ -10596,6 +10730,11 @@ if ( 'vehicle' === $kind ) :
 		check_admin_referer( 'vesla_republish' );
 
 		$result = self::publish();
+		/* It counts as a publish, so the automatic one does not immediately
+		   repeat work somebody has just asked for and watched finish. */
+		update_option( 'vesla_publish_last_run', time(), false );
+		delete_option( 'vesla_publish_pending' );
+
 		update_option(
 			'vesla_publish_status',
 			is_wp_error( $result )
@@ -10926,6 +11065,15 @@ register_activation_hook(
 );
 
 register_deactivation_hook( __FILE__, 'flush_rewrite_rules' );
+
+/* And nothing due. A deactivated plugin whose publish job is still on the
+   schedule wakes up to an action nothing is listening for. */
+register_deactivation_hook(
+	__FILE__,
+	static function () {
+		wp_clear_scheduled_hook( Vesla_Publisher::EVENT );
+	}
+);
 
 /**
  * Prompt on first run. Shown once, and only until the page has been opened —
