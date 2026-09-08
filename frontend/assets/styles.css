@@ -1117,6 +1117,81 @@ html.is-loading{overflow:hidden}
    the browser from fetching their photographs. */
 html.has-js .card-later{display:none}
 #more{min-width:230px}
+/* ─ the arrival film ─
+   The container paints the ground itself rather than inheriting it. body is
+   white on this site, so an overlay that let the page show through would
+   flash white for a frame between the poster and the first painted pixel,
+   which is the one thing this whole piece exists to avoid.
+
+   var(--void) rather than a hex, because the palette is computed from the
+   admin's ink colour at render time — hard-coding it here would drift the
+   moment the theme changed. The film's own ground is baked in when it is
+   encoded and cannot follow, which is why the field help names the colour.
+
+   display:none until the script says otherwise: with scripting off there is
+   no overlay at all and the page is simply the page. */
+.vesla-intro{
+  /* The film's OWN black, not the page's.
+
+     These are not the same colour: the supplied clip sits on #030303 and
+     the page's ground is #0D0D0E, about ten levels apart. Painting the
+     container in the page's colour would put a lighter panel either side of
+     a darker film for the whole three seconds — with contain on a desktop
+     window that is some 467px of it down each edge, and the join is plainly
+     visible. So while the film plays, the container is the film's colour and
+     there is no join at all.
+
+     Named here so that a different film needs one value changed rather than
+     a rule rewritten. It must match whatever the clip sits on. */
+  --film-ground:#030303;
+
+  position:fixed; inset:0; z-index:9999; display:none;
+  background:var(--film-ground);
+  opacity:1;
+  transition:opacity .3s ease, background-color .3s ease;
+}
+.vesla-intro.is-open{display:block}
+html.vesla-intro-run{overflow:hidden}
+
+/* And on the way out it becomes the page's ground, over the same 300ms as
+   the fade. The film is dissolving toward a page that is already painted
+   underneath in #0D0D0E, so moving the ground with it means the two arrive
+   at the same colour together and there is no step at the end. Nothing is
+   done to the film itself. */
+.vesla-intro.is-going{opacity:0; background:var(--void,#0D0D0E)}
+
+/* The film is one fixed shape and the viewport is not — a portrait clip on a
+   landscape screen has to be padded or cropped, and which one is right
+   depends on the film, so it is a setting rather than a decision made here.
+
+   contain pads: every pixel of the film is shown, and because the padding is
+   the same colour as the film's own ground there is nothing to see.
+   cover fills: the top and bottom are cropped on a wide window, which suits a
+   film whose subject stays well inside the middle.
+
+   Neither touches the film. No transform, no filter, no mask — it plays as
+   it was supplied. */
+.vesla-intro-film{
+  width:100%; height:100%; display:block;
+  object-fit:contain; background:var(--film-ground,#030303);
+}
+.vesla-intro-film.is-contain{object-fit:contain}
+.vesla-intro-film.is-cover{object-fit:cover}
+
+/* Quiet, and there from the first frame. The site's own type and its own
+   yellow rather than a browser default — and never absent, because somebody
+   who does not want to watch should not have to wait to say so. */
+.vesla-intro-skip{
+  position:absolute; right:clamp(16px,4vw,40px); bottom:clamp(16px,4vw,40px);
+  font-family:var(--body,inherit); font-size:13px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--paper,#fff);
+  background:transparent; border:1px solid rgba(255,255,255,.28);
+  border-radius:999px; padding:9px 18px; cursor:pointer;
+  opacity:.75; transition:opacity .2s,border-color .2s,color .2s;
+}
+.vesla-intro-skip:hover,.vesla-intro-skip:focus-visible{
+  opacity:1; color:var(--amber,#F2ED28); border-color:var(--amber,#F2ED28);
+}
 .more-n{opacity:.6;letter-spacing:.08em;text-transform:none;font-size:12px}
 /* the card focused after a batch is revealed should not draw a focus ring —
    it is taking focus programmatically, not because anyone tabbed to it */
