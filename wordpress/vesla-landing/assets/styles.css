@@ -1108,6 +1108,14 @@ html.is-loading{overflow:hidden}
    current page of stock rather than as another card. */
 .more-wrap{display:flex;justify-content:center;margin-top:clamp(28px,4vw,44px)}
 .more-wrap[hidden]{display:none}
+/* ─ the cars past the first page ─
+   Written into the HTML so every car has a link a crawler can follow and
+   somebody with no JavaScript can use. Folded away only where scripting is
+   on, because there app.js rebuilds the grid and owns the Show more button;
+   where it is off these stay visible, since nothing could ever reveal them.
+   display:none rather than visibility or opacity: only display:none keeps
+   the browser from fetching their photographs. */
+html.has-js .card-later{display:none}
 #more{min-width:230px}
 .more-n{opacity:.6;letter-spacing:.08em;text-transform:none;font-size:12px}
 /* the card focused after a batch is revealed should not draw a focus ring —
