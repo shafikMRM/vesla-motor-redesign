@@ -7217,6 +7217,12 @@ class Vesla_Render {
 		$max       = max( 1, (int) Vesla_Settings::get( 'extras', 'intro_max', 4 ) );
 		$skip      = trim( (string) Vesla_Settings::get( 'extras', 'intro_skip_label', '' ) );
 		$skip      = '' !== $skip ? $skip : __( 'Skip', 'vesla-landing' );
+
+		/* Whether prefers-reduced-motion is consulted at all. The same setting
+		   that gates the reduced-motion CSS block this class prints, so the
+		   film and the stylesheet answer the toggle together instead of
+		   separately. See the note beside the check itself. */
+		$respect = (bool) Vesla_Settings::get( 'extras', 'respect_reduced_motion', 0 );
 		?>
 <div class="vesla-intro" id="vesla-intro">
 	<video class="vesla-intro-film is-<?php echo esc_attr( $fit ); ?>" id="vesla-intro-film" aria-hidden="true"
@@ -7243,9 +7249,36 @@ class Vesla_Render {
 
 	/* Somebody who has asked for less movement gets none of it -- not a
 	   shortened film or a still, but the page as it would be. Removed
-	   outright, so neither arrival nor the Home link can revive it. */
+	   outright, so neither arrival nor the Home link can revive it.
+
+	   ASKED FOR is the whole difficulty, and why this is behind a setting
+	   rather than read straight from the browser. Windows reports
+	   "prefers-reduced-motion: reduce" from the Visual effects switch and
+	   from battery saver, neither of which is a considered accessibility
+	   choice -- SPI_GETCLIENTAREAANIMATION is what Chrome, Edge and Firefox
+	   all map the query to on Windows, so an ordinary laptop with animations
+	   dimmed reports the same thing as somebody with vestibular illness. On
+	   this project that false positive was deleting the film on the very
+	   machine it was being built on, while the loading screen -- whose own
+	   reduced-motion rule is parked -- stayed up in its place.
+
+	   So the query is only consulted when the administrator has switched
+	   "Respect reduced motion" on. Off, the film plays for everyone; on, it
+	   is removed for anyone whose browser asks, and the reduced-motion CSS
+	   block Vesla_Render prints is emitted by the same setting, so the two
+	   cannot disagree.
+
+	   DO NOT replace this with a bare matchMedia call. That is the bug this
+	   comment exists to prevent, and it looks like a fix. app.js, motion.js
+	   and the parked blocks in the two stylesheets hold their own flag at
+	   false for the same reason; they do not yet follow this setting, so
+	   turning it on reaches the film and the printed CSS but not those four.
+	   Moving them is a separate change and they must all move at once. */
+	var RESPECT = <?php echo $respect ? 'true' : 'false'; ?>;
 	var reduced = false;
-	try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+	if (RESPECT) {
+		try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+	}
 	if (reduced) { if (box.parentNode) { box.parentNode.removeChild(box); } return; }
 
 	/* Reading storage can throw, not only writing it: Safari with cookies
