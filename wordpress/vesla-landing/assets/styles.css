@@ -1232,6 +1232,23 @@ html.m-on .hero-v .reveal.in{transform:none}
 .hero-v .v-2{transition-delay:.09s}
 .hero-v .v-3{transition-delay:.18s}
 .hero-v .v-4{transition-delay:.27s}
+.hero-v .v-5{transition-delay:.36s}
+
+/* The figures, over a film rather than over flat ground.
+
+   Same four items and the same markup; what changes is that they now have to
+   hold their own against a moving picture. The hairline and the labels are
+   both lifted, because .58 alpha on a white label is comfortable over
+   var(--void) and disappears over a lit frame. The numerals come down a size:
+   the band is half the height of the classic hero and the row has to sit
+   under the buttons without pushing the whole section taller than it needs. */
+.hero-v .hero-stats{
+  margin-top:clamp(22px,3.5vh,38px);
+  padding-top:20px;
+  border-top-color:rgba(255,255,255,.22);
+}
+.hero-v .hero-stats b{font-size:clamp(24px,2.6vw,34px)}
+.hero-v .hero-stats span{color:rgba(238,238,236,.80)}
 
 /* ─ the opening ─
 

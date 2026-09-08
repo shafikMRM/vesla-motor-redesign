@@ -427,7 +427,7 @@ class Vesla_Schema {
 							'classic' => __( 'Classic — heading, paragraph and the shield', 'vesla-landing' ),
 							'video'   => __( 'Film — the same words over a film', 'vesla-landing' ),
 						),
-						'help'    => __( 'Both use the wording below. Changing this changes how it is presented, not what it says — there is one set of words and it is edited in one place. The film style needs a film and a poster picture before it will turn on.', 'vesla-landing' ),
+						'help'    => __( 'Both use the wording and the figures below. Changing this changes how they are presented, not what they say — there is one set of words and it is edited in one place. The film style needs a film and a poster picture before it will turn on. One thing it also gives up: the film style has no shield beside the heading, so the opening animation has nothing to settle onto and ends in a plain cross-fade instead. That is the trade, and it is the honest behaviour rather than a fault.', 'vesla-landing' ),
 					),
 					'video' => array(
 						'type'      => 'video',
@@ -6066,7 +6066,7 @@ class Vesla_Render {
 				   it. The delays have to go too, or the staggered words would
 				   still arrive one after another, just instantly each. */
 				. '.hero-v .reveal{opacity:1!important;transform:none!important;transition:none!important}'
-				. '.hero-v .v-1,.hero-v .v-2,.hero-v .v-3,.hero-v .v-4{transition-delay:0s!important}'
+				. '.hero-v .v-1,.hero-v .v-2,.hero-v .v-3,.hero-v .v-4,.hero-v .v-5{transition-delay:0s!important}'
 				. '.hero-v-film{transform:none!important;transition:none!important}'
 				. '}';
 		}
@@ -7663,6 +7663,41 @@ class Vesla_Render {
 		<?php
 	}
 
+	/**
+	 * The row of figures under the opening section.
+	 *
+	 * Shared by both styles for the same reason the words are: these four are
+	 * the showroom's credibility and they sit above the fold, so which
+	 * presentation is switched on must not decide whether they exist. They
+	 * were briefly absent from the film style and that was a content
+	 * regression, not a design choice.
+	 *
+	 * @param array $h     The hero section's settings.
+	 * @param bool  $video Whether the film style is in force. Adds the last
+	 *                     step of the stagger, so the figures arrive after the
+	 *                     buttons rather than with them.
+	 */
+	private static function hero_stats( $h, $video = false ) {
+		if ( empty( $h['stats'] ) ) {
+			return;
+		}
+		?>
+		<ul class="hero-stats reveal<?php echo $video ? ' v-5' : ''; ?>">
+			<?php foreach ( $h['stats'] as $s ) : ?>
+				<li>
+					<?php if ( $s['count'] && is_numeric( $s['value'] ) ) : ?>
+						<b data-count="<?php echo esc_attr( $s['value'] ); ?>"
+						   <?php echo $s['suffix'] ? 'data-suffix="' . esc_attr( $s['suffix'] ) . '"' : ''; ?>>0</b>
+					<?php else : ?>
+						<b><?php echo esc_html( $s['value'] . $s['suffix'] ); ?></b>
+					<?php endif; ?>
+					<span><?php echo esc_html( $s['label'] ); ?></span>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+		<?php
+	}
+
 	private static function hero() {
 		$h = Vesla_Settings::get( 'hero' );
 
@@ -7706,21 +7741,7 @@ class Vesla_Render {
 					</div>
 				<?php endif; ?>
 
-				<?php if ( ! empty( $h['stats'] ) ) : ?>
-					<ul class="hero-stats reveal">
-						<?php foreach ( $h['stats'] as $s ) : ?>
-							<li>
-								<?php if ( $s['count'] && is_numeric( $s['value'] ) ) : ?>
-									<b data-count="<?php echo esc_attr( $s['value'] ); ?>"
-									   <?php echo $s['suffix'] ? 'data-suffix="' . esc_attr( $s['suffix'] ) . '"' : ''; ?>>0</b>
-								<?php else : ?>
-									<b><?php echo esc_html( $s['value'] . $s['suffix'] ); ?></b>
-								<?php endif; ?>
-								<span><?php echo esc_html( $s['label'] ); ?></span>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php endif; ?>
+				<?php self::hero_stats( $h, false ); ?>
 			</div>
 		</section>
 		<?php
@@ -7779,6 +7800,7 @@ class Vesla_Render {
 				<div class="hero-copy">
 					<?php self::hero_copy( $h, true ); ?>
 				</div>
+				<?php self::hero_stats( $h, true ); ?>
 			</div>
 		</section>
 		<?php if ( $src ) : ?>
