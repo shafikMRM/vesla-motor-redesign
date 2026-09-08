@@ -11020,11 +11020,35 @@ if ( 'vehicle' === $kind ) :
 	 * went live.
 	 */
 	public static function notices() {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		$screen = get_current_screen();
+		if ( ! $screen ) {
 			return;
 		}
-		$screen = get_current_screen();
-		if ( ! $screen || 'toplevel_page_' . Vesla_Admin::SLUG !== $screen->id ) {
+
+		/* The settings screen, and the car screens.
+
+		   A publish that has not happened is most urgent to whoever just
+		   added the car, and they are not on the settings screen -- they are
+		   looking at the list they just added a row to. */
+		$on_settings = ( 'toplevel_page_' . Vesla_Admin::SLUG === $screen->id );
+		$on_cars     = in_array( $screen->id, array( 'edit-' . Vesla_Vehicle::TYPE, Vesla_Vehicle::TYPE ), true );
+		if ( ! $on_settings && ! $on_cars ) {
+			return;
+		}
+
+		/* Being told is not the same permission as being able to fix it.
+
+		   Cars use the ordinary post capabilities, so the person adding stock
+		   is typically an Editor with no manage_options at all. Gating this
+		   on administrator would hide "your car is not on the website" from
+		   the one person who needs to know it, which is the whole point of
+		   showing it here. So they are told, in words that suit what they can
+		   actually do about it, and everything else on this screen stays
+		   administrator business. */
+		$type      = get_post_type_object( Vesla_Vehicle::TYPE );
+		$may_edit  = $type && current_user_can( $type->cap->edit_posts );
+		$may_admin = current_user_can( 'manage_options' );
+		if ( ! $may_admin && ! $may_edit ) {
 			return;
 		}
 
@@ -11034,7 +11058,7 @@ if ( 'vehicle' === $kind ) :
 		   looks like it worked, and the public site quietly stops matching the
 		   editor for weeks. There is no error to notice because nothing failed.
 		   So it is said out loud, on the screen where the saving happens. */
-		if ( ! self::enabled() && file_exists( self::target_file() ) ) {
+		if ( $may_admin && $on_settings && ! self::enabled() && file_exists( self::target_file() ) ) {
 			printf(
 				'<div class="notice notice-warning"><p><strong>%s</strong></p><p>%s</p><p><code>%s</code></p></div>',
 				esc_html__( 'The public page is no longer being updated.', 'vesla-landing' ),
@@ -11049,7 +11073,23 @@ if ( 'vehicle' === $kind ) :
 		   published successfully has no status to read, and that is exactly
 		   the site where this matters most. */
 		$late = self::overdue();
-		if ( $late ) {
+		if ( $late && ! $may_admin ) {
+			/* No cron line and no button: neither is any use to somebody who
+			   cannot act on them. What they need is the fact and who to ask. */
+			printf(
+				'<div class="notice notice-warning"><p><strong>%s</strong></p><p>%s</p></div>',
+				esc_html__( 'Your changes are saved, but the website has not been updated yet.', 'vesla-landing' ),
+				esc_html(
+					sprintf(
+						/* translators: %s: a length of time, e.g. "2 hours". */
+						__( 'A change has been waiting %s to reach the public site, so visitors are still seeing the previous version. Nothing is lost. Ask an administrator to open Landing Page and press Publish now.', 'vesla-landing' ),
+						human_time_diff( (int) get_option( 'vesla_publish_pending' ), time() )
+					)
+				)
+			);
+		}
+
+		if ( $late && $may_admin ) {
 			$waiting = human_time_diff( (int) get_option( 'vesla_publish_pending' ), time() );
 			printf(
 				'<div class="notice notice-warning"><p><strong>%s</strong></p><p>%s</p><p>%s</p><p><code>%s</code></p><p>%s</p><p><a class="button button-primary" href="%s">%s</a></p></div>',
@@ -11067,6 +11107,12 @@ if ( 'vehicle' === $kind ) :
 				esc_url( self::republish_url() ),
 				esc_html__( 'Publish now', 'vesla-landing' )
 			);
+		}
+
+		/* Everything past here is for whoever configures the site, and only
+		   on the screen where they configure it. */
+		if ( ! $may_admin || ! $on_settings ) {
+			return;
 		}
 
 		$status = get_option( 'vesla_publish_status' );
