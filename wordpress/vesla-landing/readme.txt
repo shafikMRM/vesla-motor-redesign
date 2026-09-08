@@ -132,58 +132,87 @@ not both write it.
 
 == Backing up and moving the content ==
 
-The database holds everything an administrator has typed: the settings and
-every vehicle. The code and the published pages can be kept in version
-control; the content cannot, unless it is written out as a file. Three
-different things do that, and they are not interchangeable.
+READ THIS FIRST: the content export is not a backup.
+
+It carries every word and every vehicle. It does NOT carry a single
+photograph. Restore from it alone into an empty install and you get the
+complete site with no pictures on it -- and photographs are the one thing
+this site is short of, so that is not a small gap.
+
+A real backup of this site is two things together:
+
+  1. a database dump (mysqldump, or your host's backup tool), and
+  2. the wp-content/uploads folder.
+
+Take both. The content export is for putting the words and the cars into
+version control alongside the code, and for moving content between installs
+that already share a media library. It is not a substitute for either of the
+two above, and nothing in this plugin is.
+
+= What the export does about pictures =
+
+Every picture on this site is stored as a media library id, and an id means
+nothing in another install -- id 88 there is a different picture, or none.
+So the export records the FILE each id points at as well as the id:
+
+    "media": { "88": "2026/09/f3dcc04d50b14e1988b2864a1b92c41d-.webp" }
+
+On restore each of those files is looked up in the media library being
+restored into, and every reference is renumbered to whatever id it has
+there. So if you carried the uploads folder across and let WordPress import
+the media, the photographs reattach themselves to the right cars even though
+the numbers have all changed.
+
+If a file is not in that media library, its reference is left alone and
+simply does not resolve. The car then shows as one with no photograph yet,
+which every part of this site already handles. The import reports how many
+were found and how many were not, so you know before looking at the site.
+
+= The three files, and which one to use =
 
 **A copy for safe keeping.** Landing Page -> Backups -> "Download a copy".
 Every stored setting as JSON, including the address enquiries are sent to.
-This is a recovery file. Keep it somewhere private and do NOT commit it.
+A recovery file. Keep it somewhere private and do NOT commit it.
 
-**Automatic backups.** One is taken before every save, into
-wp-content/uploads/vesla-backups/, and the last ten are kept. Put one back
-from the same panel. These also hold the enquiry address, and the uploads
-folder is not for committing.
+**Automatic backups.** One before every save, into
+wp-content/uploads/vesla-backups/, last ten kept, restored from the same
+panel. These also hold the enquiry address.
 
 **The content export.** Landing Page -> Backups -> "Write the content
-export". This writes every setting and every vehicle to content-export.json
-in the folder named under "Publish the public page" -> "Folder to write the
-content export into". Unlike the two above, this one is meant to be
-committed: the address enquiries are delivered to is left out of it, and so
-is everything under Enquiries. It is sorted the same way every time, so a
-commit shows the values that changed rather than a reshuffled file.
+export". Writes content-export.json to the folder named under "Publish the
+public page" -> "Folder to write the content export into". This is the one
+meant to be committed: the enquiry address is left out, and so is everything
+under Enquiries. It sorts identically every time, so a commit shows the
+values that changed rather than a reshuffled file.
 
 = Restoring content into a fresh install =
 
-1. Install and activate the plugin. It will seed itself with the starter
-   copy; that is expected and about to be replaced.
+1. Install and activate the plugin. It seeds itself with the starter copy;
+   that is expected and about to be replaced.
 
-2. Copy content-export.json into the folder the export setting points at, or
-   anywhere the site can read.
+2. Bring the pictures over first, if you want any: copy wp-content/uploads
+   across and let WordPress index the media, or import the media library by
+   whatever route your host offers. Do this BEFORE step 3 -- the re-matching
+   only finds what is already there.
 
-3. Import it. Either from Landing Page -> Backups -> "Load a copy back in",
-   or, with WP-CLI:
+3. Import content-export.json, either from Landing Page -> Backups -> "Load
+   a copy back in", or with WP-CLI:
 
        wp eval '$d = json_decode( file_get_contents( "content-export.json" ), true );
                 $r = Vesla_Store::import_content( $d );
                 echo is_wp_error( $r ) ? $r->get_error_message() : print_r( $r, true );'
 
-   Settings are replaced wholesale. Vehicles are matched on the car's own
-   number rather than the WordPress post id, so a car that already exists is
-   updated in place and one that does not is created carrying the same
-   number. That is what keeps every car's web address the same after a
-   restore -- the addresses are built from the car number, not the post id.
+   It reports settings written, cars updated, cars created, and how many
+   pictures were found and lost.
 
-4. Two things the export deliberately does not carry, because neither is
-   content:
+   Settings are replaced wholesale. Cars are matched on the car's own number
+   rather than the WordPress post id, so a car that already exists is updated
+   in place and one that does not is created carrying the same number. That
+   is what keeps every car's web address the same -- the addresses are built
+   from the car number, not the post id.
 
-   * The address enquiries are sent to. Set it again under "Contact section
-     & enquiry form".
-   * Pictures. The export records which picture each field points at, by its
-     media library id, and those ids only mean something in the install they
-     came from. Move the uploads folder and the media library across as
-     well, or set the pictures again.
+4. Set the address enquiries are sent to, under "Contact section & enquiry
+   form". The export never carries it.
 
 5. Press Save once. That rebuilds the taxonomies behind the vehicle list and
    writes the public pages out again.

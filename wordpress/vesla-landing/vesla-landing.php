@@ -2412,6 +2412,27 @@ $cols				PRIMARY KEY  (id),
 			return array( $a['car_id'], $a['slug'] ) <=> array( $b['car_id'], $b['slug'] );
 		} );
 
+		/* ── the pictures, by name as well as by number ──
+
+		   Every picture on this site is stored as a media library id, and an id
+		   means nothing anywhere else: restore into a fresh install and id 88
+		   is either a different picture or no picture. Recording the file each
+		   id points at gives a restore something to match on, so an install
+		   whose uploads folder has been carried across can find the same
+		   photographs again even though WordPress has renumbered them.
+
+		   It is a re-match, not a backup. If the file is not in the media
+		   library of the install being restored into, nothing here can conjure
+		   it -- see the readme. */
+		$media = array();
+		foreach ( self::media_ids( $rows, $cars ) as $id ) {
+			$file = (string) get_post_meta( $id, '_wp_attached_file', true );
+			if ( '' !== $file ) {
+				$media[ (string) $id ] = $file;
+			}
+		}
+		ksort( $media );
+
 		/* No timestamp, deliberately.
 
 		   This file is committed, and the repository already records when it
@@ -2422,9 +2443,64 @@ $cols				PRIMARY KEY  (id),
 			'plugin'   => 'vesla-landing',
 			'version'  => VESLA_VERSION,
 			'site'     => home_url(),
+			'media'    => $media,
 			'settings' => $rows,
 			'vehicles' => $cars,
 		);
+	}
+
+	/** Settings paths, as section.field, whose value is one attachment id. */
+	private static function image_setting_paths() {
+		return Vesla_Schema::image_paths();
+	}
+
+	/** Car meta keys holding attachment ids => whether the key holds a list. */
+	private static function car_media_keys() {
+		$out = array();
+		foreach ( self::car_fields() as $key => $def ) {
+			$type = isset( $def['type'] ) ? $def['type'] : '';
+			if ( 'image' === $type ) {
+				$out[ Vesla_Vehicle::META . $key ] = false;
+			} elseif ( 'gallery' === $type ) {
+				$out[ Vesla_Vehicle::META . $key ] = true;
+			}
+		}
+		return $out;
+	}
+
+	/** Every attachment id referenced by these settings and these cars. */
+	private static function media_ids( $rows, $cars ) {
+		$paths = self::image_setting_paths();
+		$keys  = self::car_media_keys();
+		$ids   = array();
+
+		foreach ( $rows as $r ) {
+			if ( in_array( $r['section'] . '.' . $r['field'], $paths, true ) ) {
+				$ids[] = (int) $r['value'];
+			}
+		}
+		foreach ( $cars as $car ) {
+			foreach ( $keys as $key => $is_list ) {
+				if ( ! isset( $car['meta'][ $key ] ) ) {
+					continue;
+				}
+				foreach ( self::split_ids( $car['meta'][ $key ], $is_list ) as $one ) {
+					$ids[] = $one;
+				}
+			}
+		}
+
+		$ids = array_values( array_unique( array_filter( $ids ) ) );
+		sort( $ids );
+		return $ids;
+	}
+
+	/** A stored value as a list of ids. A gallery is comma separated. */
+	private static function split_ids( $value, $is_list ) {
+		if ( ! $is_list ) {
+			return array_filter( array( (int) $value ) );
+		}
+		return array_values( array_filter( array_map( 'intval', explode( ',', (string) $value ) ) ) );
 	}
 
 	/**
@@ -2445,7 +2521,44 @@ $cols				PRIMARY KEY  (id),
 			return new WP_Error( 'vesla_export_unreadable', __( 'That file is not a content export this plugin can read.', 'vesla-landing' ) );
 		}
 
-		$put = self::put_rows( $data['settings'] );
+		/* ── find the pictures again ──
+
+		   The ids in the file belong to the install it came from. Each one was
+		   recorded with the file it points at, so the same photograph can be
+		   found here under whatever number WordPress has given it. Anything
+		   not found keeps its old id and simply does not resolve, which is the
+		   same state as a car nobody has photographed yet -- every part of
+		   this site already degrades cleanly when a picture is missing. */
+		$remap  = array();
+		$missing = 0;
+		foreach ( (array) ( isset( $data['media'] ) ? $data['media'] : array() ) as $was => $file ) {
+			$now = self::attachment_by_file( (string) $file );
+			if ( ! $now ) {
+				$missing++;
+				continue;
+			}
+			if ( (int) $was !== $now ) {
+				$remap[ (int) $was ] = $now;
+			}
+		}
+
+		$settings = $data['settings'];
+		if ( $remap ) {
+			$paths = self::image_setting_paths();
+			foreach ( $settings as $i => $r ) {
+				if ( ! isset( $r['section'], $r['field'] ) ) {
+					continue;
+				}
+				if ( in_array( $r['section'] . '.' . $r['field'], $paths, true ) ) {
+					$id = (int) ( isset( $r['value'] ) ? $r['value'] : 0 );
+					if ( $id && isset( $remap[ $id ] ) ) {
+						$settings[ $i ]['value'] = (string) $remap[ $id ];
+					}
+				}
+			}
+		}
+
+		$put = self::put_rows( $settings );
 		if ( is_wp_error( $put ) ) {
 			return $put;
 		}
@@ -2476,13 +2589,22 @@ $cols				PRIMARY KEY  (id),
 				$made++;
 			}
 
+			$media_keys = self::car_media_keys();
 			foreach ( (array) ( isset( $car['meta'] ) ? $car['meta'] : array() ) as $key => $value ) {
 				/* The prefix is checked again on the way in. A file is a file, and
 				   this one decides what goes into post meta. */
 				if ( 0 !== strpos( (string) $key, Vesla_Vehicle::META ) ) {
 					continue;
 				}
-				update_post_meta( $id, (string) $key, (string) $value );
+				$value = (string) $value;
+				if ( $remap && isset( $media_keys[ $key ] ) ) {
+					$moved = array();
+					foreach ( self::split_ids( $value, $media_keys[ $key ] ) as $one ) {
+						$moved[] = isset( $remap[ $one ] ) ? $remap[ $one ] : $one;
+					}
+					$value = implode( ',', $moved );
+				}
+				update_post_meta( $id, (string) $key, $value );
 			}
 			update_post_meta( $id, Vesla_Vehicle::ID_META, (int) $car['car_id'] );
 		}
@@ -2491,10 +2613,30 @@ $cols				PRIMARY KEY  (id),
 		do_action( 'vesla_content_saved' );
 
 		return array(
-			'settings' => count( $data['settings'] ),
-			'updated'  => $kept,
-			'created'  => $made,
+			'settings'       => count( $settings ),
+			'updated'        => $kept,
+			'created'        => $made,
+			'pictures_found' => count( $data['media'] ?? array() ) - $missing,
+			'pictures_lost'  => $missing,
 		);
+	}
+
+	/**
+	 * The attachment whose file is this, or 0.
+	 *
+	 * Matched on _wp_attached_file, which is the path inside uploads and the
+	 * one thing about a picture that survives being moved between installs.
+	 */
+	private static function attachment_by_file( $file ) {
+		global $wpdb;
+		if ( '' === $file ) {
+			return 0;
+		}
+		$id = $wpdb->get_var( $wpdb->prepare( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- no core API matches an attachment by its file.
+			"SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_wp_attached_file' AND meta_value = %s LIMIT 1",
+			$file
+		) );
+		return $id ? (int) $id : 0;
 	}
 
 	/** The post holding a given car number, or 0. */
