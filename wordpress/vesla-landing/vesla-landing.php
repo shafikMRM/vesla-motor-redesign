@@ -1526,6 +1526,11 @@ class Vesla_Schema {
 						'help'  => __( 'Where visitors actually go — https://veslamotors.com, not the /cms address you are reading this on. Leave empty and the address one level above WordPress is used. It is needed because the published page has to point at its own stylesheet and pictures, and because search engines require full addresses in the listing data.', 'vesla-landing' ),
 						
 					),
+					'cms_url' => array(
+						'type'  => 'text',
+						'label' => __( 'Web address WordPress will be at on the live site', 'vesla-landing' ),
+						'help'  => __( 'Where WordPress itself answers once the site is live — usually the /cms address under your public site. The published page carries the photographs, the data feed and the enquiry endpoint from here, and while you are editing they all point at the computer you are editing on, which no visitor can reach. Leave empty and cms/ under the public address is used.', 'vesla-landing' ),
+					),
 					'export_path' => array(
 						'type'  => 'text',
 						'label' => __( 'Folder to write the content export into', 'vesla-landing' ),
@@ -9961,6 +9966,27 @@ class Vesla_Publisher {
 	}
 
 	/**
+	 * The address WordPress itself will answer on once the site is live.
+	 *
+	 * This is the other half of site_url(), and the two are not interchangeable.
+	 * Everything the publisher composes -- the canonical, the stylesheet, the
+	 * addresses inside the listing data -- is built from site_url(), so it is
+	 * right by construction. But everything WordPress hands back already
+	 * finished -- a photograph from the media library, the REST feed, the
+	 * enquiry endpoint -- carries the address WordPress is installed at, and
+	 * nothing was rewriting those. On the machine the editing happens on that
+	 * is a local address no visitor can reach, so the published page went out
+	 * with every car photograph pointing at somebody's own computer.
+	 *
+	 * Defaults to cms/ beneath the public site, which is the layout the rest of
+	 * this screen describes. Set it explicitly if WordPress lives elsewhere.
+	 */
+	public static function cms_url() {
+		$set = trim( (string) Vesla_Settings::get( 'publish', 'cms_url', '' ) );
+		return untrailingslashit( $set ? $set : self::site_url() . '/cms' );
+	}
+
+	/**
 	 * Copies the stylesheets, scripts and bundled pictures next to the page.
 	 *
 	 * So the public site does not reach into wp-content for its own stylesheet.
@@ -10500,8 +10526,37 @@ if ( 'vehicle' === $kind ) :
 		   markup, so the copies app.js reads still pointed into wp-content and
 		   the asset folder beside the page went unused by exactly the code that
 		   redraws the grid. */
-		$from = VESLA_URL . 'assets/';
-		$to   = self::site_url() . '/assets/';
+		$html = self::rebase( $html, VESLA_URL . 'assets/', self::site_url() . '/assets/' );
+
+		/* Then everything else WordPress put its own address on: the media
+		   library photographs, the REST feed app.js refreshes from, the enquiry
+		   endpoint, the preconnect hint. These are not composed here -- they
+		   arrive already finished from wp_get_attachment_url(), rest_url() and
+		   admin_url() -- so here is the only place they can be corrected.
+
+		   Second, not first: the plugin's own assets sit underneath the
+		   WordPress address, so rebasing WordPress first would leave the rule
+		   above nothing to match and the copies beside the page unused.
+
+		   Skipped when the two are the same address, which means this is not
+		   the split layout publishing is for and there is nothing to move. */
+		$wp = untrailingslashit( home_url() );
+		if ( $wp && $wp !== self::site_url() ) {
+			$html = self::rebase( $html, $wp, self::cms_url() );
+		}
+		return $html;
+	}
+
+	/**
+	 * Swaps one address for another everywhere it appears in a built page.
+	 *
+	 * Twice over, because the same addresses appear again inside the JSON data
+	 * block with their slashes escaped. A plain replace matched only the
+	 * markup, so the copies app.js reads still pointed into wp-content and the
+	 * asset folder beside the page went unused by exactly the code that redraws
+	 * the grid.
+	 */
+	private static function rebase( $html, $from, $to ) {
 		$html = str_replace( $from, $to, $html );
 		return str_replace(
 			str_replace( '/', '\/', $from ),
