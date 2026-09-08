@@ -5613,9 +5613,33 @@ class Vesla_Render {
 	/**
 	 * A slug with no car behind it: 410 if we used to have it, 404 if not.
 	 *
+	 * READ THIS BEFORE REASONING ABOUT WHAT A SOLD CAR ANSWERS. This runs on
+	 * a WordPress route, and on the published site WordPress never sees the
+	 * request: a car's address is a folder of static HTML sitting in front of
+	 * it, and the web server answers from disk without PHP being involved. So
+	 * for public traffic -- which is all traffic that matters here -- none of
+	 * what follows happens.
+	 *
+	 * What a sold car actually answers on the live site is build_sold(): a
+	 * tombstone page saying "This car has been sold", served as an ordinary
+	 * static file with status 200, carrying "noindex, follow" and a canonical
+	 * pointing at itself, and left out of sitemap.xml. Not a 410. The status
+	 * code is the web server's to give and it has an existing file to hand
+	 * back, so 200 is the only thing it can say; the noindex is what takes the
+	 * page out of the index instead, more slowly than a 410 would but without
+	 * needing PHP in front of every car.
+	 *
+	 * This function is therefore reached only where WordPress answers the
+	 * route itself -- previewing a car from the admin, and any deployment that
+	 * stopped publishing static files. It is kept, and kept correct, because
+	 * it is right for that case and because the two ways of retiring a car
+	 * should not drift apart. The reasoning below is about that case.
+	 *
 	 * A sold car's address stays in search results and in people's messages
 	 * for months. Answering 200 with nothing on it teaches a crawler the page
-	 * is fine and keeps it in the index, so that is never right.
+	 * is fine and keeps it in the index, so that is never right -- which is
+	 * why the static tombstone carries a noindex rather than being an empty
+	 * 200, and why deleting the folder outright would be worse than either.
 	 *
 	 * Between the other two:
 	 *
