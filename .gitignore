@@ -22,6 +22,10 @@ wp-content/uploads/
 *.sqlite
 
 # ── the machine, not the project ──────────────────────────────────────────
+# Claude Code's own working area: session scratch, and the extra
+# checkouts it makes under .claude/worktrees. Generated, and specific to
+# this machine.
+.claude/
 node_modules/
 .DS_Store
 Thumbs.db
