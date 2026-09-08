@@ -1517,7 +1517,7 @@ class Vesla_Schema {
 					'enabled' => array(
 						'type'  => 'toggle',
 						'label' => __( 'Write the public page when I save', 'vesla-landing' ),
-						'help'  => __( 'Leave this off if visitors see the page WordPress itself renders. Turn it on only for the separate-HTML-file set-up.', 'vesla-landing' ),
+						'help'  => __( 'Leave this off if visitors see the page WordPress itself renders. Turn it on only for the separate-HTML-file set-up. Because visitors then never load a WordPress page, WordPress’s scheduled tasks have nothing to run them — so the server needs a real cron job calling wp-cron.php every five minutes, and wp-config.php needs DISABLE_WP_CRON set to true. Without it the page is only written when somebody opens this screen, and you will be told here when that has left something waiting. The readme has the exact wording for cPanel.', 'vesla-landing' ),
 						
 					),
 					'site_url' => array(
@@ -8180,9 +8180,25 @@ final class Vesla_Vehicle {
 			return;
 		}
 		/* The same stylesheet and script the settings screen uses, because the
-			   panel is drawn by the same field renderer — the gallery picker, the
-			   tick lists and the rich editors are all that code. */
+		   panel is drawn by the same field renderer -- the gallery picker, the
+		   tick lists and the rich editors are all that code. */
 		wp_enqueue_media();
+
+		/* And the editor, which this screen was missing.
+
+		   admin.js upgrades a 'rich' field to TinyMCE the first time it is
+		   clicked, but it checks for wp.editor first and quietly does nothing
+		   when it is absent -- which is honest degradation, and also why this
+		   went unnoticed: "About this car" looked like a plain textarea and
+		   behaved like one, on the screen where the longest prose on the site
+		   is written. The settings screen loaded this and the car screen did
+		   not, so the same field type behaved differently depending on where
+		   you met it.
+
+		   This is the bootstrap only. No editor starts until a field is
+		   clicked, and where user_can_richedit() fails WordPress serves the
+		   plain half and the field still saves the same markup. */
+		wp_enqueue_editor();
 		wp_enqueue_style( 'vesla-admin', VESLA_URL . 'assets/admin.css', array(), vesla_asset_ver( 'assets/admin.css' ) );
 		wp_enqueue_script( 'vesla-admin', VESLA_URL . 'assets/admin.js', array( 'jquery' ), vesla_asset_ver( 'assets/admin.js' ), true );
 	}
@@ -9927,6 +9943,15 @@ class Vesla_Publisher {
 	 */
 	const DEBOUNCE = 30;
 
+	/**
+	 * How late an owed publish may be before the screen says so, in seconds.
+	 *
+	 * Long enough not to nag about the ordinary gap between saving and the
+	 * next request coming along, short enough that nobody spends an
+	 * afternoon believing a car is on the site when it is not.
+	 */
+	const OVERDUE = 300;
+
 	/** Whether this request has already arranged to publish when it ends. */
 	private static $after_response = false;
 
@@ -10217,6 +10242,32 @@ class Vesla_Publisher {
 	public static function publish() {
 		$dir  = self::target_dir();
 		$file = self::target_file();
+
+		/* The one folder this run is allowed to touch, when something has
+		   said so.
+
+		   A publisher driven from a script writes wherever the stored
+		   settings point, and during testing that twice turned out to be a
+		   working copy of this repository -- harmless both times, and only
+		   because the output happened to be identical. Naming the intended
+		   folder in VESLA_PUBLISH_ONLY turns that from something you have to
+		   remember into something the publisher refuses. Nothing defines it
+		   in ordinary use, so this costs one constant lookup. */
+		if ( defined( 'VESLA_PUBLISH_ONLY' ) ) {
+			$only = untrailingslashit( str_replace( '\\', '/', (string) VESLA_PUBLISH_ONLY ) );
+			$here = untrailingslashit( str_replace( '\\', '/', $dir ) );
+			if ( $only !== $here ) {
+				return new WP_Error(
+					'vesla_publish_guard',
+					sprintf(
+						/* translators: 1: the folder the settings point at. 2: the only folder this run may write to. */
+						__( 'Refused: the settings point at %1$s, but this run may only publish into %2$s.', 'vesla-landing' ),
+						$dir,
+						$only
+					)
+				);
+			}
+		}
 
 		if ( ! is_dir( $dir ) ) {
 			return new WP_Error(
@@ -10753,6 +10804,50 @@ if ( 'vehicle' === $kind ) :
 		exit;
 	}
 
+	/**
+	 * How long a publish has been owed past when it should have happened.
+	 *
+	 * The whole automatic path leans on WordPress's scheduled tasks, and
+	 * those only run when somebody requests a WordPress page. On the
+	 * set-up this plugin exists for, visitors are served plain HTML and
+	 * never touch WordPress at all -- so the only traffic is whoever is
+	 * logged in here, and a car saved by a salesperson can sit unpublished
+	 * until somebody happens to open a screen. The answer is a real cron
+	 * job on the server; until there is one, the least this can do is not
+	 * pretend everything is fine.
+	 *
+	 * @return int Seconds late, or 0 when nothing is owed or it is not late yet.
+	 */
+	public static function overdue() {
+		if ( ! self::enabled() ) {
+			return 0;
+		}
+		$pending = (int) get_option( 'vesla_publish_pending' );
+		if ( ! $pending ) {
+			return 0;
+		}
+
+		/* Nothing on the schedule at all is worse than late, not better: it
+		   means the work is owed and nothing whatever is coming for it. Judge
+		   it from when it was first owed. */
+		$due  = (int) wp_next_scheduled( self::EVENT );
+		$due  = $due ? $due : $pending + self::DEBOUNCE;
+		$late = time() - $due;
+
+		return $late > self::OVERDUE ? $late : 0;
+	}
+
+	/**
+	 * The line to hand cPanel's Cron Jobs screen.
+	 *
+	 * Built from this installation rather than written out as an example,
+	 * so it names the path WordPress is actually at on this server and can
+	 * be copied without being edited.
+	 */
+	public static function cron_line() {
+		return '*/5 * * * * /usr/local/bin/php -q ' . str_replace( '\\', '/', untrailingslashit( ABSPATH ) ) . '/wp-cron.php >/dev/null 2>&1';
+	}
+
 	public static function republish_url() {
 		return wp_nonce_url( admin_url( 'admin-post.php?action=vesla_republish' ), 'vesla_republish' );
 	}
@@ -10945,6 +11040,32 @@ if ( 'vehicle' === $kind ) :
 				esc_html__( 'The public page is no longer being updated.', 'vesla-landing' ),
 				esc_html__( 'There is a published page on disk, but “Write the public page when I save” is switched off — so what visitors see is frozen at whatever it said when it was last written, and saving here will not change it.', 'vesla-landing' ),
 				esc_html( self::target_file() )
+			);
+		}
+
+		/* ── owed, and nothing has come to collect it ──
+
+		   Placed above the status check on purpose: a site that has never
+		   published successfully has no status to read, and that is exactly
+		   the site where this matters most. */
+		$late = self::overdue();
+		if ( $late ) {
+			$waiting = human_time_diff( (int) get_option( 'vesla_publish_pending' ), time() );
+			printf(
+				'<div class="notice notice-warning"><p><strong>%s</strong></p><p>%s</p><p>%s</p><p><code>%s</code></p><p>%s</p><p><a class="button button-primary" href="%s">%s</a></p></div>',
+				esc_html__( 'Saved here, but not yet on the public page.', 'vesla-landing' ),
+				esc_html(
+					sprintf(
+						/* translators: %s: a length of time, e.g. "2 hours". */
+						__( 'A change has been waiting %s to be written out. Until it is, visitors are still being served the previous version of the site.', 'vesla-landing' ),
+						$waiting
+					)
+				),
+				esc_html__( 'Writing the page is carried by WordPress’s scheduled tasks, and those only run when somebody asks WordPress for a page. This site serves its visitors plain HTML, so they never do — which leaves whoever happens to be logged in here. Ask your host to run this every five minutes and it stops being your job:', 'vesla-landing' ),
+				esc_html( self::cron_line() ),
+				esc_html__( 'In the meantime, this writes it out straight away:', 'vesla-landing' ),
+				esc_url( self::republish_url() ),
+				esc_html__( 'Publish now', 'vesla-landing' )
 			);
 		}
 
