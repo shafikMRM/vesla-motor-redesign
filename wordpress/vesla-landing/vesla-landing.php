@@ -1468,6 +1468,41 @@ class Vesla_Schema {
 						'min' => 1, 'max' => 10,
 					),
 
+					'intro_video' => array(
+						'type'  => 'video',
+						'label' => __( 'Intro video', 'vesla-landing' ),
+						'help'  => __( 'A short clip that plays once on arrival and hands over to the page, in place of the loading screen. Three seconds is the length this was built around. Leave it empty and nothing changes. What to give the editor: H.264 MP4, no larger than 1280 × 720, no audio track, CRF about 26 — at those settings three muted seconds lands well under a megabyte. The last frame should be the shield centred on the site’s own dark ground, and the encode must not add black frames at either end; one black flash is the whole illusion gone.', 'vesla-landing' ),
+					),
+					'intro_poster' => array(
+						'type'  => 'image',
+						'label' => __( 'Poster — the video’s first frame', 'vesla-landing' ),
+						'help'  => __( 'Shown in the moment before playback starts, and it is what a visitor sees if their browser refuses to autoplay. It must be the video’s FIRST frame and nothing else: any other picture and the clip visibly jumps the instant it starts.', 'vesla-landing' ),
+					),
+					'intro_show' => array(
+						'type'    => 'select',
+						'label'   => __( 'Show the intro', 'vesla-landing' ),
+						'default' => 'first',
+						'choices' => array(
+							'never' => __( 'Never', 'vesla-landing' ),
+							'first' => __( 'On a visitor’s first visit only', 'vesla-landing' ),
+							'every' => __( 'Every visit', 'vesla-landing' ),
+						),
+						'help'    => __( '“First visit only” is remembered in the visitor’s own browser, so it is per browser rather than per person, and clearing their history shows it again. That is the most it can promise without following anybody around.', 'vesla-landing' ),
+					),
+					'intro_max' => array(
+						'type'    => 'number',
+						'label'   => __( 'Show the page regardless after this many seconds', 'vesla-landing' ),
+						'default' => 4,
+						'help'    => __( 'A ceiling, not a duration. If the video has not begun playing by then the intro is abandoned and the page is shown — nobody should be kept waiting by a video that will not play.', 'vesla-landing' ),
+						'min' => 1, 'max' => 15,
+					),
+					'intro_skip_label' => array(
+						'type'    => 'text',
+						'label'   => __( 'Wording on the skip button', 'vesla-landing' ),
+						'default' => 'Skip',
+						'help'    => __( 'Visible from the first frame. Somebody who does not want to watch must never have to wait to say so.', 'vesla-landing' ),
+					),
+
 					'motion_enabled' => array(
 						'type'  => 'toggle',
 						'label' => __( 'Use the animations', 'vesla-landing' ),
@@ -3119,6 +3154,16 @@ Deny from all
 
 class Vesla_Settings {
 	const OPTION = 'vesla_landing';
+
+	/**
+	 * The largest intro video that may be stored, in bytes.
+	 *
+	 * Enforced in the sanitiser rather than described in help text, because
+	 * a limit nobody enforces is a suggestion. Three muted seconds at 720p
+	 * and CRF 26 is a few hundred kilobytes; five megabytes is already
+	 * something that went wrong in the export.
+	 */
+	const INTRO_MAX_BYTES = 5242880;   // 5 MB
 	const GROUP  = 'vesla_landing_group';
 
 	/* The merged array for this request. Cleared on save, so the editor redraws
@@ -3663,6 +3708,62 @@ class Vesla_Settings {
 			case 'image':
 				return $value ? absint( $value ) : '';
 
+			case 'video':
+				/* Refused with a reason, and the previous value dropped rather than
+				   a bad one kept. Every branch here says what to do about it: being
+				   told "invalid file" by a screen that then forgets what you chose
+				   is the worst of both. */
+				$vid = $value ? absint( $value ) : 0;
+				if ( ! $vid ) {
+					return '';
+				}
+
+				$mime = (string) get_post_mime_type( $vid );
+				if ( 'video/mp4' !== $mime ) {
+					self::complain(
+						'vesla_intro_type',
+						sprintf(
+							/* translators: %s: the file's type, e.g. video/quicktime. */
+							__( 'The intro video was not saved: it has to be an MP4, and that file is %s. Export it as H.264 MP4 and choose it again.', 'vesla-landing' ),
+							$mime ? $mime : __( 'of a type this site could not read', 'vesla-landing' )
+						)
+					);
+					return '';
+				}
+
+				$path  = get_attached_file( $vid );
+				$bytes = ( $path && file_exists( $path ) ) ? (int) filesize( $path ) : 0;
+				if ( $bytes > self::INTRO_MAX_BYTES ) {
+					self::complain(
+						'vesla_intro_size',
+						sprintf(
+							/* translators: 1: the file's size. 2: the limit. */
+							__( 'The intro video was not saved: it is %1$s and the limit is %2$s. Three muted seconds at 1280 × 720, H.264, CRF about 26 comes to well under a megabyte — this wants re-exporting rather than the limit raising.', 'vesla-landing' ),
+							size_format( $bytes, 1 ),
+							size_format( self::INTRO_MAX_BYTES )
+						)
+					);
+					return '';
+				}
+
+				/* An audio track on a clip that is played muted is weight nobody can
+				   ever hear. Stripping it here would need ffmpeg, which cannot be
+				   assumed on shared hosting, so it is refused and the export is asked
+				   for again. WordPress reads the file with getID3 on upload, so this
+				   reads a stored fact rather than parsing the file afresh -- and when
+				   that reading found nothing, silence is not proof of absence, so the
+				   file is allowed through rather than refused on a guess. */
+				$meta = wp_get_attachment_metadata( $vid );
+				if ( is_array( $meta ) && ! empty( $meta['audio'] ) ) {
+					self::complain(
+						'vesla_intro_audio',
+						__( 'The intro video was not saved: it carries an audio track. The clip is played muted, so nobody ever hears it and it only makes the file bigger. Export it again with the audio removed — in ffmpeg that is -an — and choose it once more.', 'vesla-landing' )
+					);
+					return '';
+				}
+
+				return $vid;
+
 			case 'checks':
 				/* Only what the list actually offers survives. A value posted
 				   that is not on the list is dropped rather than stored, which
@@ -3850,6 +3951,8 @@ class Vesla_Admin {
 			array(
 				'chooseImage' => __( 'Choose image', 'vesla-landing' ),
 				'useImage'    => __( 'Use this image', 'vesla-landing' ),
+				'chooseVideo' => __( 'Choose video', 'vesla-landing' ),
+				'useVideo'    => __( 'Use this video', 'vesla-landing' ),
 				'confirmDrop' => __( 'Remove this item? It will be gone once you save.', 'vesla-landing' ),
 				'unsaved'     => __( 'You have unsaved changes. Leave without saving?', 'vesla-landing' ),
 				'empty'       => __( 'Nothing here yet — press the button below to add the first one.', 'vesla-landing' ),
@@ -4392,6 +4495,51 @@ class Vesla_Admin {
 					       value="<?php echo esc_attr( $value ); ?>" class="vesla-input vesla-input--hex"
 					       spellcheck="false" placeholder="#000000">
 				</span>
+				<?php
+				break;
+
+			case 'video':
+				$vid_id = absint( $value );
+				$vid_src = $vid_id ? wp_get_attachment_url( $vid_id ) : '';
+				$vid_path = $vid_id ? get_attached_file( $vid_id ) : '';
+				$vid_bytes = ( $vid_path && file_exists( $vid_path ) ) ? (int) filesize( $vid_path ) : 0;
+				?>
+				<div class="vesla-image" data-vesla-image data-vesla-media="video">
+					<div class="vesla-image-preview<?php echo $vid_src ? '' : ' is-empty'; ?>">
+						<?php if ( $vid_src ) : ?>
+							<video src="<?php echo esc_url( $vid_src ); ?>" muted playsinline preload="metadata"></video>
+						<?php else : ?>
+							<span><?php esc_html_e( 'No video chosen', 'vesla-landing' ); ?></span>
+						<?php endif; ?>
+					</div>
+					<?php if ( $vid_bytes ) : ?>
+						<p class="vesla-help<?php echo $vid_bytes > 2097152 ? ' vesla-help--warn' : ''; ?>">
+							<?php
+							if ( $vid_bytes > 2097152 ) {
+								printf(
+									/* translators: %s: the file's size. */
+									esc_html__( 'This file is %s, which is larger than an intro of this kind should need. Three muted seconds ought to be well under two megabytes: H.264 MP4, no larger than 1280 × 720, no audio track, CRF about 26. Anything over five megabytes is refused outright.', 'vesla-landing' ),
+									esc_html( size_format( $vid_bytes, 1 ) )
+								);
+							} else {
+								printf(
+									/* translators: %s: the file's size. */
+									esc_html__( 'This file is %s.', 'vesla-landing' ),
+									esc_html( size_format( $vid_bytes, 1 ) )
+								);
+							}
+							?>
+						</p>
+					<?php endif; ?>
+					<div class="vesla-image-act">
+						<button type="button" class="button vesla-image-pick"><?php esc_html_e( 'Choose video', 'vesla-landing' ); ?></button>
+						<button type="button" class="button-link vesla-image-clear"<?php echo $vid_id ? '' : ' hidden'; ?>>
+							<?php esc_html_e( 'Remove', 'vesla-landing' ); ?>
+						</button>
+					</div>
+					<input type="hidden" id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>"
+						       value="<?php echo esc_attr( $vid_id ? $vid_id : '' ); ?>" class="vesla-image-id">
+				</div>
 				<?php
 				break;
 
@@ -6725,6 +6873,7 @@ class Vesla_Render {
 
 	public static function shortcode() {
 		ob_start();
+		self::intro();
 		self::loader();
 		self::header_bar();
 		self::hero();
@@ -6994,6 +7143,136 @@ class Vesla_Render {
 	/** Set while Vesla_Publisher is writing the static file. */
 	public static $static_build = false;
 
+	/**
+	 * The arrival film, and the handover to the page underneath it.
+	 *
+	 * Printed here rather than hooked to wp_head, because a published file
+	 * never runs wp_head at all -- its head is written by the publisher. A
+	 * boot script hung on that hook works in the WordPress preview and is
+	 * silently missing from the site visitors actually get.
+	 *
+	 * Everything about it is arranged so that the page beneath is never
+	 * waiting on the film:
+	 *
+	 *  - the markup is an overlay, so the page loads and lays out behind it
+	 *    the whole time and is finished by the time the film ends;
+	 *  - it is display:none until the script decides otherwise, so with
+	 *    scripting off it is not merely skipped, it is never shown;
+	 *  - the container paints the ground colour itself. Inheriting it would
+	 *    mean a white body showing through for one frame, which is the
+	 *    single worst thing that can happen here.
+	 *
+	 * The colour is var(--void), not a hex: the palette is computed from the
+	 * admin's ink colour at render time, so hard-coding it here would drift
+	 * the moment somebody changed the theme. The film itself cannot follow
+	 * -- its ground is baked in when it is encoded -- so the field help says
+	 * which colour to encode against.
+	 */
+	private static function intro() {
+		$vid  = (int) Vesla_Settings::get( 'extras', 'intro_video', 0 );
+		$show = (string) Vesla_Settings::get( 'extras', 'intro_show', 'first' );
+		if ( ! $vid || 'never' === $show ) {
+			return;
+		}
+		$src = wp_get_attachment_url( $vid );
+		if ( ! $src ) {
+			return;   // the file has been deleted from the library since
+		}
+
+		$poster_id = (int) Vesla_Settings::get( 'extras', 'intro_poster', 0 );
+		$poster    = $poster_id ? wp_get_attachment_image_url( $poster_id, 'full' ) : '';
+		$max       = max( 1, (int) Vesla_Settings::get( 'extras', 'intro_max', 4 ) );
+		$skip      = trim( (string) Vesla_Settings::get( 'extras', 'intro_skip_label', '' ) );
+		$skip      = '' !== $skip ? $skip : __( 'Skip', 'vesla-landing' );
+		?>
+<div class="vesla-intro" id="vesla-intro">
+	<video class="vesla-intro-film" id="vesla-intro-film" aria-hidden="true"
+	       muted playsinline autoplay preload="auto"
+	       <?php if ( $poster ) : ?>poster="<?php echo esc_url( $poster ); ?>"<?php endif; ?>
+	       src="<?php echo esc_url( $src ); ?>"></video>
+	<button type="button" class="vesla-intro-skip" id="vesla-intro-skip"><?php echo esc_html( $skip ); ?></button>
+</div>
+<script id="vesla-intro-js">
+(function(){
+	var root = document.documentElement;
+	var box  = document.getElementById('vesla-intro');
+	var film = document.getElementById('vesla-intro-film');
+	var skip = document.getElementById('vesla-intro-skip');
+	if (!box || !film) { return; }
+
+	var SHOW = '<?php echo esc_js( $show ); ?>';
+	var MAX  = <?php echo (int) $max; ?> * 1000;
+	var KEY  = 'vesla-intro-seen';
+
+	var drop = function(){ if (box.parentNode) { box.parentNode.removeChild(box); } };
+
+	/* Somebody who has asked for less movement gets none of it. Not a
+	   shortened intro or a still -- the page, as it would be. */
+	var reduced = false;
+	try { reduced = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+	if (reduced) { drop(); return; }
+
+	/* Reading storage can throw, not only writing it: Safari with cookies
+	   blocked throws on the read. Both go in a try, and a browser that
+	   will not remember simply sees the intro again. */
+	if (SHOW === 'first') {
+		var seen = false;
+		try { seen = !!localStorage.getItem(KEY); } catch (e) { seen = false; }
+		if (seen) { drop(); return; }
+		try { localStorage.setItem(KEY, '1'); } catch (e) {}
+	}
+
+	root.classList.add('vesla-intro-run');
+
+	var done = false;
+	var finish = function(){
+		if (done) { return; }
+		done = true;
+		/* Held, not cleared. Pausing leaves the last frame on screen while
+		   the whole overlay fades over a page that is already painted
+		   beneath it -- and both are the same ground colour, so there is no
+		   instant at which anything else is visible. Letting the element
+		   empty itself for one frame is the whole problem this avoids. */
+		try { film.pause(); } catch (e) {}
+		box.classList.add('is-going');
+		root.classList.remove('vesla-intro-run');
+		setTimeout(drop, 400);   /* longer than the 300ms fade in the stylesheet */
+	};
+
+	if (skip) { skip.addEventListener('click', finish); }
+	document.addEventListener('keydown', function(e){ if (e.key === 'Escape') { finish(); } });
+	film.addEventListener('ended', finish);
+	film.addEventListener('error', finish);
+
+	/* The ceiling. Nobody waits on a video that will not start. Cleared
+	   the moment it actually does, and replaced with one measured from
+	   the clip's own length in case it stalls half way and never ends. */
+	var ceiling = setTimeout(finish, MAX);
+	film.addEventListener('playing', function(){
+		clearTimeout(ceiling);
+		var left = (isFinite(film.duration) && film.duration > 0)
+			? (film.duration - film.currentTime) * 1000
+			: MAX;
+		setTimeout(finish, left + 1500);
+	});
+
+	/* Autoplay can simply be refused -- iOS in Low Power Mode refuses even
+	   a muted clip. The poster is the first frame, so what is on screen is
+	   already right; it is held for a moment and then handed over exactly
+	   as a finished film would be, rather than sitting there for the whole
+	   ceiling while nothing happens. */
+	var attempt;
+	try { attempt = film.play(); } catch (e) { attempt = null; }
+	if (attempt && attempt.catch) {
+		attempt.catch(function(){
+			clearTimeout(ceiling);
+			setTimeout(finish, 600);
+		});
+	}
+})();
+</script>
+		<?php
+	}
 	private static function loader() {
 		/* A published file arrives with its content already in it, so there is
 		   nothing to cover up while waiting. */

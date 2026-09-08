@@ -91,6 +91,10 @@
 .vesla-input--hex{ max-width:120px; font-family:ui-monospace,Menlo,Consolas,monospace; }
 .vesla-help{ margin:6px 0 0; color:#646970; font-size:12.8px; line-height:1.5; max-width:75ch; }
 .vesla-help--block{ margin:0 0 12px; }
+/* Said in the colour of a warning, because "this file is 7.4 MB" read in
+   the same grey as every other hint is a fact nobody acts on. */
+.vesla-help--warn{ color:#8a6100; font-weight:600; }
+.vesla-image-preview video{ max-width:100%; max-height:200px; display:block; }
 
 /* ── on/off switch ───────────────────────────────────────────────────── */
 .vesla-switch{ display:inline-flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
