@@ -1,0 +1,2255 @@
+
+/* ===========================================================================
+   FONTS, SERVED FROM THIS SITE
+   They used to come from fonts.googleapis.com on the critical path: a
+   stylesheet from one Google origin, then the files themselves from a
+   second, before a single word could be painted in the right typeface.
+   Two DNS lookups and two TLS handshakes ahead of the text.
+   Latin and latin-ext only. The Cyrillic, Greek and Vietnamese subsets
+   were most of the weight and this page has no use for any of them.
+   Paths are relative to THIS FILE, not to the page. That is what lets the
+   same stylesheet work under /cms/wp-content/plugins/ and again beside the
+   published page at the document root, with no absolute URL to rewrite.
+   ============================================================================ */
+@font-face{  /* latin-ext */
+  font-family:'Barlow';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('fonts/barlow-400-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{  /* latin */
+  font-family:'Barlow';
+  font-style:normal;
+  font-weight:400;
+  font-display:swap;
+  src:url('fonts/barlow-400-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{  /* latin-ext */
+  font-family:'Barlow';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url('fonts/barlow-500-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{  /* latin */
+  font-family:'Barlow';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url('fonts/barlow-500-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{  /* latin-ext */
+  font-family:'Barlow';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('fonts/barlow-600-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{  /* latin */
+  font-family:'Barlow';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('fonts/barlow-600-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{  /* latin-ext */
+  font-family:'Barlow Semi Condensed';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url('fonts/barlow-semi-condensed-500-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{  /* latin */
+  font-family:'Barlow Semi Condensed';
+  font-style:normal;
+  font-weight:500;
+  font-display:swap;
+  src:url('fonts/barlow-semi-condensed-500-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{  /* latin-ext */
+  font-family:'Barlow Semi Condensed';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('fonts/barlow-semi-condensed-600-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{  /* latin */
+  font-family:'Barlow Semi Condensed';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('fonts/barlow-semi-condensed-600-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face{  /* latin-ext: one variable file covers 500 700 */
+  font-family:'Playfair Display';
+  font-style:normal;
+  font-weight:500 700;
+  font-display:swap;
+  src:url('fonts/playfair-display-500-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face{  /* latin: one variable file covers 500 700 */
+  font-family:'Playfair Display';
+  font-style:normal;
+  font-weight:500 700;
+  font-display:swap;
+  src:url('fonts/playfair-display-500-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Vesla Motors — landing page
+   Theme: warm obsidian + amber.
+   The ground is a near-black warmed off blue toward neutral, and the single
+   accent is amber — carried on the wordmark, the hero headline, the prices and
+   every rule that draws itself. Layout, motion and easing curves are unchanged
+   from the shared MRM sheet; only the colour layer differs.
+   One accent, used sparingly, is what keeps this reading as premium rather than
+   as a theme: amber marks the thing you are meant to look at and nothing else.
+   Everything not marked is a warm neutral. */
+:root{
+  /* Surfaces — neutral near-blacks sampled from the shield itself (#181818),
+     not the warm blacks the amber scheme used. The logo's black has no hue in
+     it, and a warm ground under a lemon-yellow mark turns the yellow green. */
+  --void:#0B0B0C;
+  --ink:#141415;            /* dark sections — the shield's own black       */
+  --ink-soft:#1A1A1B;       /* footer                                       */
+  --panel:#212122;
+  --paper:#FFFFFF;
+  --pearl:#F5F5F3;          /* light tinted sections                        */
+  --steel:#6A6A6C;          /* muted body text on light                     */
+
+  /* Yellow — sampled from assets/brand/vesla-logo.png. A lemon, not an amber:
+     red and green are level and there is almost no blue, which is why the old
+     #F5B31A read as orange next to the mark and had to go. */
+  --amber:#F2ED28;          /* the brand yellow, as it is in the shield     */
+  --amber-lit:#F7F45E;      /* lifted, for accents on a dark ground         */
+  --amber-dim:#A9A52A;
+  /* A lemon yellow cannot carry text on white — at #F2ED28 it is about 1.1:1.
+     Accent TEXT on paper is therefore the dark end of the same hue, which
+     reads as the brand colour and still passes contrast; the pure yellow is
+     kept for fills, rules and anything on black. */
+  --amber-deep:#67620C;
+  --amber-glow:linear-gradient(180deg,#FBF89A 0%,#F2ED28 48%,#C9C41B 100%);
+  --amber-text:linear-gradient(180deg,#FDFBC4 0%,#F4EF3A 46%,#C6C11B 100%);
+
+  /* The sheet was written against a platinum/steel-blue palette and names it
+     throughout. Rather than rename several dozen declarations, the old names
+     are pointed at the amber ramp — so the whole page re-themes from these six
+     lines and nothing downstream had to be touched. */
+  --platinum:var(--amber-lit);
+  --platinum-dim:var(--amber-dim);
+  --accent-deep:var(--amber-deep);
+  --chrome:var(--amber-glow);
+  --chrome-text:var(--amber-text);
+  /* Two different lines that both happen to be one pixel wide.
+
+     --hair divides things: the edge of a panel, the rule between two rows
+     of a list. It is meant to be almost invisible, and at 12% it is.
+
+     --edge is the boundary of something you can operate -- a select, a
+     button drawn as an outline, the plus on an accordion. It has to be
+     seen or the control does not read as a control at all, which is what
+     went wrong when these two shared a token: the sound toggle and the
+     filter selects were drawn in the panel hairline and looked like
+     printed text. 42% is where the line clears 3:1 against the pearl
+     ground, which is the floor for a boundary that carries meaning. */
+  --hair:rgba(10,10,11,.12);
+  --edge:rgba(10,10,11,.42);
+  --hair-dark:rgba(226,226,224,.15);
+  --edge-dark:rgba(226,226,224,.45);
+  --display:'Playfair Display',Georgia,serif;
+  --label:'Barlow Semi Condensed','Arial Narrow',sans-serif;
+  --body:'Barlow',system-ui,sans-serif;
+  --shell:1280px;
+  --pop:cubic-bezier(.22,1.15,.36,1);
+  --glide:cubic-bezier(.62,.03,.24,1);
+  /* opacity, which must not overshoot: a fade that goes past zero and
+     comes back is a flicker at the end of every page load. */
+  --soft:cubic-bezier(.33,1,.68,1);
+  --bar:clamp(64px,8vw,84px);
+  --wm-on:.85;                    /* the footer mark at rest         */
+  --wm-w:clamp(180px,20vw,280px); /* and how wide it is drawn        */
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:var(--bar)}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--body);font-size:17px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit}
+.shell{width:min(100% - var(--gutter),var(--shell));margin-inline:auto}
+.skip{
+  position:absolute;left:-9999px;top:0;z-index:99;
+  background:var(--ink);color:var(--paper);padding:12px 20px;
+}
+.skip:focus{left:0}
+:focus-visible{outline:2px solid var(--accent-deep);outline-offset:3px}
+/* ---------- type ---------- */
+/* Playfair at 500, not 600.
+
+   A display serif carries its authority in the letterforms rather than in
+   the weight: set heavy it starts to shout, and a showroom does not need
+   to. The lighter cut is the one the group's other companies set, and it
+   is the difference between reading as a dealership and reading as a firm.
+
+   The section scale comes down with it. At 54px an h2 was competing with
+   the hero on every screen; the hero is the only type on this site that
+   should be that loud. */
+/* Sizes are NOT set here. The fluid scale near the bottom of this file owns
+   every heading size through --fs-h1/--fs-h2/--fs-h3, and it comes later,
+   so anything declared here is overwritten. What this rule owns is the
+   face, the weight and the measure. */
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.1;margin:0}
+h1{letter-spacing:-.02em;line-height:1.04}
+/* 19ch, because a serif heading set across the full width of a 1280px
+   shell runs further than an eye tracks without losing the line. */
+h2{letter-spacing:-.012em;line-height:1.14;margin-bottom:18px;max-width:19ch}
+h3{line-height:1.25;margin-bottom:8px}
+
+/* ─ the amber headline ─
+   The masthead wordmark is the one place the accent is allowed to carry a
+   whole block of type. Gradient rather than flat amber: a single fill at this
+   size reads as a colour choice, where the ramp from pale gold to bronze reads
+   as the light falling on something. motion.js splits this heading into words
+   and the fill has to be re-declared per word — background-clip is per-box —
+   which motion.css does.
+
+   The dark sections' own h2s are deliberately NOT amber. One accent used on
+   one heading is a mark; the same accent on every heading is a theme, and the
+   page stops pointing anywhere. */
+.hero h1{
+  background:var(--amber-text);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;
+}
+.sec-dark h2{color:#F2F2F0}
+
+.eyebrow{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.22em;
+  font-size:12px;font-weight:600;color:var(--accent-deep);margin:0 0 14px;
+}
+.sec-lead{font-size:clamp(17px,1.6vw,20px);color:var(--steel);max-width:62ch;margin:0 0 34px}
+.note{font-size:14px;color:var(--steel);line-height:1.55;border-left:2px solid var(--hair);padding-left:14px}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.12em;
+  font-size:13px;font-weight:600;text-decoration:none;cursor:pointer;
+  /* Square. A two-pixel corner is not a decision anybody reads as a
+     decision -- it is the default a framework leaves behind. Either the
+     corner is soft enough to be a shape or it is not there at all. */
+  padding:13px 24px;border:1px solid transparent;border-radius:0;
+  transition:transform .25s var(--pop),background .25s,color .25s,border-color .25s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-lg{padding:16px 30px;font-size:14px}
+/* Primary — ink, lettered in the shield's own yellow.
+
+   The other way round, yellow ground with ink letters, is what a sale
+   banner looks like. Ink carrying the yellow as lettering spends the
+   colour sparingly, which is what lets it still mean something in the one
+   or two places it appears at full strength. */
+.btn-gold{background:var(--ink);color:var(--amber);border-color:var(--ink)}
+.btn-gold:hover{background:var(--void);border-color:var(--void)}
+/* primary — polished chrome on dark ground */
+.hero .btn-gold,.sec-dark .btn-gold,.hero .btn-solid,.sec-dark .btn-solid{
+  background:var(--chrome);color:var(--ink);
+  border-color:rgba(255,255,255,.55);
+  box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 8px 22px rgba(0,0,0,.35);
+}
+.hero .btn-gold:hover,.sec-dark .btn-gold:hover,
+.hero .btn-solid:hover,.sec-dark .btn-solid:hover{
+  background:var(--paper);border-color:var(--paper);
+}
+/* .btn-solid -- the primary, under the name the car page and the map card
+   ask for it by.
+
+   It had no rule anywhere in this file, so three buttons -- Get directions
+   on the map, Enquire on a car's page, and the way back from a sold car --
+   fell through to bare .btn: no fill, a transparent border, ink text on a
+   white ground. They were readable as words and invisible as buttons. */
+.btn-solid{background:var(--ink);color:var(--amber);border-color:var(--ink)}
+.btn-solid:hover{background:var(--void);border-color:var(--void)}
+.btn-line{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn-line:hover{background:var(--ink);color:var(--amber)}
+.btn-ghost{background:transparent;color:inherit;border-color:currentColor;opacity:.85}
+.btn-ghost:hover{opacity:1;background:rgba(10,10,11,.06)}
+/* ---------- header ---------- */
+.bar{
+  position:fixed;inset:0 0 auto;z-index:60;height:var(--bar);
+  background:rgba(255,255,255,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s;
+}
+.bar.is-stuck{border-bottom-color:var(--hair);box-shadow:0 6px 24px rgba(10,10,11,.07)}
+.bar-in{height:100%;display:flex;align-items:center;gap:24px}
+
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;margin-right:auto}
+/* The V is the only amber on the bar at rest, so it is the amber block itself
+   rather than an amber letter on ink — at 38px an outlined glyph would be lost
+   against the wordmark beside it. */
+.brand-mark{
+  width:38px;height:38px;display:grid;place-items:center;flex:none;
+  background:var(--amber-glow);color:var(--ink);
+  font-family:var(--display);font-size:21px;font-weight:700;border-radius:0;
+  box-shadow:0 1px 0 rgba(255,255,255,.55) inset,0 4px 14px rgba(242,237,40,.28);
+}
+.foot .brand-mark{box-shadow:0 1px 0 rgba(255,255,255,.45) inset}
+.brand-txt{display:flex;flex-direction:column;line-height:1}
+.brand-txt b{font-family:var(--label);font-size:19px;letter-spacing:.2em;font-weight:600}
+.brand-txt i{font-family:var(--label);font-size:10px;letter-spacing:.34em;font-style:normal;color:var(--steel);margin-top:3px}
+
+.nav{display:flex;gap:28px}
+.nav a{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  font-size:13px;font-weight:600;text-decoration:none;position:relative;padding:4px 0;
+}
+.nav a::after{
+  content:'';position:absolute;left:0;bottom:0;width:100%;height:2px;
+  background:var(--accent-deep);transform:scaleX(0);transform-origin:right;
+  transition:transform .35s var(--glide);
+}
+.nav a:hover::after,.nav a.is-active::after{transform:scaleX(1);transform-origin:left}
+.bar-cta{display:flex;gap:10px}
+.burger{display:none;width:44px;height:44px;background:none;border:0;cursor:pointer;padding:10px}
+.burger span{display:block;height:2px;background:var(--ink);margin:5px 0;transition:transform .3s var(--glide),opacity .2s}
+.burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded="true"] span:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ---------- hero ---------- */
+.hero{position:relative;padding:calc(var(--bar) + 90px) 0 90px;overflow:hidden;background:var(--void);color:var(--paper)}
+/* Two amber washes over a warm near-black, both well under the type. The
+   upper one sits behind the headline so the gradient fill has something to
+   sit against; the lower one keeps the bottom of the section from going flat
+   where the stat row crosses it. Scaled and translated by mBand in motion.css
+   as the hero scrolls, which is why it is a separate element and not a
+   background on .hero — a background cannot be transformed on its own. */
+.hero-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(1100px 620px at 78% 8%,rgba(242,237,40,.20),transparent 62%),
+    radial-gradient(760px 520px at 10% 92%,rgba(190,185,20,.22),transparent 66%),
+    linear-gradient(160deg,#070605 0%,#1C160C 54%,#070605 100%);
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(var(--hair-dark) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--hair-dark) 1px,transparent 1px);
+  background-size:80px 80px;opacity:.22;
+  mask-image:radial-gradient(70% 60% at 50% 40%,#000,transparent);
+}
+.hero-in{position:relative}
+.hero .eyebrow{color:var(--platinum)}
+.hero-lead{font-size:clamp(18px,2vw,23px);color:rgba(240,240,238,.74);max-width:56ch;margin:22px 0 36px}
+.hero-act{display:flex;flex-wrap:wrap;gap:14px}
+.hero .btn-line,.sec-dark .btn-line{color:var(--paper);border-color:var(--edge-dark)}
+.hero .btn-line:hover,.sec-dark .btn-line:hover{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+
+.hero-stats{
+  list-style:none;margin:70px 0 0;padding:34px 0 0;
+  border-top:1px solid var(--hair-dark);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:var(--gap);
+}
+/* Each figure sits under its own short amber rule, drawn against scroll by
+   mRule in motion.css. The rule is what carries the accent here — the numerals
+   themselves stay warm white, so the headline above keeps being the only large
+   amber type on the screen. */
+.hero-stats li{position:relative;padding-top:18px}
+.hero-stats li::before{
+  content:'';position:absolute;top:0;left:0;width:38px;height:2px;
+  background:var(--amber);transform:scaleX(0);transform-origin:left center;
+  transition:transform .75s var(--glide);
+}
+.hero-stats li.in::before{transform:none}
+.hero-stats b{
+  display:block;font-family:var(--display);font-size:clamp(34px,4vw,52px);font-weight:600;
+  color:#F4F4F2;
+}
+.hero-stats span{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;
+  font-size:11.5px;color:rgba(226,226,224,.58);
+}
+
+/* ---------- sections ---------- */
+.sec{padding:clamp(72px,9vw,120px) 0}
+.sec-mist{background:var(--pearl)}
+.sec-dark{background:var(--ink);color:var(--paper)}
+.sec-dark .sec-lead{color:rgba(240,240,238,.7)}
+.sec-dark .note{color:rgba(240,240,238,.58);border-left-color:var(--hair-dark)}
+.sec-dark .eyebrow{color:var(--platinum)}
+
+/* ---------- filters ---------- */
+.filters{
+  display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;
+  padding:22px;background:var(--pearl);border:1px solid var(--hair);border-radius:0;
+}
+.filters label,.est label,.enq label{
+  display:flex;flex-direction:column;gap:6px;
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  font-size:11.5px;font-weight:600;color:var(--steel);
+}
+.filters select{min-width:170px}
+select,input,textarea{
+  font-family:var(--body);font-size:15.5px;color:var(--ink);
+  padding:11px 13px;background:var(--paper);
+  border:1px solid var(--edge);border-radius:0;
+  transition:border-color .2s;
+}
+select:hover,input:hover,textarea:hover{border-color:var(--accent-deep)}
+textarea{resize:vertical}
+.filters .btn{margin-bottom:1px}
+
+.resbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:26px 0 18px}
+.count{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;
+  font-size:12px;color:var(--steel);margin:0;
+}
+
+.btn-sound{
+  display:inline-flex;align-items:center;gap:8px;background:none;
+  border:1px solid var(--edge);cursor:pointer;border-radius:0;
+  font-family:var(--label);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--steel);
+  padding:7px 12px;transition:color .2s ease,border-color .2s ease;
+}
+.btn-sound:hover{border-color:var(--accent-deep);color:var(--ink)}
+.btn-sound svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.btn-sound .cross{display:none}
+.btn-sound[aria-pressed="false"] .waves{display:none}
+.btn-sound[aria-pressed="false"] .cross{display:inline}
+/* ---------- car grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));gap:var(--gap)}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}
+.card{
+  border:1px solid var(--hair);border-radius:0;overflow:hidden;background:var(--paper);
+  display:flex;flex-direction:column;cursor:pointer;
+  /* `backwards`, not `both`: a filled-forwards animation keeps its final transform
+     applied at animation priority, which outranks every normal declaration —
+     including the hover lift below, which then silently never fires. `backwards`
+     still hides the card before it enters. */
+  animation:cardIn .5s var(--pop) backwards;
+  transition:border-color .25s ease,transform .35s var(--pop),box-shadow .25s ease;
+}
+.card:hover{border-color:var(--accent-deep);transform:translateY(-5px);box-shadow:0 18px 38px rgba(10,10,11,.12)}
+
+/* ─ a picked car ─
+   The ring is drawn with an inset shadow rather than a thicker border: a border
+   change would reflow the card's contents by a pixel as it is picked, and next to
+   a dozen neighbours that reads as a jolt. */
+.card.picked{
+  border-color:var(--accent-deep);
+  box-shadow:inset 0 0 0 2px var(--accent-deep),0 18px 38px rgba(10,10,11,.12);
+}
+.card.picked .tag{background:var(--accent-deep);color:var(--paper)}
+.card.picked .price{color:var(--ink)}
+.card-media{position:relative;aspect-ratio:16/10;background:var(--pearl);overflow:hidden}
+.card-media img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--glide)}
+.card:hover .card-media img{transform:scale(1.05)}
+.card-media .ph{
+  width:100%;height:100%;display:grid;place-items:center;
+  font-family:var(--display);font-size:34px;color:rgba(10,10,11,.2);
+  background:linear-gradient(135deg,var(--pearl),#E4E4E2);
+}
+.tag{
+  position:absolute;top:12px;left:12px;
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  font-size:10.5px;font-weight:600;background:var(--ink);color:var(--platinum);
+  padding:5px 10px;border-radius:0;
+  box-shadow:0 1px 0 rgba(255,255,255,.18) inset;
+}
+.card-body{padding:20px;display:flex;flex-direction:column;gap:12px;flex:1}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.card h3{font-size:19px;margin:0}
+.card .yr{font-family:var(--label);font-size:13px;letter-spacing:.1em;color:var(--steel)}
+.price{font-family:var(--display);font-size:24px;font-weight:600;white-space:nowrap;color:var(--accent-deep)}
+.price small{display:block;font-family:var(--label);font-size:10px;letter-spacing:.2em;color:var(--steel);text-align:right}
+.spec{
+  list-style:none;margin:0;padding:14px 0 0;border-top:1px solid var(--hair);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(130px,100%),1fr));gap:8px 14px;
+  font-size:13.5px;color:var(--steel);
+}
+.spec li{display:flex;gap:7px;align-items:center}
+.spec b{color:var(--ink);font-weight:500}
+.card .btn{margin-top:auto;width:100%}
+.empty{
+  text-align:center;padding:60px 20px;color:var(--steel);
+  font-family:var(--display);font-size:22px;
+}
+
+/* ---------- stages ---------- */
+/* The hairlines between stages are the 1px gap showing through, not borders
+   on the items. Borders needed a media query per wrap point to know which
+   item started a row; a gap does not care how the grid wraps. */
+.stages{list-style:none;margin:0;padding:0;display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));
+  gap:1px;background:var(--hair-dark)}
+.stages li{background:var(--ink)}
+.stages li{padding:32px 26px 30px;border-left:1px solid var(--hair-dark);position:relative}
+.stages li:first-child{border-left:0;padding-left:0}
+/* An amber rule across the top of each stage, drawn left to right. Where the
+   browser has scroll-driven animation, mRule in motion.css runs it off the
+   scroll position itself; everywhere else app.js adds `.in` from an observer
+   and this transition carries it. Both land in the same place. */
+.stages li::before{
+  content:'';position:absolute;top:0;left:0;width:100%;height:2px;
+  background:var(--amber);transform:scaleX(0);transform-origin:left center;
+  transition:transform .75s var(--glide);
+}
+.stages li:first-child::before{width:calc(100% - 26px)}
+.stages li.in::before{transform:none}
+.stages .num{
+  font-family:var(--display);font-size:42px;font-weight:600;
+  color:var(--amber);opacity:.85;
+  display:block;margin-bottom:14px;line-height:1;
+}
+.stages h3{color:var(--paper)}
+.stages p{font-size:15px;color:rgba(240,240,238,.64);margin:0}
+/* ---------- why ---------- */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:1px;background:var(--hair)}
+.why-grid article{background:var(--paper);padding:32px 28px}
+.why-grid p{color:var(--steel);font-size:15.5px;margin:0}
+/* ---------- record ---------- */
+.record-in,.sell-in,.contact-in{display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));
+  gap:var(--gap-lg);align-items:start}
+.glance{margin:0;padding:30px;background:var(--paper);border:1px solid var(--hair);border-radius:0}
+/* Label and value wrap onto separate lines by themselves once the value can
+   no longer fit beside the label — no breakpoint has to be told where. */
+.glance div{display:flex;flex-wrap:wrap;gap:4px 16px;padding:14px 0;border-bottom:1px solid var(--hair)}
+.glance dt{flex:0 0 clamp(96px,26%,150px)}
+.glance dd{flex:1 1 min(220px,100%);min-width:0}
+.glance div:last-child{border-bottom:0;padding-bottom:0}
+.glance dt{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;
+  font-size:11.5px;font-weight:600;color:var(--steel);
+}
+.glance dd{margin:0;font-size:15.5px}
+
+/* ---------- estimator / enquiry ---------- */
+.est,.enq{
+  background:var(--pearl);border:1px solid var(--hair);border-radius:0;
+  padding:30px;display:flex;flex-direction:column;gap:16px;
+}
+.enq{background:rgba(226,226,224,.05);border-color:var(--hair-dark)}
+.enq h3{color:var(--paper)}
+.enq label{color:rgba(240,240,238,.66)}
+.enq input,.enq textarea{
+  background:rgba(12,12,13,.5);border-color:var(--hair-dark);color:var(--paper);
+}
+.enq input:hover,.enq textarea:hover{border-color:var(--platinum)}
+.est-sub{margin:-8px 0 4px;font-size:14px;color:var(--steel)}
+.est-out{
+  margin-top:6px;padding:20px;background:var(--ink);color:var(--paper);border-radius:0;
+  display:flex;flex-direction:column;gap:6px;
+}
+.est-out span{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.18em;
+  font-size:11px;color:rgba(226,226,224,.6);
+}
+.est-out strong{
+  font-family:var(--display);font-size:clamp(24px,3vw,32px);font-weight:600;
+  background:var(--chrome-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.form-msg{margin:0;font-size:14.5px;min-height:1.4em}
+.form-msg.ok{color:var(--platinum)}
+.form-msg.bad{color:#E88E7F}
+
+/* ---------- contact ---------- */
+.chan{list-style:none;margin:28px 0 0;padding:0}
+.chan li{display:flex;flex-wrap:wrap;gap:4px 16px;padding:15px 0;
+  border-top:1px solid var(--hair-dark);align-items:baseline}
+.chan li>span:first-child{flex:0 0 clamp(96px,26%,130px)}
+.chan li>a,.chan li>em{flex:1 1 min(200px,100%);min-width:0}
+.chan span{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;
+  font-size:11.5px;font-weight:600;color:rgba(226,226,224,.55);
+}
+.chan a{color:var(--platinum);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .25s}
+.chan a:hover{border-bottom-color:var(--platinum)}
+.chan em{font-style:normal;color:rgba(240,240,238,.6);font-size:15px}
+
+/* ---------- footer ---------- */
+.foot{background:var(--ink-soft);color:rgba(240,240,238,.7);padding:56px 0 34px}
+.foot-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:var(--gap-lg)}
+.foot .brand-txt i{color:rgba(226,226,224,.5)}
+.foot-brand p{margin:16px 0 0;font-size:15px;max-width:44ch}
+.foot-nav{display:flex;flex-direction:column;gap:11px;align-items:flex-start}
+.foot-nav a{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  font-size:12.5px;text-decoration:none;color:rgba(240,240,238,.7);transition:color .25s;
+}
+.foot-nav a:hover{color:var(--platinum)}
+.copy{
+  grid-column:1/-1;margin:34px 0 0;padding-top:22px;
+  border-top:1px solid var(--hair-dark);font-size:13px;color:rgba(240,240,238,.45);
+}
+
+/* ---------- back to top ---------- */
+.totop{
+  position:fixed;right:22px;bottom:22px;z-index:55;
+  width:46px;height:46px;border:0;border-radius:50%;cursor:pointer;
+  background:var(--ink);color:var(--platinum);font-size:19px;
+  opacity:0;pointer-events:none;transform:translateY(10px);
+  transition:opacity .3s,transform .3s var(--pop),background .25s,color .25s;
+  box-shadow:0 8px 22px rgba(10,10,11,.28);
+}
+.totop.is-on{opacity:1;pointer-events:auto;transform:none}
+.totop:hover{background:var(--platinum);color:var(--ink)}
+
+/* ---------- reveal ----------
+   Exact values carried over from the Vesla mockup: a 26px lift with a slight
+   scale-up, opacity on a plain ease and the transform on --pop so it overshoots
+   a touch as it lands. Stagger is three fixed delay classes, not per-node inline
+   styles. */
+/* Hidden only once a script has said it is there to reveal them again.
+
+   Unconditionally hiding content and relying on JavaScript to bring it back
+   means any script that fails to run takes the content with it — which is
+   exactly what happened when a car's page turned out not to load the script
+   that reveals these: the map section was fully built and painted nothing.
+   Gated on the class both scripts set, so no script means no hiding. */
+/* Quicker than it was, and travelling less far.
+
+   At half a second with a 26px rise, a paragraph was still arriving after
+   the eye had reached it — the reader was waiting for the page rather than
+   the page keeping up with the reader. Two thirds the duration and half the
+   distance reads as the words settling rather than sliding in. */
+html.m-on .reveal{opacity:0;transform:translateY(14px) scale(.98);transition:opacity .3s ease,transform .38s var(--pop)}
+/* Matched to the specificity of the rule above it. `html.m-on .reveal` scores
+   higher than a bare `.reveal.in`, so the revealed state has to be written
+   the same way or nothing ever comes back. */
+html.m-on .reveal.in{opacity:1;transform:none}
+/* The stagger is halved with it: three steps of 70ms put the third item a
+   fifth of a second behind the first, which on a row of cards was long
+   enough to look like the last one had failed. */
+.reveal.d1{transition-delay:.035s} .reveal.d2{transition-delay:.07s} .reveal.d3{transition-delay:.105s}
+/* ---------- responsive ---------- */
+/* ---------- reduced motion ----------
+   Parked, and the `and (min-width:99999px)` is what parks it. Many Windows
+   laptops report "reduce motion" from battery saver or the Visual effects
+   setting rather than from a considered choice, which was switching the whole
+   motion layer off unasked.
+   Four places have to move together to honour the setting again: drop the
+   guard here, drop the matching one in motion.css, and flip `reduced` to the
+   matchMedia query in both app.js and motion.js. Any one of them alone leaves
+   the page half-animated. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   PAGE LOADER
+   A frosted scrim, not an opaque panel. The page is already rendered
+   underneath and shows through blurred, so the loader reads as the site coming
+   into focus rather than as a coloured card sitting in front of it — and the
+   screen is never filled with flat colour at either end.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* Hidden unless the boot script has run.
+
+   The scroll lock and the dismissal both live in JavaScript, so a page whose
+   script never ran — disabled, blocked, or simply broken — was left under a
+   blurred curtain for ever, over content that was already there. Keying the
+   curtain to the class that script sets means no script, no curtain. */
+/* ════════════════════════════════════════════════════════════════════════════
+   THE LOADING CURTAIN
+
+   Everything here runs from the stylesheet, not from a script. The curtain is
+   in the markup the server sends, so it is on screen and MOVING in the first
+   painted frame. A loader that starts animating once the page behind it has
+   finished building has animated after the wait rather than during it, which
+   is the one thing a loader must not do.
+
+   TIMING — derived together, never singly
+
+       400 (floor) + 420 (fade) = 820 = 80 (beat) + 740 (flood)
+
+   The shield finishes flooding on the same frame the curtain finishes
+   dissolving. The flood does not need the scrim opaque, only on screen, so
+   the floor and the fade overlap rather than queue. Change one of the four
+   numbers and the other three have to be re-derived — they are not
+   independent settings.
+
+   The floor is measured from when the curtain MOUNTS, not from navigation:
+   measured from navigation it resolves to nearly zero on a warm server and
+   the curtain vanishes inside two frames, which is the exact glitch the
+   floor exists to prevent. The ceiling lives in the boot script.
+
+   NO REDUCED-MOTION BLOCK, and that is a decision rather than an oversight.
+   The motion here is small, local and brief: dashes travelling a hundred
+   pixels inside a 560px figure for under a second, with nothing sweeping
+   across the viewport. What the query is for is large-area motion, and
+   removing this would leave a reader looking at a still frame with no way to
+   tell the page from a frozen one — which is worse, not kinder.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Hidden unless the boot script has run. The scroll lock and the dismissal
+   both live in JavaScript, so a page whose script never ran — disabled,
+   blocked, or simply broken — would otherwise sit behind a curtain for ever,
+   over content that was already there. No script, no curtain. */
+.preload{display:none}
+html.is-loading .preload{
+  position:fixed;inset:0;z-index:9000;
+  display:grid;place-items:center;overflow:hidden;
+  background:rgba(20,20,21,.58);
+  -webkit-backdrop-filter:blur(22px) saturate(.92);
+  backdrop-filter:blur(22px) saturate(.92);
+  opacity:1;
+  /* OPACITY ONLY. backdrop-filter is not a compositor property: animating the
+     radius asks the machine for a fresh full-screen blur every frame, and it
+     will not hold sixty of them on integrated graphics. */
+  transition:opacity .42s var(--soft);
+}
+.preload.done{opacity:0;pointer-events:none}
+/* Where backdrop-filter is unsupported the tint carries the whole job on its
+   own, so it goes most of the way to opaque. Left at .58 it would put the
+   wires over a legible, unblurred page, which reads as a bug. */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  html.is-loading .preload{background:rgba(20,20,21,.94)}
+}
+/* Keyed to the html class rather than to the overlay, so releasing it at the
+   start of the fade lets the reader scroll while it is still going. */
+html.is-loading{overflow:hidden}
+
+/* ─ the stage ─
+   Sized and centred, not stretched. At “meet” a 2:1 viewBox in a tall phone
+   window shrinks the wires to nothing; at “slice” it crops the tips off. */
+.pl-art{
+  position:relative; width:62%; max-width:300px;
+  display:grid; place-items:center;
+}
+.pl-wires{display:block;width:100%;aspect-ratio:2/1}
+
+/* ─ the wires ─
+   Twelve, six a side, meeting at the shield. The third row on each side runs
+   gold: one mark that says whose loader this is, against five neutral ones. */
+.pl-track{fill:none;stroke:rgba(255,255,255,.13);stroke-width:1.2}
+.pl-pulse{
+  fill:none;stroke:#ECECEB;stroke-width:2;stroke-linecap:round;
+  animation:plWire 1.25s var(--glide) infinite;
+}
+.pl-pulse.pl-gold{stroke:var(--amber);stroke-width:2.6}
+
+/* No 0% frame, deliberately. Without one the animation starts from each
+   element's own computed stroke-dashoffset — which is the per-wire value the
+   server already wrote inline — so twelve wires of three different lengths
+   each travel their own distance from this single rule, with nothing
+   restated. The dash gap equals the wire's length in every case: any less and
+   a second dash appears behind the first.
+
+   Stopping at 70% gives the light a rest before the next one departs. */
+@keyframes plWire{70%,100%{stroke-dashoffset:-26}}
+
+/* Each elbow flares as its own pulse leaves it, and each tip lights as that
+   pulse arrives. Same 1.25s cycle and same per-element delay as the wire they
+   belong to, so the three stay locked together. */
+.pl-elbow circle{fill:rgba(255,255,255,.5);animation:plElbow 1.25s var(--glide) infinite}
+@keyframes plElbow{0%{opacity:.4}9%{opacity:1}46%,100%{opacity:.4}}
+
+.pl-tip{fill:#ECECEB;animation:plTip 1.25s var(--glide) infinite}
+.pl-tip.pl-gold-tip{fill:var(--amber)}
+@keyframes plTip{0%,58%{opacity:.25}68%{opacity:1}100%{opacity:.25}}
+
+/* ─ the shield ─
+   Two stacked copies of the same artwork: a dim one at .14 so the mark is
+   present before the flood reaches it, and a bright one clipped open from the
+   left. Sitting over the wires, at the centre they all point to. */
+.pl-logo{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  /* A share of the figure rather than a fixed size: the shield and the
+     wires then keep their proportion to each other at every width, instead
+     of the mark growing into the wires on a phone. */
+  display:block;width:26%;
+  animation:plAppear .32s cubic-bezier(.5,1,.89,1) both;
+}
+.pl-logo img{display:block;width:100%;height:auto}
+.pl-base{opacity:.14}
+.pl-flood{
+  position:absolute;inset:0;opacity:1;
+  clip-path:inset(0 100% 0 0);
+  animation:plFlood .74s var(--glide) .08s forwards;
+}
+@keyframes plAppear{from{opacity:0}to{opacity:1}}
+@keyframes plFlood{to{clip-path:inset(0 0 0 0)}}
+/* ---------- footer watermark ----------
+   The Vesla shield, raised into the footer as the footer is reached — by
+   mShield off the scroll position where the browser supports it, and by the
+   `.m-in` class from motion.js where it does not. Both end at the same
+   opacity. It is behind the content and cannot be clicked through. */
+.foot{position:relative;overflow:hidden}
+.foot-in{position:relative;z-index:1}
+/* The mark sits in the last column, after the button.
+
+   It was absolute and centred on the footer's height, which put it behind
+   the contact column and straight through the button. In the flow of its
+   own column it cannot reach either. It is still unclickable and still
+   carries no alt, because it is printing rather than a control. */
+/* The mark carries transparent margin of its own inside the PNG, so the
+   space above it is only what the artwork does not already supply. */
+.foot-wm{
+  margin-top:clamp(4px,.6vw,8px);
+  line-height:0;pointer-events:none;user-select:none;
+}
+/* The mark is printed, not ghosted.
+
+   It had been carrying an opacity of .16 and a sepia wash, which on a
+   near-black footer left a shape you could just about make out and not
+   read -- and the shield is a piece of identification, so if it is worth
+   printing this large it is worth being able to see. The colour filter is
+   gone with it: the artwork is already the brand's own yellow, and pushing
+   it through sepia was correcting a colour that was never wrong.
+
+   --wm-on is the settled opacity, and it is a token because four separate
+   rules land on it -- this one, the scroll-driven keyframe in motion.css,
+   the class-driven fallback beside it, and the reduced-motion block. They
+   had already drifted apart once, which is how a mark set here at .85
+   was still being drawn at .24. */
+.foot-wm img{
+  /* Sized by its width, never its height. A fixed height with max-width
+     capping the other axis squashes anything wider than the column, and
+     the two marks this can hold are different shapes -- the shield is
+     nearly square, a wordmark is nearly two to one. Width plus auto height
+     is the only pair that keeps both honest. */
+  display:block;width:min(100%,var(--wm-w));height:auto;
+  opacity:var(--wm-on);filter:none;
+}
+
+/* ---------- mobile drawer cascade ----------
+   The links step in one after another rather than the panel arriving as one
+   block. app.js sets each link's transition-delay inline from its index — a
+   computed cascade, so adding a nav item needs no new CSS. */
+.nav a{opacity:1;transform:none}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TRUST STRIP
+   Four claims, each of which is already sourced elsewhere on this page — the
+   founding year, the award, the service centre and the certification route.
+   Nothing new is asserted here; it is the same record, put where a visitor
+   scanning the hero will actually read it.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.trust{background:var(--ink);border-top:1px solid var(--hair-dark);padding:0}
+.trust-in{
+  list-style:none;margin:0;padding:0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));
+  /* the 1px gap IS the hairline — see the note on .stages */
+  gap:1px;background:var(--hair-dark);
+}
+.trust-in li{
+  display:flex;align-items:center;gap:13px;
+  padding:clamp(16px,2.4vw,22px) clamp(16px,2.6vw,26px);background:var(--ink);
+  color:rgba(240,240,238,.78);font-size:clamp(13.5px,1.05vw,14.5px);line-height:1.35;
+}
+.trust-in svg{
+  width:21px;height:21px;flex:none;fill:none;stroke:var(--amber);
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.trust-in b{display:block;color:#F2F2F0;font-weight:600}
+
+/* ---------- card actions ----------
+   Two ways to act on a car instead of one. The enquiry form is the considered
+   route; WhatsApp is the one most people in this market actually use, and it
+   opens pre-filled with the car so nobody has to describe it twice. */
+.card-act{display:flex;gap:8px;margin-top:auto}
+.card-act .btn{flex:1;width:auto;margin-top:0;padding-inline:12px}
+.btn-wa{
+  flex:none;width:44px;padding:0;background:var(--ink);color:var(--amber);
+  border-color:var(--ink);display:grid;place-items:center;
+}
+.btn-wa:hover{background:var(--amber);color:var(--ink);border-color:var(--amber)}
+.btn-wa svg{width:18px;height:18px;fill:currentColor}
+
+/* the price block gains the warranty note, so the number is never read alone */
+.price em{
+  display:block;font-family:var(--label);font-style:normal;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--amber-deep);text-align:right;margin-top:3px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FAQ
+   The three questions already published in this page's FAQPage structured
+   data, given the visible answers they are supposed to accompany. Marking up
+   an FAQPage with no matching content on the page is exactly what the
+   structured-data guidance says not to do, so this closes that as well.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* Left-aligned, not centred. Centring an 860px list inside the 1280 shell
+   floated it away from the section heading above it, which is set flush left
+   like every other heading on the page — the two read as unrelated blocks. */
+.faq{max-width:860px;margin:0;border-top:1px solid var(--hair)}
+.faq-item{border-bottom:1px solid var(--hair)}
+.faq-head{
+  width:100%;background:none;border:0;cursor:pointer;text-align:left;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:22px 4px;font-family:var(--display);font-size:clamp(17px,2vw,21px);
+  font-weight:600;color:var(--ink);line-height:1.3;
+  transition:color .22s ease;
+}
+.faq-head:hover{color:var(--amber-deep)}
+.faq-head .sign{
+  flex:none;width:26px;height:26px;position:relative;
+  border:1px solid var(--edge);border-radius:50%;
+  transition:background .28s ease,border-color .28s ease,transform .4s var(--pop);
+}
+.faq-head .sign::before,.faq-head .sign::after{
+  content:'';position:absolute;top:50%;left:50%;width:11px;height:1.5px;
+  background:var(--ink);transform:translate(-50%,-50%);
+  transition:transform .35s var(--glide),background .28s ease;
+}
+.faq-head .sign::after{transform:translate(-50%,-50%) rotate(90deg)}
+.faq-item.open .sign{background:var(--amber);border-color:var(--amber);transform:rotate(180deg)}
+/* the vertical stroke folds away, so the plus becomes a minus rather than the
+   whole badge swapping to a different glyph */
+.faq-item.open .sign::after{transform:translate(-50%,-50%) rotate(90deg) scaleX(0)}
+/* Height, not display: a panel toggled with `hidden` cannot be transitioned at
+   all. max-height is set in px from the measured content by app.js and
+   re-measured on resize, because a hard-coded ceiling either clips a long
+   answer or makes a short one drift open. */
+.faq-body{max-height:0;overflow:hidden;transition:max-height .42s var(--glide)}
+.faq-body p{margin:0;padding:0 4px 24px;color:var(--steel);max-width:70ch}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STICKY ACTION BAR — phones only
+   On a phone the header CTAs are behind the burger, which means the two
+   things a visitor is most likely to want are two taps away for the whole
+   page. This puts them back on screen, and only once the hero has scrolled
+   past so it never covers the opening view.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.actbar{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:58;
+  background:rgba(13,11,9,.94);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  border-top:1px solid var(--hair-dark);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+  transform:translateY(110%);transition:transform .42s var(--glide);
+}
+.actbar.is-on{transform:none}
+.actbar-in{display:flex;gap:10px}
+.actbar .btn{flex:1}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOOTER — separated from the contact section above it
+   Both are dark, they sit directly on top of each other, and at --ink against
+   --ink-soft the two grounds were within a couple of points of each other —
+   so the contact panel and the footer read as one very long block with no
+   edge between them. Three things fix that, and all three are needed:
+     · the footer drops to --void, a real step down rather than a shade
+     · an amber hairline draws the join, fading out at both ends so it reads
+       as a seam and not as a border
+     · the space above the first footer line is opened up, so the eye gets a
+       gap before the next thing starts
+   ═══════════════════════════════════════════════════════════════════════════ */
+.foot{
+  background:var(--void);
+  padding:clamp(56px,7vw,84px) 0 34px;
+  border-top:1px solid var(--hair-dark);
+}
+/* the seam. Full-bleed and centre-weighted, so it states the join without
+   drawing a hard line across the whole width. */
+.foot::before{
+  content:'';position:absolute;left:0;right:0;top:0;height:2px;z-index:2;
+  background:linear-gradient(90deg,transparent,rgba(242,237,40,.55) 22%,rgba(242,237,40,.55) 78%,transparent);
+  pointer-events:none;
+}
+/* and the section above it now closes properly rather than running out of
+   copy straight into the seam */
+#contact{padding-bottom:clamp(64px,8vw,104px)}
+
+.foot-in{gap:clamp(28px,4vw,52px) 36px}
+.foot-brand p{color:rgba(240,240,238,.6)}
+/* a label over the link column, so it reads as a footer index rather than as
+   five more links continuing the page */
+.foot-lbl{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.22em;
+  font-size:11px;font-weight:600;color:var(--amber);margin:0 0 16px;
+}
+.foot-nav a{padding:2px 0}
+.copy{color:rgba(240,240,238,.4)}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   The sheet is fluid first — type, section padding and the header height are
+   all clamp() — so these breakpoints only handle the things fluid values
+   cannot: column counts, what collapses into what, and the two places where a
+   fixed minimum would overflow a narrow phone.
+   ═══════════════════════════════════════════════════════════════════════════ */
+/* ─ wide desktops ─ the shell stops growing at 1280, so past about 1500 the
+   page is a column in the middle of a lot of nothing. The gutters open up
+   instead of the measure getting longer. */
+/* ─ laptops ─ the nav and the two header buttons stop fitting side by side
+   before the burger breakpoint is anywhere near */
+/* ─ tablets ─ the three two-column sections go single, and the grid loosens */
+/* ─ small tablets and large phones ─ */
+/* ─ phones ─ */
+/* ─ the narrowest phones still sold ─ 320px logical width, where a fixed
+   300px grid minimum would have pushed the page into a horizontal scroll */
+/* ─ short landscape phones ─ the loader is centred in a 400px-tall window and
+   the wires and the wordmark were overlapping */
+/* ─ touch devices ─
+   Hover lifts are a pointer affordance. On a touch screen the :hover state is
+   entered on tap and then held until something else is tapped, which leaves a
+   card stuck in its raised state — so they are simply not applied. The tap
+   targets are opened out to 44px in the same pass. */
+/* ─ very wide, very short — desktop windows dragged to a strip ─ */
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHAIRMAN / OWNERSHIP
+   A monogram plate rather than a portrait. There is no photograph of the
+   chairman available here, and a stock image of somebody else standing in for
+   a named, real person would be worse than no image at all — so the group's
+   initials are set as a plate in the same amber the brand mark uses, and the
+   space carries the mark instead of a face.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.chair-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));
+  gap:var(--gap-lg);align-items:center}
+/* Two columns of unequal width, the first cut to the plate exactly.
+
+   With four equal auto-fit columns the plate sat as a small square in the
+   middle of a much wider cell, which read as a photograph somebody had
+   forgotten to size rather than as a portrait — empty to its right, and
+   empty above and below it because the text beside it was taller. Naming
+   the first column the plate's own width removes all three gaps at once:
+   the picture is the column. */
+@media (min-width:900px){
+  .chair-in{grid-template-columns:minmax(0,var(--chair-plate)) minmax(0,1fr)}
+}
+/* ─ the plate ─
+   One square of a known size, whether it is carrying the monogram or a
+   photograph. It is a fixed box rather than a grid cell left to stretch,
+   for two reasons: the amber corner marks are drawn at its edges and only
+   read as a mark on a square, and the portrait is cropped to fill it, so
+   the crop has to be predictable rather than a function of how wide the
+   window happens to be. */
+.chair-mark{
+  width:100%;max-width:var(--chair-plate);aspect-ratio:1;height:auto;
+  display:grid;place-items:center;gap:18px;align-content:center;
+  background:linear-gradient(150deg,rgba(242,237,40,.10),rgba(242,237,40,.02) 62%,transparent);
+  border:1px solid var(--hair-dark);border-radius:0;position:relative;
+}
+/* With a photograph in it the plate stops being a square and takes the
+   picture's own shape.
+
+   Holding the square meant one of two bad outcomes and no third: crop the
+   photograph to fit, which cuts whatever the photographer framed, or letter-
+   box it, which draws bands of empty ground above and below inside a panel
+   whose whole job is to look deliberate. Letting the frame follow the file
+   gives the whole picture, edge to edge, with the amber corners landing on
+   the corners of the picture itself. The monogram version keeps the square,
+   because there a square is the design rather than an accident of what was
+   uploaded.
+
+   The ground goes flat ink behind it: the amber wash would tint a face, and
+   ink is also what shows through if the file never arrives. */
+.chair-mark.has-shot{background:var(--ink);aspect-ratio:auto;height:auto}
+.chair-portrait{display:block;width:100%;height:auto}
+/* a thin amber corner, so the plate reads as a mark and not as an empty box */
+.chair-mark::before,.chair-mark::after{
+  content:'';position:absolute;width:26px;height:26px;border:2px solid var(--amber);
+}
+.chair-mark::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.chair-mark::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.chair-mono{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(46px,6vw,72px);line-height:1;letter-spacing:.04em;
+  background:var(--amber-text);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.chair-rule{width:52px;height:2px;background:var(--amber);opacity:.7}
+
+.chair-id{margin:26px 0 24px;display:grid;gap:0}
+.chair-id div{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:4px 16px;
+  padding:14px 0;border-top:1px solid var(--hair-dark);
+}
+.chair-id div:last-child{border-bottom:1px solid var(--hair-dark)}
+.chair-id dt{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;
+  font-size:11.5px;font-weight:600;color:var(--amber);
+}
+.chair-id dd{margin:0;font-family:var(--display);font-size:19px;font-weight:600;color:#F2F2F0}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FORM VALIDATION
+   The message belongs under the field it is about, not in a summary at the
+   bottom of the form — a reader told "please check your details" has to go
+   hunting for which detail. The line at the bottom only says how many.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.req{color:var(--amber);margin-left:2px}
+.field-msg{
+  display:block;font-family:var(--body);text-transform:none;letter-spacing:0;
+  font-size:13px;font-weight:400;line-height:1.4;color:#F0A08C;
+  /* Height is animated rather than toggled, so a message appearing does not
+     jolt every field below it down the page. max-height is a ceiling large
+     enough for two lines at this size. */
+  max-height:0;opacity:0;overflow:hidden;
+  transition:max-height .28s var(--glide),opacity .22s ease,margin-top .28s var(--glide);
+}
+.field-msg.on{max-height:44px;opacity:1;margin-top:6px}
+.enq input.is-bad,.enq textarea.is-bad{
+  border-color:#C4614A;
+  box-shadow:0 0 0 3px rgba(196,97,74,.16);
+}
+.enq input.is-bad:focus,.enq textarea.is-bad:focus{border-color:#E08B74}
+/* on the light estimator panel the same states need a darker red to read */
+.est input.is-bad,.est select.is-bad{border-color:#A33C22;box-shadow:0 0 0 3px rgba(163,60,34,.14)}
+.est .field-msg{color:#A33C22}
+.form-msg.bad{color:#F0A08C}
+.form-msg.ok{color:var(--amber-lit)}
+
+/* ---------- show more ----------
+   Centred under the grid with room above it, so it reads as the end of the
+   current page of stock rather than as another card. */
+.more-wrap{display:flex;justify-content:center;margin-top:clamp(28px,4vw,44px)}
+.more-wrap[hidden]{display:none}
+#more{min-width:230px}
+.more-n{opacity:.6;letter-spacing:.08em;text-transform:none;font-size:12px}
+/* the card focused after a batch is revealed should not draw a focus ring —
+   it is taking focus programmatically, not because anyone tabbed to it */
+.card[tabindex]:focus{outline:none}
+.card[tabindex]:focus-visible{outline:2px solid var(--accent-deep);outline-offset:3px}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FOOTER — rebuilt
+   Two columns of mostly empty space was the problem: a brand blurb on the left
+   and a bare list of links on the right, with the shield stranded between them.
+   Four columns of actual content instead — who we are, where to go, how to
+   reach us, and where we are — then a rule and a quiet bottom bar.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.foot-in{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));
+  gap:var(--gap-lg);
+  align-items:start;
+}
+/* The first column is wider than the other three because it is the only
+   one carrying a picture; the links, the numbers and the address all set
+   comfortably in less. Below this width the four stack anyway. */
+@media (min-width:1024px){
+  .foot-in{grid-template-columns:1.45fr 1fr 1fr 1fr}
+}
+.foot-brand .brand{margin-right:0;margin-bottom:18px}
+.foot-brand p{margin:0;font-size:14.5px;line-height:1.6;max-width:34ch;color:rgba(240,240,238,.62)}
+
+/* the three facts in their shortest possible form, as small amber-ruled chips */
+.foot-badges{
+  list-style:none;display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 0;padding:0;
+}
+.foot-badges li{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  font-size:10.5px;font-weight:600;color:var(--amber-lit);
+  border:1px solid rgba(242,237,40,.3);border-radius:0;padding:5px 9px;
+  background:rgba(242,237,40,.05);
+}
+
+.foot-lbl{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.2em;
+  font-size:11px;font-weight:600;color:var(--amber);
+  margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--hair-dark);
+}
+
+.foot-nav{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.foot-nav a{
+  display:inline-block;
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;
+  font-size:12.5px;text-decoration:none;color:rgba(240,240,238,.7);
+  padding:6px 0;transition:color .25s;
+}
+.foot-nav a:hover{color:var(--amber-lit)}
+
+.foot-contact{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.foot-contact a{
+  display:block;text-decoration:none;font-size:15.5px;color:#F2F2F0;
+  transition:color .25s;
+}
+.foot-contact a:hover{color:var(--amber-lit)}
+.foot-contact span{
+  display:block;margin-top:2px;
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;
+  font-size:10.5px;color:rgba(240,240,238,.42);
+}
+.foot-where{margin:0 0 20px;font-size:14.5px;line-height:1.6;color:rgba(240,240,238,.62)}
+.foot-where em{display:block;margin-top:8px;font-style:normal;font-size:13px;color:rgba(240,240,238,.4)}
+.foot .btn-gold{background:var(--amber-glow);color:var(--ink);border-color:transparent}
+.foot .btn-gold:hover{background:var(--paper);border-color:var(--paper)}
+/* ─ bottom bar ─ set off by its own rule, so the small print reads as small
+     print and not as a fifth column */
+.foot-bar{
+  display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center;
+  margin-top:clamp(34px,4.5vw,54px);padding-top:22px;
+  border-top:1px solid var(--hair-dark);
+}
+.foot-bar p{margin:0;font-size:12.5px;color:rgba(240,240,238,.38)}
+.foot-meta{font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;font-size:11px}
+/* ---------- touch targets ----------
+   The audit put the smallest interactive box at 31px on a phone. Everything
+   below is brought up to the 44px that a fingertip actually needs; the sound
+   toggle and the footer links were the two that missed. */
+/* ═══════════════════════════════════════════════════════════════════════════
+   THE MARK
+   assets/brand/vesla-logo.png — the shield, as supplied: a neutral black body
+   with the lemon-yellow outline, wordmark and V, on transparency. Everything
+   below uses that file rather than redrawing it, so there is exactly one
+   version of the logo on the site.
+
+   It ships as a ~2050px PNG, which is right for the hero and the footer
+   watermark and far more than the 38px header lockup needs — worth replacing
+   with an SVG, or a second small PNG, when one is available.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.brand-mark{
+  /* Larger than it was: at 38px the shield read as an icon beside the
+     wordmark rather than as the mark the wordmark belongs to. */
+  width:auto;height:48px;flex:none;display:block;
+  /* the shield is black-bodied, so on the dark footer it needs a light edge to
+     separate from the ground; on the white bar it needs nothing */
+  background:none;box-shadow:none;border-radius:0;
+  transition:transform .4s var(--pop);
+}
+.foot .brand-mark{height:56px;filter:drop-shadow(0 0 1px rgba(255,255,255,.35))}
+.bar.is-stuck .brand-mark{transform:scale(.92)}
+
+/* ─ hero: copy left, shield right ─
+   The masthead was a single column with the whole right-hand side empty. It is
+   now a two-column grid, with the stat row spanning both underneath. */
+.hero-in{
+  display:grid;
+  /* Two weighted columns, not an auto-fit set. auto-fit cannot be used
+     here: .hero-stats spans 1/-1, which occupies every track, so no track
+     is ever empty and none of them collapse — the copy ended up in one
+     third of the width with dead space beside the logo. minmax(0,…fr)
+     keeps it fluid at every width and the 0 minimum lets the text column
+     shrink rather than forcing an overflow. */
+  grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+  gap:var(--gap-lg);
+  align-items:center;
+}
+/* the shield is taller than the copy beside it, and at full height it forced a
+   large dead gap between the buttons and the stat row underneath */
+.hero{padding-bottom:clamp(48px,6vw,72px)}
+.hero-copy{min-width:0}
+.hero-logo{justify-self:center;min-width:0}
+.hero-logo img{
+  /* The hero mark is the one place the shield is the subject rather than
+     a label, so it is allowed to be large. */
+  width:min(100%,440px);height:auto;
+  /* a soft yellow bloom behind the shield, so it sits in the light of the
+     backdrop rather than being pasted on top of it */
+  filter:drop-shadow(0 22px 48px rgba(0,0,0,.55)) drop-shadow(0 0 60px rgba(242,237,40,.14));
+}
+.hero-stats{grid-column:1/-1}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HERO — brought down in scale
+   The masthead was running to well over a full viewport before the stock grid
+   began: a 104px headline, 90px of padding above it and 70px of air before the
+   stat row. Everything is pulled in so the first row of cars is reachable
+   without a deliberate scroll, and the shield comes down with it so the two
+   columns stay in proportion.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.hero{
+  padding-top:calc(var(--bar) + clamp(26px,3.4vw,50px));
+  padding-bottom:clamp(34px,4vw,52px);
+}
+.hero h1{font-size:clamp(38px,5.6vw,74px)}
+.hero-lead{font-size:clamp(16.5px,1.5vw,19px);margin:16px 0 26px;max-width:52ch}
+.hero-act{gap:12px}
+.hero-stats{margin-top:clamp(34px,4vw,48px);padding-top:26px;gap:22px}
+.hero-stats b{font-size:clamp(28px,3.1vw,40px)}
+.hero-stats li{padding-top:15px}
+.hero-stats li::before{width:32px}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BRAND WORDMARK
+   The lockup was set in Barlow Semi Condensed — a condensed grotesque sitting
+   next to a shield whose own VESLA is a high-contrast serif. The two argued,
+   and at 19px the condensed caps read as a subheading rather than as a name.
+
+   VESLA now takes the display serif, which is the closest thing on the page to
+   the lettering inside the mark, so the words and the shield read as one
+   object. MOTORS stays in the label face underneath — a wide-tracked line of
+   small caps under a serif name is the standard automotive lockup, and the
+   contrast between the two is what stops the second word competing with the
+   first.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.brand-txt{gap:0}
+.brand-txt b{
+  font-family:var(--display);
+  font-size:23px;
+  font-weight:700;
+  letter-spacing:.11em;
+  line-height:1;
+  /* the serif has a little sidebearing the shield does not, so the two are
+     optically aligned rather than mathematically flush */
+  margin-left:-1px;
+}
+.brand-txt i{
+  font-family:var(--label);
+  font-size:9.5px;
+  font-weight:600;
+  letter-spacing:.44em;
+  line-height:1;
+  color:var(--steel);
+  margin-top:6px;
+  /* letter-spacing hangs a full space off the last letter, which pulls the
+     word visibly left of the name above it; half of it is given back */
+  text-indent:.22em;
+}
+.foot .brand-txt i{color:rgba(226,226,224,.52)}
+/* The honeypot in the enquiry form. Moved off-screen rather than
+   display:none — some bots skip hidden fields, and a field that is never
+   submitted cannot catch anything. */
+.vesla-hp{position:absolute!important;left:-9999px!important;top:auto;width:1px;height:1px;overflow:hidden}
+/* ═══════════════════════════════════════════════════════════════════════════
+   FLUID SYSTEM
+   ═══════════════════════════════════════════════════════════════════════════
+   This section replaces 33 media queries with five.
+   The 28 that went were not layout decisions — they were scaling, stepped at
+   arbitrary widths. A page built that way is only correct at the widths
+   somebody thought to list, and subtly wrong at every width in between: type
+   that jumps a size at 981px, a grid that holds four columns 40px too long,
+   padding that snaps rather than shrinks.
+
+   What replaced them:
+     · clamp() for anything that scales — type, padding, gaps, gutters
+     · auto-fit grids for anything that reflows, so columns are decided by the
+       space available rather than by a number written here
+     · container queries for the car card, which has to be right at whatever
+       width the grid hands it, not at whatever width the window happens to be
+     · min(Xpx,100%) inside every minmax(), so a track can never be wider than
+       its own container and no grid can force a horizontal scrollbar
+
+   The five that stayed are genuine decisions, not scaling:
+     1  820px   the navigation becomes a drawer
+     2  1500px  the measure stops growing
+     3  short landscape phones
+     4  (hover:none) touch targets
+     5  reduced motion (parked — see the note where it is defined)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* ── the fluid scale ──
+     Each is written min / preferred / max. The MIN is the value at ~320px and
+     is chosen to be readable there, not merely proportional: a 5vw that looks
+     considered at 1440 is 16px at 320, which is why every one of these has a
+     floor set by hand rather than left to the viewport. */
+  --gutter:clamp(24px,5vw,40px);        /* page edge to content            */
+  --gap:clamp(16px,2.2vw,26px);         /* between cards and grid cells    */
+  --gap-lg:clamp(28px,4.6vw,64px);      /* between major columns           */
+  --section-pad:clamp(52px,8vw,120px);  /* vertical rhythm of a section    */
+
+  --fs-body:clamp(15.5px,1.18vw,17px);
+  --fs-lead:clamp(16px,1.5vw,20px);
+  --fs-h1:clamp(34px,6.2vw,74px);
+  --fs-h2:clamp(24px,3.2vw,40px);      /* was 54 at the top; a section    */
+                                       /* heading that size argued with   */
+                                       /* the hero on every screen.       */
+  --fs-h3:clamp(17px,1.5vw,20px);
+  --fs-eyebrow:clamp(10.5px,.95vw,12px);
+  --fs-label:clamp(11px,1vw,13px);
+
+  --chair-plate:clamp(240px,32vw,440px); /* the chairman's square         */
+}
+
+/* ── the floor ──
+   Below 320px the page scrolls sideways rather than compressing further. That
+   is the deliberate choice: 320 is the narrowest screen still in use, and
+   letting content reflow below it costs legibility everywhere above it for a
+   viewport almost nobody has. */
+body{
+  min-width:320px;
+  font-size:var(--fs-body);
+  /* Long unbroken strings are the other way a page gains a horizontal
+     scrollbar: an email address, a phone number or a model name with no space
+     in it cannot wrap unless it is told it may. */
+  overflow-wrap:break-word;
+}
+.chan a,.foot-contact a,.card h3,.faq-head,.glance dd,.chair-id dd,.foot-brand p{
+  overflow-wrap:anywhere;
+}
+
+/* ── type ── */
+h1{font-size:var(--fs-h1);letter-spacing:-.02em}
+h2{font-size:var(--fs-h2)}
+h3{font-size:var(--fs-h3)}
+.hero h1{font-size:var(--fs-h1)}
+.sec-lead{font-size:var(--fs-lead)}
+.eyebrow{font-size:var(--fs-eyebrow)}
+.hero-lead{font-size:clamp(16px,1.45vw,19px);margin:clamp(14px,1.8vw,22px) 0 clamp(22px,2.6vw,30px)}
+.brand-txt b{font-size:clamp(19px,1.7vw,23px);letter-spacing:clamp(.08em,.4vw,.11em)}
+.brand-txt i{font-size:clamp(8.5px,.75vw,9.5px);letter-spacing:clamp(.34em,1vw,.44em)}
+.faq-head{font-size:clamp(16px,1.9vw,21px);padding:clamp(17px,2.2vw,22px) 4px}
+.trust-in b{font-size:clamp(13.5px,1.1vw,15px)}
+
+/* ── spacing ── */
+.sec{padding:var(--section-pad) 0}
+.filters{padding:clamp(15px,2.2vw,22px);gap:clamp(12px,1.6vw,16px)}
+.est,.enq{padding:clamp(18px,3vw,30px)}
+.card-body{padding:clamp(15px,2vw,20px)}
+.resbar{margin:clamp(18px,2.6vw,26px) 0 clamp(12px,1.8vw,18px)}
+.foot{padding:clamp(46px,7vw,84px) 0 34px}
+.foot-bar{margin-top:clamp(28px,4.5vw,54px)}
+
+/* ── the hero ──
+   Height as well as width. The two queries that shrank this section on short
+   screens are gone: `vh` in the clamp does the same work continuously, so a
+   laptop in a 620px-tall window and a phone in landscape both get a hero that
+   fits without either being named here. */
+.hero{
+  padding-top:calc(var(--bar) + clamp(20px,3vh + 1vw,52px));
+  padding-bottom:clamp(28px,3vh + 1vw,52px);
+}
+.hero-stats{
+  margin-top:clamp(26px,3.4vw,48px);
+  padding-top:clamp(20px,2.4vw,26px);
+  gap:clamp(18px,2.4vw,26px);
+}
+.hero-stats b{font-size:clamp(26px,3vw,40px)}
+.hero-act{gap:clamp(10px,1.2vw,14px)}
+/* the two actions sit side by side while both fit and stack when they do not,
+   without a width being named */
+.hero-act .btn{flex:1 1 min(210px,100%)}
+/* The hero shield, a little larger than it was — it is the subject of that
+   half of the masthead, not a label on it. Declared once here, in the
+   fluid scale; it used to be set twice, forty pixels apart. */
+.hero-logo img{width:min(100%,clamp(200px,26vw,340px))}
+
+/* ── controls ── */
+.totop{
+  right:clamp(14px,1.6vw,22px);bottom:clamp(14px,1.6vw,22px);
+  width:clamp(42px,4vw,46px);height:clamp(42px,4vw,46px);
+}
+#more{min-width:min(230px,100%)}
+.nav{gap:clamp(18px,1.9vw,28px)}
+.nav a{font-size:clamp(12px,.95vw,13px)}
+.bar-in{gap:clamp(14px,1.8vw,24px)}
+.btn{padding:clamp(11px,1.1vw,12px) clamp(16px,1.9vw,22px)}
+.btn-lg{padding:clamp(14px,1.5vw,16px) clamp(22px,2.4vw,30px)}
+
+/* ── the footer watermark ──
+   Sized fluidly instead of stepping through three heights; it is hidden
+   outright only where the footer stacks, which is a decision, not a size. */
+
+/* ═══ CONTAINER QUERIES ══════════════════════════════════════════════════════
+   A card in this grid can be 280px wide or 420px depending on how many columns
+   fit — and the window width tells you nothing about which. At 1440px a card
+   might be 300px (four columns) or 420px (three), so sizing its insides against
+   the viewport gets it wrong in one of those cases every time.
+
+   `cqi` is 1% of the CARD's own inline size, so the type and padding inside it
+   follow the card rather than the window. Wrapped in @supports: where container
+   queries are not available the fixed values above stand, which is the design
+   as it was before this section existed. */
+@supports (container-type:inline-size){
+  .card{container-type:inline-size}
+
+  .card h3{font-size:clamp(16px,5.4cqi,19px)}
+  .card .price{font-size:clamp(17px,7cqi,24px)}
+  .card-body{padding:clamp(14px,5cqi,20px);gap:clamp(9px,3.4cqi,12px)}
+  .spec{font-size:clamp(12.5px,3.9cqi,13.5px);padding-top:clamp(10px,4cqi,14px)}
+  .card .yr{font-size:clamp(11.5px,3.7cqi,13px)}
+
+  /* A narrow card cannot carry two columns of specification or a 16:10 frame
+     without the photograph becoming a letterbox. This is the card deciding for
+     itself, at whatever width it has been given. */
+  @container (max-width:300px){
+    .spec{grid-template-columns:1fr}
+    .card-media{aspect-ratio:16/9}
+    .card-act{gap:6px}
+  }
+  @container (min-width:400px){
+    .card-media{aspect-ratio:16/10}
+  }
+}
+/* ═══ THE FIVE REMAINING MEDIA QUERIES ═══════════════════════════════════════ */
+/* 1 · The navigation becomes a drawer.
+      A real change of component, not a size: the links stop being a row and
+      become a panel that opens. Everything else in here is the same decision
+      seen from a different angle — the header actions move into that panel,
+      the filters stop being a row, the phone action bar appears, and the two
+      decorative shields step aside because the header already carries one. */
+@media (max-width:820px){
+  .bar-cta{display:none}
+  .burger{display:block}
+  .nav{
+    position:fixed;inset:var(--bar) 0 auto;flex-direction:column;gap:0;
+    background:var(--paper);border-bottom:1px solid var(--hair);
+    padding:8px 20px 20px;
+    transform:translateY(-120%);transition:transform .4s var(--glide);
+    box-shadow:0 18px 40px rgba(10,10,11,.14);
+  }
+  .nav.is-open{transform:none}
+  .nav a{
+    padding:15px 0;border-bottom:1px solid var(--hair);font-size:15px;
+    opacity:0;transform:translateY(-10px);
+    transition:opacity .3s ease,transform .38s var(--pop),background .2s;
+  }
+  .nav a:last-child{border-bottom:0}
+  .nav.is-open a{opacity:1;transform:none}
+  .filters{flex-direction:column;align-items:stretch}
+  .filters select{width:100%;min-width:0}
+  .actbar{display:block}
+  .totop{bottom:calc(74px + env(safe-area-inset-bottom))}
+  .hero-in{grid-template-columns:1fr}
+  .hero-logo{display:none}
+  .foot-wm{display:none}
+}
+
+/* 2 · The measure stops growing.
+      Past this width the column would keep widening into an unreadable line
+      length, so the shell is capped and the extra space becomes margin. */
+@media (min-width:1500px){
+  :root{--shell:1380px}
+}
+
+/* 3 · Short landscape phones.
+      A height decision, and the only one the vh terms above cannot express:
+      the loader is centred in the viewport rather than flowing with the page,
+      so it needs telling directly. */
+@media (max-height:460px) and (orientation:landscape){
+  .pl-art{width:min(240px,56vw)}
+}
+
+/* 4 · Touch.
+      Hover lifts are a pointer affordance: on a touch screen :hover is entered
+      on tap and held until something else is tapped, leaving a card stuck in
+      its raised state. Tap targets are opened to 44px in the same pass. */
+@media (hover:none){
+  .card:hover,.why-grid article:hover,.chan li:hover,.glance div:hover,
+  .btn:hover,.btn-sound:hover{transform:none !important}
+  .card:hover .card-media img{transform:scale(1.04)}
+  .btn{padding:14px 22px;min-height:44px}
+  .btn-lg{padding:17px 28px}
+  .btn-wa{width:48px}
+  .nav a{padding:12px 0}
+  .faq-head{min-height:56px}
+  .btn-sound{padding:12px 16px;min-height:44px}
+  .foot-nav a{padding:11px 0}
+  .foot-contact a{padding:4px 0}
+}
+
+/* 5 · Reduced motion.
+      Parked behind an impossible width, and the note on the original block
+      explains why: Windows battery saver reports this setting even when the
+      visitor has not asked for it. The plugin exposes it as an opt-in
+      setting instead — see Vesla_Render::css_vars(). */
+@media (prefers-reduced-motion:reduce) and (min-width:99999px){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}
+  .reveal{opacity:1;transform:none}
+  .preload{display:none}
+  .stages li::before,.hero-stats li::before{transform:none}
+}
+
+/* ---------- loading skeletons ----------
+   Real boxes of the right size while the cars are being fetched, so the page
+   does not jump when they arrive. Sized by the same aspect-ratio the card
+   media uses, for the same reason. */
+@keyframes veslaSkeleton{from{background-position:150% 0}to{background-position:-50% 0}}
+
+/* The vehicle popup's stylesheet lived here — about a hundred and thirty
+   rules for a <dialog> that was replaced by a page of its own. Removed
+   rather than left commented out: dead CSS is read by every visitor's
+   browser and by everyone who ever opens this file looking for the rules
+   that are actually in use. What draws a car now is the .vp-* block
+   further down. */
+
+/* ── Where we are ──────────────────────────────────────────────────────────
+   Above the footer, on the page's off-white ground — the same tint the other
+   light sections use, so the page steps down into the footer rather than
+   going black twice in a row.
+
+   The map is nine image tiles with one pin drawn over them: no third-party
+   script, no API key, no consent banner, and nothing marked on it but this
+   showroom. */
+.sec-map{
+  background:var(--pearl); color:var(--ink);
+  padding:clamp(46px,6vw,80px) 0;
+}
+.sec-map .eyebrow{ color:var(--amber-deep); }
+.sec-map h2{ margin:0 0 clamp(22px,3vw,34px); color:var(--ink); }
+
+.map-wrap{ display:grid; gap:clamp(16px,2.2vw,26px); }
+/* ─ the stage ─
+   The map and the address card are SIBLINGS inside a positioned box. The
+   card must never be a child of the map element: Leaflet rewrites the
+   position of whatever it initialises into, and takes anything inside it
+   along. isolation seals the stacking context — Leaflet stacks its panes
+   from 400 and its zoom controls at 1000, and .leaflet-container is
+   z-index:auto, so without the seal the map paints straight over the
+   masthead as the page scrolls. */
+.map-card{
+  position:relative; isolation:isolate; z-index:0;
+  border-radius:16px; overflow:hidden;
+  border:1px solid rgba(20,20,21,.10);
+  box-shadow:0 18px 50px rgba(20,20,21,.07);
+  background:var(--paper);
+}
+
+/* Height as a clamp, not a ratio computed from width: the published file
+   is written at an assumed desktop width, and a baked-in pixel height
+   would snap to something else the moment a phone opened it. */
+.map-frame{
+  position:relative; overflow:hidden;
+  height:clamp(360px,46vw,560px);
+  background:#FAFAF8;
+}
+.vesla-map{ position:absolute; inset:0; z-index:1; background:#FAFAF8; }
+
+/* ─ the skeleton ─
+   Fills the frame until tiles have painted, and stays for good if they
+   never do. A quiet frame says “no map here” more honestly than a spinner
+   turning for ever. */
+/* A box the shape of what is coming, pulsed on opacity — not a shimmer
+   sweep, which reads as a consumer app, and not a spinner, which says only
+   “wait” where this says how much is coming and holds the space so nothing
+   jumps when it lands. */
+.map-skel{
+  position:absolute; inset:0; z-index:2;
+  background:#F2F2EF;
+}
+@media (prefers-reduced-motion:no-preference){
+  .map-skel{ animation:skelPulse .9s var(--glide) infinite alternate; }
+  @keyframes skelPulse{ from{ opacity:.55; } to{ opacity:1; } }
+}
+.map-frame.is-ready .map-skel{ opacity:0; visibility:hidden; transition:opacity .4s ease; }
+
+/* ─ the basemap, graded ─
+   Raw tiles are the loudest thing on the page: strong green parks, red
+   motorways. Applied to the TILE PANE and not to the container — the
+   container would drag the marker, its caption and the zoom controls
+   through the same filter and take the yellow out of the pin; per tile
+   would make each one its own stacking context and open hairline seams
+   half way through a zoom. */
+.vesla-map .leaflet-tile-pane{ filter:saturate(.32) brightness(1.06) contrast(.94); }
+
+/* ─ the pin ─
+   border-box on the mark is load-bearing: under content-box an 18px mark
+   with a 3px ring paints at 24px while Leaflet sizes the hit area to 18px,
+   so the ring sits outside its own target and the pin needs two taps. */
+.vesla-pin{ background:none; border:0; }
+.vesla-pin-mark{
+  position:absolute; inset:0; box-sizing:border-box;
+  width:24px; height:24px; border-radius:50%;
+  background:var(--amber); border:3px solid var(--ink);
+  box-shadow:0 4px 12px rgba(20,20,21,.45);
+}
+/* behind the mark, so the ring stays a ring */
+.vesla-pin-aura{
+  position:absolute; left:50%; top:50%; z-index:-1;
+  width:52px; height:52px; margin:-26px 0 0 -26px; border-radius:50%;
+  background:radial-gradient(closest-side,rgba(242,237,40,.38),transparent 72%);
+}
+.vesla-pin:focus-visible .vesla-pin-mark{ outline:3px solid var(--ink); outline-offset:3px; }
+@media (prefers-reduced-motion:no-preference){
+  .vesla-pin{ animation:veslaPinDrop .5s cubic-bezier(.22,1.15,.36,1) both; }
+  @keyframes veslaPinDrop{
+    from{ opacity:0; transform:translateY(-16px) scale(.9); }
+    to{ opacity:1; transform:none; }
+  }
+}
+
+/* ─ the caption ─ a plate, not a bubble, so the default arrow is off ─ */
+.vesla-map .vesla-pin-label{
+  background:var(--paper); color:var(--ink);
+  border:1px solid rgba(20,20,21,.14); border-left:2px solid var(--amber);
+  border-radius:0; box-shadow:0 8px 22px rgba(20,20,21,.16);
+  padding:6px 10px; white-space:nowrap;
+  font-family:var(--label); font-weight:600; font-size:11.5px;
+  letter-spacing:.13em; text-transform:uppercase;
+}
+.vesla-map .vesla-pin-label::before{ display:none; }
+
+/* ─ the popup ─ */
+.vesla-map .vesla-pop .leaflet-popup-content-wrapper{
+  border-radius:0; border-left:3px solid var(--amber);
+  box-shadow:0 24px 54px rgba(20,20,21,.26);
+}
+.vesla-map .vesla-pop .leaflet-popup-content{ margin:14px 16px; font:inherit; }
+.vesla-map .vesla-pop b{
+  display:block; margin-bottom:6px;
+  font-family:var(--display); font-weight:600; font-size:17px; color:var(--ink);
+}
+.vesla-pop-addr{ display:block; font-size:14.5px; line-height:1.6; color:var(--steel); }
+
+/* ─ Leaflet's own furniture ─ */
+.vesla-map .leaflet-control-zoom{ border:0; box-shadow:0 6px 18px rgba(20,20,21,.14); }
+.vesla-map .leaflet-control-zoom a{
+  width:34px; height:34px; line-height:34px; border-radius:0;
+  color:var(--ink); border:1px solid rgba(20,20,21,.12);
+}
+.vesla-map .leaflet-control-zoom a:hover{ background:var(--amber); color:var(--ink); }
+.vesla-map .leaflet-control-attribution{
+  background:rgba(255,255,255,.86); color:#4A4A4C;
+  font-family:var(--body,inherit); font-size:11px; padding:3px 7px;
+}
+.vesla-map .leaflet-control-attribution a{ color:#2A2A2C; }
+/* ─ the address card ─
+   Floating over the map's top-left, and aligned to the SHELL rather than
+   to the window: the max() below keeps it level with the heading above it
+   at every width instead of drifting towards the middle on a wide screen. */
+.map-body{
+  position:absolute; z-index:2;
+  top:clamp(20px,3vw,38px);
+  left:max(clamp(18px,3vw,28px),
+           calc((100% - min(100%,1180px)) / 2 + clamp(18px,3vw,28px)));
+  width:min(320px,calc(100% - clamp(36px,6vw,56px)));
+  padding:clamp(18px,2.2vw,26px);
+  display:flex; flex-direction:column; gap:10px;
+  background:var(--paper); border:1px solid rgba(20,20,21,.12);
+  border-left:3px solid var(--amber);
+  box-shadow:0 18px 46px rgba(20,20,21,.16);
+  transition:transform .42s cubic-bezier(.22,1.15,.36,1), border-color .28s ease;
+}
+/* A lift is a pointer affordance. On a touch screen :hover is entered on
+   tap and held, which would leave the card stuck in its raised state. */
+@media (hover:hover) and (pointer:fine){
+  .map-card:hover .map-body{ transform:translateY(-4px); }
+}
+.map-body h3{ margin:0; font-size:clamp(1.05rem,1.5vw,1.25rem); font-weight:600; color:var(--ink); }
+.map-addr{ margin:0; color:var(--steel); line-height:1.65; font-size:.92rem; }
+.map-tel{ margin:0; }
+.map-tel a{ color:var(--amber-deep); font-weight:700; text-decoration:none; font-size:1rem; }
+.map-tel a:hover{ text-decoration:underline; }
+.map-go{ align-self:flex-start; margin-top:4px; min-height:44px; }
+
+/* Under 860px a 320px card over a 360px map would leave almost none of the
+   map visible, so it stops floating and sits below, overlapping the lower
+   edge. The zoom controls move out of its way while it is up top and come
+   back below the same breakpoint. */
+@media (min-width:861px){
+  .vesla-map .leaflet-top.leaflet-left{ top:auto; bottom:8px; }
+}
+@media (max-width:860px){
+  .map-body{
+    /* relative, NOT static: the card is pulled up over the map's lower edge,
+       and z-index only applies to a positioned element -- as static it lost
+       its stacking order and the map painted over the branch name. */
+    position:relative; top:auto; left:auto;
+    width:auto; margin:-40px clamp(12px,4vw,24px) 0;
+  }
+  .map-card{ overflow:visible; background:none; border:0; box-shadow:none; }
+  /* The card overlaps the map's lower edge, which is where Leaflet puts the
+     attribution -- and that credit is a condition of using the tiles, not a
+     decoration. Moved to the top of the map, clear of the card. */
+  .vesla-map .leaflet-bottom.leaflet-right{ bottom:auto; top:0; }
+  .map-frame{ border-radius:16px; border:1px solid rgba(20,20,21,.10); }
+}
+
+/* ── A card is a link ──────────────────────────────────────────────────────
+   One anchor, wrapping the title, stretched across the whole card. One link
+   for a crawler and a screen reader rather than three pointing at the same
+   place — and still a real link, so middle-click opens a tab and hovering
+   shows where it goes. The buttons sit above it on z-index and keep working. */
+.card{ position:relative; }
+.card-link{ color:inherit; text-decoration:none; }
+.card-link::after{ content:""; position:absolute; inset:0; z-index:1; }
+.card:hover .card-link{ color:var(--amber-deep); }
+.card-act{ position:relative; z-index:2; }
+
+/* ===========================================================================
+   THE VEHICLE PAGE
+
+   A car on its own page, in the site's own language: the near-black ground,
+   the lemon accent, the same buttons. The depth is deliberately restrained --
+   the stage tilts a few degrees towards the pointer and the blocks rise as
+   they arrive. A page somebody is reading a price off should not swing about.
+   =========================================================================== */
+/* ─ a car's page, in daylight ─
+   It used to be near-black from the masthead to the footer, and a black
+   page with black panels on it has nothing to separate one thing from
+   the next: the specification, the calculator and the features read as
+   one dark mass. It is the same ground the rest of the site stands on
+   now — pearl behind, white panels in front, ink type — so a car looks
+   like part of the website rather than a different one.
+
+   The GALLERY stays dark, deliberately. A photograph of a car is the one
+   thing on this page that has to be looked at rather than read, and a
+   dark surround is what stops the page competing with it — which is why
+   every showroom hangs cars against dark walls. */
+.veh-page{ background:var(--pearl); color:var(--ink); min-height:100vh; }
+.veh-page main{ padding-bottom:clamp(40px,6vw,70px); }
+
+.vp-top{ padding:clamp(84px,9vw,120px) 0 clamp(14px,2vw,20px); }
+.vp-back{
+  display:inline-flex; align-items:center; gap:8px;
+  min-height:44px; padding:0 4px;
+  color:var(--steel); text-decoration:none; font-size:.85rem;
+  letter-spacing:.06em; text-transform:uppercase; font-weight:600;
+  transition:color .2s ease;
+}
+.vp-back svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2; }
+.vp-back:hover{ color:var(--amber); }
+
+.vp-grid{
+  display:grid; gap:clamp(20px,3vw,40px);
+  grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); align-items:start;
+}
+@media (max-width:960px){ .vp-grid{ grid-template-columns:1fr; } }
+
+/* ── the photographs ─────────────────────────────────────────────────────
+   perspective on the wrapper, the transform on the stage: putting both on one
+   element makes the rotation flat, which is the usual reason a 3D tilt looks
+   like a shear instead of a turn. */
+/* min-width:0 is load-bearing, and this is why: the thumbnail strip below
+   the stage is a flex row of ten 92px thumbnails. Its min-content width is
+   therefore about a thousand pixels, and a grid item defaults to min-width
+   auto -- so the column sized itself to the strip and the whole page ran a
+   thousand pixels wide on a phone. overflow-x on the strip cannot help while
+   the track it sits in is already too wide. */
+.vp-gal{ perspective:1400px; min-width:0; opacity:0; transform:translateY(18px); }
+.vp-gal.is-in{ opacity:1; transform:none; transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.3,1); }
+
+.vp-stage{
+  position:relative; overflow:hidden; border-radius:18px;
+  /* 4:3, which is the shape the photographs actually are. At 3:2 every one
+     of them sat in a letterbox with a grey bar down each side; matching the
+     picture means the picture fills the frame. Anything shaped differently
+     still fits rather than crops -- see object-fit on .vp-shot -- and the
+     blurred copy behind it fills whatever is left. */
+  aspect-ratio:4 / 3; background:#0e0e10;
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  transform-style:preserve-3d;
+  transition:transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease;
+}
+.vp-stage.is-tilt{
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) scale(1.012);
+  box-shadow:0 42px 100px rgba(0,0,0,.62);
+}
+/* ─ the backdrop ─
+   The stage shows the whole photograph, so anything that is not 3:2
+   leaves bars at the sides. They used to be flat near-black, which read
+   as a picture that had failed to load. This is the same photograph,
+   cropped to fill, blurred past recognition and darkened so it never
+   competes with the real one in front of it.
+
+   scale(1.1) because a blur samples beyond its own edges: without it the
+   filter fades out at the border and draws a pale frame. */
+.vp-fill{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; display:block;
+  opacity:0; visibility:hidden;
+  transform:scale(1.1);
+  filter:blur(40px) saturate(1.25) brightness(.52);
+  pointer-events:none;
+}
+.vp-fill.is-on{ opacity:1; visibility:visible; }
+
+.vp-shot{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; display:block;
+  opacity:0; visibility:hidden;
+  /* above the backdrop, which is its own blurred copy */
+  z-index:1;
+}
+.vp-shot.is-on{ opacity:1; visibility:visible; }
+@media (prefers-reduced-motion:no-preference){
+  .vp-shot.is-on.from-right{ animation:vpRight .4s cubic-bezier(.2,.7,.3,1) both; }
+  .vp-shot.is-on.from-left{ animation:vpLeft .4s cubic-bezier(.2,.7,.3,1) both; }
+  @keyframes vpRight{ from{ opacity:0; transform:translateX(6%); } }
+  @keyframes vpLeft{ from{ opacity:0; transform:translateX(-6%); } }
+}
+/* ─ a car photographed later than it was listed ─ */
+.vp-stage .ph{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(14px,2vw,20px); padding:clamp(20px,4vw,40px); text-align:center;
+  background:radial-gradient(120% 100% at 50% 0%, #1d1d1e 0%, var(--void) 70%);
+}
+.vp-nophoto-mark{
+  width:clamp(58px,9vw,86px); height:auto; opacity:.5;
+}
+.vp-nophoto p{
+  margin:0; max-width:34ch; color:var(--steel);
+  font-size:.88rem; line-height:1.6;
+}
+
+.vp-nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+  width:46px; height:46px; padding:0; cursor:pointer;
+  display:grid; place-items:center;
+  border:1px solid rgba(255,255,255,.22); border-radius:50%;
+  background:rgba(10,10,11,.55); color:var(--paper);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  transition:background .18s ease, border-color .18s ease, transform .18s ease;
+}
+.vp-prev{ left:14px; }
+.vp-next{ right:14px; }
+.vp-nav svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2.1; }
+.vp-nav:hover{ background:var(--amber); color:var(--ink); border-color:var(--amber); }
+.vp-nav:focus-visible{ outline:2px solid var(--amber); outline-offset:3px; }
+@media (max-width:560px){ .vp-prev{ left:8px; } .vp-next{ right:8px; } }
+
+.vp-count{
+  position:absolute; right:14px; bottom:14px; z-index:3;
+  padding:5px 11px; border-radius:999px;
+  background:rgba(10,10,11,.62); color:var(--paper);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  font-size:.74rem; font-weight:600; font-variant-numeric:tabular-nums;
+}
+
+.vp-thumbs{
+  display:flex; gap:9px; margin-top:12px; padding-bottom:4px;
+  min-width:0; max-width:100%;
+  overflow-x:auto; overscroll-behavior-x:contain; scrollbar-width:thin;
+}
+.vp-th{
+  flex:0 0 auto; width:92px; height:66px; padding:0; cursor:pointer;
+  border:1px solid rgba(20,20,21,.14); border-radius:9px; overflow:hidden;
+  background:var(--pearl); opacity:.55;
+  transition:opacity .18s ease, border-color .18s ease, transform .18s ease;
+}
+.vp-th img{ width:100%; height:100%; object-fit:cover; display:block; }
+.vp-th:hover{ opacity:1; transform:translateY(-2px); }
+.vp-th.is-on{ opacity:1; border-color:var(--amber); }
+
+/* ── the facts ───────────────────────────────────────────────────────────── */
+.vp-side{
+  position:sticky; top:96px;
+  display:flex; flex-direction:column; gap:13px;
+  padding:clamp(20px,2.4vw,28px);
+  background:var(--paper); border:1px solid rgba(20,20,21,.10);
+  box-shadow:0 14px 40px rgba(20,20,21,.06);
+  border-radius:18px;
+  opacity:0; transform:translateY(18px);
+}
+.vp-side.is-in{ opacity:1; transform:none; transition:opacity .5s .08s ease, transform .5s .08s cubic-bezier(.2,.7,.3,1); }
+@media (max-width:960px){ .vp-side{ position:static; } }
+
+/* ─ the breadcrumb ─ */
+.vp-crumbs{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+  font-family:var(--label); font-size:.72rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--steel);
+}
+/* A breadcrumb link is standalone, not a word inside a sentence, so it gets
+   a real target rather than the exemption inline links get. The row is
+   already flex, so the extra height costs no layout. */
+.vp-crumbs a{
+  color:var(--steel); text-decoration:none;
+  display:inline-flex; align-items:center; min-height:44px;
+}
+.vp-crumbs a:hover{ color:var(--amber); }
+.vp-crumbs [aria-current]{ color:var(--ink); }
+.vp-crumbs span[aria-hidden]{ opacity:.4; }
+
+/* ─ the badge and the stock number, on one line ─ */
+.vp-tags{ margin:0; display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.vp-badge{
+  display:inline-block; padding:4px 9px; border-radius:3px;
+  background:var(--amber); color:var(--ink);
+  font-family:var(--label); font-size:.64rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase;
+}
+/* The line under the price. Small print, and it should read as small
+   print: a warranty is a promise, and one set in the same weight as the
+   price would be claiming more than it says. */
+.vp-warranty{
+  margin:-6px 0 0; color:var(--amber-deep);
+  font-size:.78rem; letter-spacing:.02em;
+}
+
+.vp-ref{
+  margin:0; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--amber-deep); font-weight:600;
+}
+.vp-title{
+  margin:0; font-size:clamp(1.5rem,2.6vw,2.1rem); line-height:1.14;
+  letter-spacing:-.01em;
+}
+.vp-price{
+  margin:0; font-size:clamp(1.6rem,2.8vw,2.2rem); font-weight:700; line-height:1.1;
+  background:var(--chrome-text); -webkit-background-clip:text;
+  background-clip:text; color:transparent;
+}
+.vp-price small{
+  display:block; font-size:.7rem; font-weight:500; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--steel);
+  background:none; -webkit-text-fill-color:var(--steel);
+}
+.vp-head{
+  margin:4px 0 0; padding:0; list-style:none; display:grid; gap:1px;
+  grid-template-columns:repeat(auto-fit,minmax(min(110px,100%),1fr));
+  background:rgba(20,20,21,.10);
+  border:1px solid rgba(255,255,255,.09); border-radius:12px; overflow:hidden;
+}
+.vp-head li{ background:var(--pearl); padding:10px 12px; }
+.vp-head span{
+  display:block; font-size:.62rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--steel); margin-bottom:3px;
+}
+.vp-head b{ font-size:.92rem; font-weight:600; }
+.vp-act{ display:flex; flex-wrap:wrap; gap:10px; margin-top:4px; }
+.vp-act .btn{ flex:1 1 auto; justify-content:center; min-height:46px; }
+/* The same edge every other control on a light ground uses; at .28 this one
+   sat below the contrast a boundary needs to be read as a boundary. */
+.vp-act .btn-line{ color:var(--ink); border-color:var(--edge); }
+.vp-act .btn-line:hover{ background:var(--ink); color:var(--amber); }
+
+/* ── the detail ──────────────────────────────────────────────────────────── */
+.vp-detail{ margin-top:clamp(28px,4vw,52px); display:grid; gap:clamp(20px,2.6vw,32px); }
+
+/* ─ the specification and the calculator, side by side ─
+   The two things a buyer reads together: what it is, and what it would cost
+   a month. Each keeps its own height — the calculator is short and the
+   specification is long, and stretching the short one to match leaves a
+   panel that is mostly empty. */
+.vp-pair{
+  display:grid; gap:clamp(20px,2.6vw,32px); align-items:start;
+  grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);
+}
+/* Below this each would be too narrow to read: the specification collapses
+   to one fact a line and the slider loses its travel. */
+@media (max-width:900px){ .vp-pair{ grid-template-columns:1fr; } }
+
+/* At half the width its own inner columns come down to one, so the rows read
+   as a list rather than as a grid with a gap down the middle. */
+.vp-over .vp-spec{ grid-template-columns:1fr; }
+@media (min-width:1280px){ .vp-over .vp-spec{ grid-template-columns:repeat(2,1fr); } }
+.vp-block{
+  padding:clamp(20px,2.6vw,30px);
+  background:var(--paper); border:1px solid rgba(20,20,21,.10); border-radius:18px;
+  box-shadow:0 14px 40px rgba(20,20,21,.06);
+  opacity:0; transform:translateY(20px);
+}
+.vp-block.is-in{ opacity:1; transform:none; transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.3,1); }
+.vp-block h2{
+  /* A panel's title is a label, not a heading in the page's own voice, so
+     it opts out of the 19ch measure the section headings take. */
+  margin:0 0 16px; max-width:none;
+  font-size:.74rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--steel); font-weight:600;
+}
+/* The separators are drawn INSIDE each row rather than as gaps showing a
+   lighter background through. With gaps, an odd number of facts left the
+   last cell of the grid empty and that emptiness was a pale tile the same
+   size as a fact — it read as a value that had failed to load. Drawn this
+   way there is no cell to be empty. */
+.vp-spec{
+  margin:0; display:grid; gap:0;
+  grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));
+  background:var(--paper);
+  border:1px solid rgba(20,20,21,.10); border-radius:12px; overflow:hidden;
+}
+.vp-row{
+  background:var(--paper); padding:13px 16px;
+  box-shadow:inset -1px 0 0 rgba(20,20,21,.09),
+             inset 0 -1px 0 rgba(20,20,21,.09);
+}
+.vp-row dt{
+  font-size:.64rem; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--steel); margin:0 0 4px;
+}
+.vp-row dd{ margin:0; font-weight:600; font-size:.95rem; }
+
+.vp-about{ color:var(--steel); line-height:1.7; font-size:.98rem; }
+.vp-about a{ color:var(--amber-deep); }
+
+.vp-feat{
+  margin:0; padding:0; list-style:none; display:grid; gap:9px 18px;
+  grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));
+}
+.vp-feat li{ position:relative; padding-left:25px; font-size:.94rem; color:var(--ink); }
+.vp-feat li::before{
+  content:""; position:absolute; left:2px; top:.45em;
+  /* amber-deep, not amber: lemon on white is a tick nobody can see. */
+  width:12px; height:6px; border-left:2px solid var(--amber-deep);
+  border-bottom:2px solid var(--amber-deep); transform:rotate(-45deg);
+}
+
+.vp-fin-row{
+  display:grid; grid-template-columns:1fr auto; align-items:baseline;
+  gap:6px 12px; margin-bottom:13px;
+}
+.vp-fin-row label{ font-size:.84rem; color:var(--steel); }
+.vp-fin-row output{ font-weight:600; font-size:.92rem; font-variant-numeric:tabular-nums; }
+/* 44px, not 26. A slider's tap target is the whole track, and this one sets
+   the deposit on a car -- it has to be draggable with a thumb on a phone.
+   Written here rather than in the tap-target block at the end of this file
+   because [type=range] outranks a plain `input` selector, so a rule down
+   there would silently lose to this one. */
+.vp-fin-row input[type=range]{
+  grid-column:1 / -1; width:100%; accent-color:var(--amber); min-height:44px;
+}
+.vp-fin-out{
+  display:flex; align-items:baseline; gap:10px; margin-top:6px;
+  padding:15px 17px; border-radius:12px;
+  background:rgba(242,237,40,.08); border:1px solid rgba(242,237,40,.22);
+}
+.vp-fin-out b{
+  font-size:clamp(1.4rem,2.4vw,1.8rem); font-weight:700; color:var(--amber);
+  font-variant-numeric:tabular-nums;
+}
+.vp-fin-out span{ color:var(--steel); font-size:.84rem; }
+.vp-fin-note{ margin:10px 0 0; font-size:.78rem; color:var(--steel); line-height:1.55; }
+
+@media (prefers-reduced-motion:reduce){
+  .vp-gal, .vp-side, .vp-block{ opacity:1; transform:none; }
+  .vp-stage, .vp-stage.is-tilt{ transform:none; transition:none; }
+}
+
+/* ── Moving to a car without a reload ──────────────────────────────────────
+   The landing page is hidden, not destroyed, so coming back is instant and
+   arrives exactly where it was left. */
+html.route-on{ background:var(--void); }
+
+@media (prefers-reduced-motion:no-preference){
+  @keyframes routeIn{ from{ opacity:0; transform:translateY(10px); } }
+}
+@media (prefers-reduced-motion:reduce){  }
+
+
+/* The header and footer sit inside .veh-page, which is a dark panel and sets
+   a light text colour. The bar is light, so it was inheriting white text onto
+   a white background and all but disappearing on every car page. Colour is
+   stated here rather than inherited — a bar that changes colour depending on
+   what it happens to be nested in is a bar that will do this again. */
+.veh-page .bar{ color:var(--ink); }
+.veh-page .bar a{ color:inherit; }
+.veh-page .brand-txt b{ color:var(--ink); }
+.veh-page .brand-txt i{ color:var(--steel); }
+.veh-page .bar .btn-line{ color:var(--ink); border-color:var(--ink); }
+.veh-page .bar .btn-line:hover{ background:var(--ink); color:var(--paper); }
+
+/* Each button named, not caught by exclusion. `:not(.btn-line)` swept up the
+   ghost telephone button as well and left it pale on a light bar -- the same
+   fault, one button along. */
+/* Left over from when the primary was ink lettered in white. */
+.veh-page .bar .btn-gold{ color:var(--amber); }
+.veh-page .bar .btn-ghost{ color:var(--ink); border-color:var(--ink); }
+
+/* ── A car with little filled in ───────────────────────────────────────────
+   Most of the stock has nine fields and one photograph, not thirty and ten.
+   The page has to look deliberate at that end of the range, not unfinished.
+
+   The photograph column was running 500px taller than the panel beside it,
+   which left the right-hand side floating in a large empty space and read as
+   a page that had failed to load. Capping the stage keeps the two columns
+   within sight of each other. */
+/* The stage is capped so a tall photograph cannot push the price and the
+   buttons off the first screen. Raised to 115vh on request: the picture is
+   what somebody came for, and it is allowed to be taller than the window
+   they are looking through. */
+.vp-stage{ max-height:115vh; }
+
+/* Two columns, not five. auto-fit packed six facts into a wide row and left
+   four hollow cells sitting under them; a car with six facts should look like
+   a car with six facts, not like one with sixteen that failed to load ten. */
+.vp-spec{ grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr)); }
+@media (min-width:1100px){ .vp-spec{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* Same for the four facts at the top: with only two filled in, a four-column
+   strip is two boxes and two gaps. */
+.vp-head{ grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr)); }
+
+/* With nothing below it the side panel has no reason to stick, and sticking
+   makes the emptiness follow the reader down the page. */
+@media (min-width:961px){
+  .vp-side{ position:sticky; top:96px; }
+  .veh-page:has(.vp-block:nth-of-type(2)) .vp-side{ position:sticky; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TAP TARGETS
+
+   Measured at 390x844 with touch emulation, not guessed: every control on
+   the page, its real painted box, anything under 44x44 listed. What is
+   below is that list, closed with padding and min-height only. Nothing
+   here changes a font size — the type on this site is set the way it is on
+   purpose, and growing a control by growing its text would fix a tap
+   target by breaking a layout.
+
+   Two things measured small and are deliberately left alone:
+
+     .card-link   the car's title. Its own box is one line of text, but the
+                  ::after on it is stretched across the whole card, so the
+                  thing a finger actually lands on is 320x300. Padding the
+                  heading would add space inside the card and change
+                  nothing about the target.
+
+     a inside a   a link in the middle of a sentence cannot be 44px tall
+     paragraph    without opening up the line spacing around it. WCAG 2.5.8
+                  exempts inline links in a block of text for exactly this
+                  reason. Standalone links are padded below; links inside
+                  running copy are not.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Back to top: two pixels short, and it is a floating control with nothing
+   beside it to catch a near miss. */
+.totop{ width:44px; height:44px; }
+
+/* Form controls. Every one of these measured 41-43px: near enough to look
+   right and not near enough to hit reliably at arm's length on a bus. */
+.filter select,
+#est select,
+.enq input,
+.enq select,
+.enq textarea,
+#f-reset{ min-height:44px; }
+
+/* Standalone links that sit on their own line: the footer columns, the
+   channel list, and the branch telephone number under the map. Given a box
+   rather than left as bare text, and centred inside it so the padding is
+   split evenly above and below rather than pushing the text off its line. */
+.foot-nav li a,
+.foot-contact li a,
+.chan li a,
+.map-tel a{
+  display:inline-flex; align-items:center; min-height:44px;
+  /* min-WIDTH too: the shortest footer link is one three-letter word and
+     measured 41px across. The box grows to the right of left-aligned text,
+     so nothing moves and nothing looks padded. */
+  min-width:44px;
+}
+
+/* The finance calculator's own fields, on a car's page. The two number
+   inputs measured 40px and their labels 22px — and the label matters here
+   because tapping it is what focuses the field. */
+.vp-fin-row input,
+.vp-fin-row select{ min-height:44px; }
+.vp-fin-row label{
+  display:flex; align-items:center; min-height:44px;
+}
+
+/* The masthead lockup. 38px tall because it is sized to the bar, so the
+   height comes from padding inside the link rather than from the logo. */
+.brand{ padding-block:3px; min-height:44px; }
+
+/* A car's page has the same controls plus the gallery arrows and thumbs. */
+.vp-nav{ min-width:44px; min-height:44px; }
+.vp-th{ min-width:44px; min-height:44px; }
+
+/* ─ a car arriving ─
+   The curtain is up for half a second while the page is fetched, then fades
+   over 420ms. Without anything of its own the car simply existed behind it:
+   the curtain lifted on a finished page, which reads as a cut rather than as
+   a move.
+
+   So the page rises as the curtain goes, and its parts arrive a beat apart —
+   the photographs first, because that is what somebody pressed the card to
+   see, then the price beside them, then the detail below. Short enough to be
+   over before the eye has finished travelling, which is the difference
+   between an entrance and a wait.
+
+   `both`, so nothing flashes at full opacity before its delay begins. */
+@media (prefers-reduced-motion:no-preference){
+  #vesla-car-host .veh-page{ animation:carIn .42s var(--pop) both; }
+  #vesla-car-host .vp-gal{ animation:carPart .40s var(--pop) .04s both; }
+  #vesla-car-host .vp-side{ animation:carPart .40s var(--pop) .12s both; }
+  #vesla-car-host .vp-detail{ animation:carPart .40s var(--pop) .18s both; }
+  @keyframes carIn{ from{ opacity:0; } }
+  @keyframes carPart{ from{ opacity:0; transform:translateY(16px); } }
+}
+
+/* The parts are animated in, so the observer that normally reveals them must
+   not also be holding them at zero — it never sees them, because they were
+   put on screen already scrolled to. */
+#vesla-car-host .vp-gal,
+#vesla-car-host .vp-side,
+#vesla-car-host .vp-block{ opacity:1; transform:none; }

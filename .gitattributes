@@ -1,0 +1,10 @@
+# Store every file exactly as it is on disk.
+#
+# Not the usual `text=auto`. This project has already lost an afternoon to line
+# endings once: a run of edits doubled CRLF into \r\r\n across the plugin and
+# left several hundred spurious blank lines, and the PHP file still carries
+# real newlines inside a few double-quoted strings where they are deliberate.
+# Letting Git normalise on checkin and denormalise on checkout would rewrite
+# those bytes on every clone. The plugin is CRLF, some assets are LF, and both
+# should survive a round trip untouched.
+* -text

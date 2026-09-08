@@ -1,0 +1,39 @@
+# ── backups ───────────────────────────────────────────────────────────────
+# Snapshots of the published site, taken by hand before risky work. They are
+# copies of frontend/ and belong on disk, not in the history.
+frontend.bak-*/
+*.bak
+*.bak-*
+vesla-landing.php.bak*
+
+# Settings exports and the automatic snapshots the plugin writes. These hold
+# every word of the site's content and, in the contact section, the address
+# enquiries are sent to — they are a recovery route, not source.
+vesla-settings-*.json
+content-2*.json
+vesla-backups/
+
+# ── local WordPress ───────────────────────────────────────────────────────
+# The plugin here is the source. The WordPress install it runs inside is not:
+# it carries wp-config.php, the database credentials and the uploads folder.
+wp-config.php
+wp-content/uploads/
+*.sql
+*.sqlite
+
+# ── the machine, not the project ──────────────────────────────────────────
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+.idea/
+.vscode/
+*.code-workspace
+
+# ── editor and OS leftovers ───────────────────────────────────────────────
+*~
+*.swp
+*.swo
+*.tmp
+.~lock.*
