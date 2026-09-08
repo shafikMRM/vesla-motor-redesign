@@ -66,6 +66,139 @@ own header and footer, so a theme that adds a second set of both will look
 doubled up. Most themes offer a template called something like "Full width",
 "Blank", "Canvas" or "Elementor Full Width".
 
+== Setting up on the live server ==
+
+Work through this once, in order, when the site goes live. Every step here is
+something that fails **quietly** if it is skipped — the site keeps loading and
+looking correct while something behind it does not work. Nothing here needs to
+be repeated afterwards.
+
+= 1. Put WordPress in public_html/cms =
+
+Visitors are served plain HTML from `public_html`. WordPress is the editor
+behind it and belongs in `public_html/cms`.
+
+It must be a folder under the same domain, not a subdomain. The enquiry form
+checks that the request came from this same address before it accepts it, so
+a WordPress on `cms.yourdomain.com` is a different origin and every enquiry is
+refused. It is also what lets the published pages load the car photographs
+straight out of the media library.
+
+**If you skip it:** enquiries are rejected, and the photographs on the
+published pages point at an address that does not exist.
+
+= 2. Fill in the three addresses =
+
+Landing Page → Publish the public page:
+
+* **Web address of the public site** — `https://yourdomain.com`. Exactly the
+  form that actually serves: if the site answers on `www.`, write `www.`, and
+  if it is https, write https.
+* **Web address WordPress will be at on the live site** — `https://yourdomain.com/cms`.
+  Leave it empty and `/cms` under the public address is assumed, which is
+  correct if you followed step 1. Fill it in if WordPress is anywhere else.
+* **Folder to write index.html into** — the full path to `public_html`, e.g.
+  `/home/USERNAME/public_html`. Leave it empty and the folder one level above
+  WordPress is used, which is right for the layout in step 1.
+
+**If you skip it:** the published pages carry whatever address WordPress
+happens to be installed at. On a site built on somebody's own machine that
+means every photograph, the sharing image, the data feed and the enquiry
+endpoint point at a computer no visitor can reach. The pages look fine in the
+editor and are broken for everybody else.
+
+= 3. Turn publishing on, then press Republish =
+
+Tick **Write the public page when I save**, save, then press **Republish**
+once and confirm it reports success. That writes `index.html`, every car page,
+`sitemap.xml`, `robots.txt` and a copy of the stylesheets and scripts into the
+folder from step 2.
+
+**If you skip it:** there is no public site at all, or an old one that never
+changes again. The editor will not warn you that saving does nothing.
+
+= 4. Add the cron job, and switch WordPress's own timer off =
+
+This is the step most likely to be skipped and the most damaging to skip.
+
+Writing the public page is carried by WordPress's scheduled tasks, and those
+are not a clock: WordPress only checks whether anything is due when somebody
+asks it for a page. Visitors here are served plain HTML and never ask
+WordPress for anything — so on a working, busy website, nothing whatsoever
+triggers it except somebody logging into the admin.
+
+In cPanel, **Advanced → Cron Jobs**, under "Add New Cron Job":
+
+* **Common Settings** — choose "Every 5 Minutes (*/5 * * * *)"
+* **Command** — paste this, with your own account name and path:
+
+    /usr/local/bin/php -q /home/USERNAME/public_html/cms/wp-cron.php >/dev/null 2>&1
+
+The exact line for your installation, with the path already filled in, is
+printed on the Landing Page screen whenever something is waiting to be
+published. The `>/dev/null 2>&1` at the end is what stops cPanel emailing you
+every five minutes.
+
+Then edit `wp-config.php` and add this above the "stop editing" line:
+
+    define( 'DISABLE_WP_CRON', true );
+
+**If you skip it:** a car added by a salesperson can sit unpublished for hours
+— until an administrator happens to open a screen. The site shows the old
+stock the whole time and nothing appears to be wrong. The admin will tell you
+when this has happened, and offers a Publish now button, but that is a
+symptom being managed rather than the problem being fixed.
+
+= 5. Make the site able to send email =
+
+Two separate things, both needed.
+
+**The mailbox it sends from.** Enquiry emails are sent from
+`no-reply@yourdomain.com` — built from your domain automatically, with the
+visitor's own address put in Reply-To so pressing Reply in your mail client
+reaches the customer. Create that mailbox (or at least that address) in cPanel
+→ **Email Accounts**. A From address the domain does not actually host is what
+SPF and DMARC exist to reject.
+
+**A real sending route.** Shared hosting very often cannot send mail reliably
+on its own. Install an SMTP plugin and point it at a real mailbox on this
+domain.
+
+Then set **where enquiries go**: Landing Page → the contact section →
+"Send enquiries to". Send yourself a test through the form on the live site
+and confirm it arrives.
+
+**If you skip it:** enquiries are still saved — they appear under Landing Page
+→ Enquiries and nothing is lost — but nobody is told a customer got in touch.
+The visitor is thanked as normal, so the failure is invisible from outside.
+The Enquiries screen has an Emailed column, and a warning appears by itself
+once three in a row have failed.
+
+= 6. Settings → Reading → Search Engine Visibility =
+
+Leave "Discourage search engines from indexing this site" **unticked**.
+
+Being straight about this one: on this set-up it matters less than it usually
+does. The published pages are plain files written by this plugin, and the
+`robots.txt` it writes always says `Allow: /` — that tick box is a WordPress
+setting and the published site never reads it. It affects the WordPress
+install at `/cms`, which is not where your visitors are.
+
+**If you skip it:** most likely nothing. Untick it anyway — it costs one
+click, and it stops being harmless the moment anything is ever served by
+WordPress itself.
+
+= 7. Check it actually worked =
+
+Open the public address in a browser that is not logged in. Then:
+
+* View the page source and search for `localhost` or a machine name. There
+  should be none. Anything found means step 2 is wrong.
+* Open a car page directly, e.g. `/cars/some-car-2021-604/`.
+* Send an enquiry through the form and confirm the email arrives.
+* Change something small, save, wait five minutes, and reload the public page
+  without being logged in. If it changed, step 4 is working.
+
 == Frequently Asked Questions ==
 
 = I changed something and the page looks the same =
@@ -75,51 +208,10 @@ If your host has caching, or you use a caching plugin, clear that too.
 
 = A car was saved hours ago and is still not on the website =
 
-This is the one thing to set up properly, and it takes five minutes.
+The cron job in step 4 of "Setting up on the live server" has not been set
+up, or has stopped. Nothing is lost: open Landing Page and press Publish now,
+then fix the cron job so it stops being a manual job.
 
-Writing the public page is carried by WordPress's scheduled tasks. Those are
-not a real timer: WordPress only checks whether anything is due when somebody
-asks it for a page. On this set-up your visitors are served plain HTML files
-and never ask WordPress for anything, so the only person whose visit can
-trigger it is whoever is logged into the admin. Save a car on a quiet
-afternoon and it can sit unpublished until someone next opens a screen.
-
-The fix is to have the server run it on a clock instead.
-
-**1. Add the cron job in cPanel**
-
-In cPanel, open **Advanced -> Cron Jobs**. Under "Add New Cron Job":
-
-* **Common Settings** - choose "Every 5 Minutes (*/5 * * * *)". That fills in
-  the five boxes for you: Minute `*/5`, and Hour, Day, Month and Weekday all `*`.
-* **Command** - paste this, then correct the path to match your account:
-
-    /usr/local/bin/php -q /home/USERNAME/public_html/cms/wp-cron.php >/dev/null 2>&1
-
-Replace `USERNAME` with your cPanel username, and make sure the path is where
-WordPress actually lives — if the site is served from public_html and
-WordPress sits in a "cms" folder inside it, the line above is already right.
-The exact line for this installation, with the path filled in, is shown on the
-Landing Page screen whenever something is waiting to be published.
-
-Press **Add New Cron Job**. cPanel will email you the output of every run
-unless you clear the notification address; the `>/dev/null 2>&1` on the end is
-what keeps those emails empty.
-
-**2. Tell WordPress to stop trying on its own**
-
-Edit `wp-config.php` (cPanel -> File Manager, in the WordPress folder) and add
-this line anywhere above the line that says "That's all, stop editing":
-
-    define( 'DISABLE_WP_CRON', true );
-
-Without this, WordPress keeps checking on every admin page load as well, which
-is wasted work and can have two publishes overlapping.
-
-**Until that is done**, nothing is lost — a save is remembered, and the Landing
-Page screen tells you plainly when something has been waiting, with a
-**Publish now** button that writes it out immediately. The **Republish** button
-always works straight away and never waits for any of this.
 = The photographs are the sample ones. How do I use mine? =
 
 Landing Page → Cars for sale → open a car → Photograph → Choose image. Upload
