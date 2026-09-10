@@ -615,6 +615,14 @@ textarea{resize:vertical}
 .prose ul,.prose ol{margin:0 0 14px 20px}
 .prose li{margin:0 0 6px}
 
+/* Privacy and Terms, on the same line as the copyright. Quiet on purpose:
+   they have to be findable, not prominent. */
+.foot-legal{
+  list-style:none;display:flex;flex-wrap:wrap;gap:6px 20px;margin:0;padding:0;
+}
+.foot-legal a{font-size:13.5px;color:var(--steel);text-decoration:none}
+.foot-legal a:hover{color:var(--paper);text-decoration:underline}
+
 /* ---------- the finance page ----------
    Documents beside the calculator rather than under it: a reader comparing
    what to bring against what it costs is looking at both. */

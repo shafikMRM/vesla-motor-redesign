@@ -7423,6 +7423,98 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		}
 	}
 
+	/**
+	 * The cars, as schema.org ListItems.
+	 *
+	 * Pulled out of head() so the homepage and /stock/ cannot end up describing
+	 * different stock. $limit is how many to include: the homepage shows eight
+	 * and was publishing all twenty-four, telling a search engine about cars
+	 * that were not on the page it was reading. /stock/ passes 0 and gets them
+	 * all, because /stock/ does show them all.
+	 */
+	private static function stock_items( $limit = 0 ) {
+		$stock = Vesla_Settings::get( 'stock' );
+		if ( ! Vesla_Settings::enabled( 'stock' ) || empty( $stock['cars'] ) ) {
+			return array();
+		}
+			$currency = Vesla_Settings::get( 'stock', 'currency', '' );
+			$items    = array();
+			$position = 0;
+
+			foreach ( $stock['cars'] as $car ) {
+				if ( empty( $car['make'] ) && empty( $car['model'] ) ) {
+					continue;
+				}
+				$position++;
+
+				$photo = '';
+				if ( ! empty( $car['photo'] ) ) {
+					$photo = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
+				} elseif ( ! empty( $car['photo_file'] ) ) {
+					$photo = VESLA_URL . ltrim( $car['photo_file'], '/' );
+				}
+
+				/* The same identifier the car's own page publishes, so the listing
+				   here and the page over there are one thing described twice
+				   rather than two cars that happen to match. Without it a crawler
+				   is entitled to treat them as separate stock. */
+				$entry = array(
+					'@id'           => self::car_id( $car ),
+					'@type'         => 'Car',
+					'name'          => trim( $car['make'] . ' ' . $car['model'] ),
+					'brand'         => array( '@type' => 'Brand', 'name' => $car['make'] ),
+					'model'         => $car['model'],
+					'itemCondition' => 'https://schema.org/UsedCondition',
+				);
+				if ( $car['year'] ) {
+					$entry['vehicleModelDate'] = (string) $car['year'];
+				}
+				if ( $car['body'] ) {
+					$entry['bodyType'] = $car['body'];
+				}
+				if ( $car['fuel'] ) {
+					$entry['fuelType'] = $car['fuel'];
+				}
+				if ( $car['trans'] ) {
+					$entry['vehicleTransmission'] = $car['trans'];
+				}
+				if ( $car['seats'] ) {
+					$entry['seatingCapacity'] = (int) $car['seats'];
+				}
+				if ( $car['km'] ) {
+					$entry['mileageFromOdometer'] = array(
+						'@type'    => 'QuantitativeValue',
+						'value'    => (int) $car['km'],
+						'unitCode' => 'KMT',
+					);
+				}
+				if ( $photo ) {
+					$entry['image'] = $photo;
+				}
+				if ( $car['price'] && $currency ) {
+					$entry['offers'] = array(
+						'@type'         => 'Offer',
+						'price'         => (int) $car['price'],
+						'priceCurrency' => $currency,
+						'availability'  => 'https://schema.org/InStock',
+						'seller'        => array( '@id' => $url . '#dealer' ),
+					);
+				}
+
+				$items[] = array(
+					'@type'    => 'ListItem',
+					'position' => $position,
+					'item'     => $entry,
+				);
+
+				if ( $limit && $position >= $limit ) {
+					break;
+				}
+			}
+
+		return $items;
+	}
+
 	public static function head( $force = false ) {
 		if ( ! $force && ! self::is_landing() ) {
 			return;
@@ -7669,8 +7761,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		/* The questions are emitted only when the section is actually shown.
 		   Marking up an FAQ that a visitor cannot see on the page is exactly
 		   what the structured-data guidance says not to do. */
+		/* Only while /faq/ is off. Once the questions have a page of their own
+		   that page is the one that should answer them in a search result, and
+		   the same FAQPage on two URLs is two nodes competing for one set of
+		   questions. */
 		$faq = Vesla_Settings::get( 'faq' );
-		if ( Vesla_Settings::enabled( 'faq' ) && ! empty( $faq['items'] ) ) {
+		if ( ! self::page_live( 'faq' ) && Vesla_Settings::enabled( 'faq' ) && ! empty( $faq['items'] ) ) {
 			$entities = array();
 			foreach ( $faq['items'] as $item ) {
 				if ( ! $item['q'] || ! $item['a'] ) {
@@ -7691,91 +7787,18 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			}
 		}
 
-		/* Every car on the floor, as an ItemList of Offers, so the listings are
-		   eligible for vehicle rich results. Built from the same stored rows the
-		   grid is built from, so the two can never describe different stock. */
-		$stock = Vesla_Settings::get( 'stock' );
-		if ( Vesla_Settings::enabled( 'stock' ) && ! empty( $stock['cars'] ) ) {
-			$currency = Vesla_Settings::get( 'stock', 'currency', '' );
-			$items    = array();
-			$position = 0;
-
-			foreach ( $stock['cars'] as $car ) {
-				if ( empty( $car['make'] ) && empty( $car['model'] ) ) {
-					continue;
-				}
-				$position++;
-
-				$photo = '';
-				if ( ! empty( $car['photo'] ) ) {
-					$photo = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
-				} elseif ( ! empty( $car['photo_file'] ) ) {
-					$photo = VESLA_URL . ltrim( $car['photo_file'], '/' );
-				}
-
-				/* The same identifier the car's own page publishes, so the listing
-				   here and the page over there are one thing described twice
-				   rather than two cars that happen to match. Without it a crawler
-				   is entitled to treat them as separate stock. */
-				$entry = array(
-					'@id'           => self::car_id( $car ),
-					'@type'         => 'Car',
-					'name'          => trim( $car['make'] . ' ' . $car['model'] ),
-					'brand'         => array( '@type' => 'Brand', 'name' => $car['make'] ),
-					'model'         => $car['model'],
-					'itemCondition' => 'https://schema.org/UsedCondition',
-				);
-				if ( $car['year'] ) {
-					$entry['vehicleModelDate'] = (string) $car['year'];
-				}
-				if ( $car['body'] ) {
-					$entry['bodyType'] = $car['body'];
-				}
-				if ( $car['fuel'] ) {
-					$entry['fuelType'] = $car['fuel'];
-				}
-				if ( $car['trans'] ) {
-					$entry['vehicleTransmission'] = $car['trans'];
-				}
-				if ( $car['seats'] ) {
-					$entry['seatingCapacity'] = (int) $car['seats'];
-				}
-				if ( $car['km'] ) {
-					$entry['mileageFromOdometer'] = array(
-						'@type'    => 'QuantitativeValue',
-						'value'    => (int) $car['km'],
-						'unitCode' => 'KMT',
-					);
-				}
-				if ( $photo ) {
-					$entry['image'] = $photo;
-				}
-				if ( $car['price'] && $currency ) {
-					$entry['offers'] = array(
-						'@type'         => 'Offer',
-						'price'         => (int) $car['price'],
-						'priceCurrency' => $currency,
-						'availability'  => 'https://schema.org/InStock',
-						'seller'        => array( '@id' => $url . '#dealer' ),
-					);
-				}
-
-				$items[] = array(
-					'@type'    => 'ListItem',
-					'position' => $position,
-					'item'     => $entry,
-				);
-			}
-
-			if ( $items ) {
-				$graph[] = array(
-					'@type'           => 'ItemList',
-					'@id'             => $url . '#stock',
-					'name'            => Vesla_Settings::get( 'stock', 'heading', '' ),
-					'numberOfItems'   => count( $items ),
-					'itemListElement' => $items,
-				);
-			}
+		/* The cars actually shown on this page. Built by stock_items(), which
+		   /stock/ also uses -- one builder, so the two pages cannot disagree
+		   about what is on the floor. */
+		$items = self::stock_items( (int) Vesla_Settings::get( 'stock', 'per_page', 8 ) );
+		if ( $items ) {
+			$graph[] = array(
+				'@type'           => 'ItemList',
+				'@id'             => $url . '#stock',
+				'name'            => Vesla_Settings::get( 'stock', 'heading', '' ),
+				'numberOfItems'   => count( $items ),
+				'itemListElement' => $items,
+			);
 		}
 
 		echo '<script type="application/ld+json">'
@@ -8136,6 +8159,70 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 * dealer, the FAQ, the stock list and each car, and a second definition of
 	 * any of those would be worse than none.
 	 */
+	/**
+	 * The site's sharing picture, as og:image with its dimensions.
+	 *
+	 * Shared by every page's head. Every page but the homepage was sharing as
+	 * a bare link because only the homepage printed one, and a link with no
+	 * card is a link nobody presses. There is no per-page picture and none is
+	 * proposed: one nobody ever changes is worse than one that is shared.
+	 *
+	 * The dimensions matter as much as the picture. WhatsApp and Facebook
+	 * fetch it separately and often have not finished before the preview is
+	 * drawn; told the size up front they reserve the space and draw a large
+	 * card on the FIRST share, which is the share that matters.
+	 */
+	public static function share_image_ld() {
+		$share = absint( Vesla_Settings::get( 'seo', 'share_image', 0 ) );
+		if ( ! $share ) {
+			return;
+		}
+		$src = wp_get_attachment_image_src( $share, 'full' );
+		if ( ! $src ) {
+			return;
+		}
+		printf( '<meta property="og:image" content="%s">' . "
+", esc_url( $src[0] ) );
+		printf( '<meta property="og:image:width" content="%d">' . "
+", (int) $src[1] );
+		printf( '<meta property="og:image:height" content="%d">' . "
+", (int) $src[2] );
+		$alt = trim( (string) get_post_meta( $share, '_wp_attachment_image_alt', true ) );
+		if ( '' !== $alt ) {
+			printf( '<meta property="og:image:alt" content="%s">' . "
+", esc_attr( $alt ) );
+		}
+	}
+
+	/**
+	 * A BreadcrumbList for a page one step below the homepage.
+	 *
+	 * Shared because the contact page needs the same thing and building it
+	 * there separately is how two breadcrumbs end up disagreeing about the name
+	 * of the site. No @id: the only @ids here belong to the dealer, the FAQ,
+	 * the two stock lists and each car, and a crumb trail is not a thing worth
+	 * naming twice.
+	 */
+	public static function breadcrumb_ld( $name ) {
+		if ( ! Vesla_Settings::get( 'seo', 'enabled', 0 ) || '' === trim( (string) $name ) ) {
+			return;
+		}
+		$site = trailingslashit( Vesla_Publisher::site_url() );
+		echo '<script type="application/ld+json">'
+			. wp_json_encode(
+				array(
+					'@context'        => 'https://schema.org',
+					'@type'           => 'BreadcrumbList',
+					'itemListElement' => array(
+						array( '@type' => 'ListItem', 'position' => 1, 'name' => get_bloginfo( 'name' ), 'item' => $site ),
+						array( '@type' => 'ListItem', 'position' => 2, 'name' => $name ),
+					),
+				),
+				JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+			)
+			. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+	}
+
 	public static function page_head() {
 		$key   = self::$page_key;
 		$pages = self::pages();
@@ -8149,6 +8236,13 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		$desc  = self::plain( (string) Vesla_Settings::get( $owner, 'page_intro', '' ) );
 		if ( '' === $desc ) {
 			$desc = self::plain( (string) Vesla_Settings::get( $owner, 'lead', '' ) );
+		}
+		if ( '' === $desc && ! empty( $pages[ $key ]['rich'] ) ) {
+			/* Privacy and Terms have no lead and no intro -- they are a page of
+			   prose and nothing else. The opening of that prose is a truer
+			   description than no description at all, which is what a search engine
+			   was being given. */
+			$desc = self::plain( (string) Vesla_Settings::get( $owner, $pages[ $key ]['rich'], '' ) );
 		}
 		$desc  = $desc ? wp_html_excerpt( $desc, 155, '…' ) : '';
 		$title = trim( $head . ' — ' . $name );
@@ -8164,24 +8258,67 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		}
 		printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $url ) );
 
+		self::share_image_ld();
+
 		if ( ! Vesla_Settings::get( 'seo', 'enabled', 0 ) ) {
 			return;
 		}
-		$site   = trailingslashit( Vesla_Publisher::site_url() );
-		$crumbs = array(
-			array( '@type' => 'ListItem', 'position' => 1, 'name' => get_bloginfo( 'name' ), 'item' => $site ),
-			array( '@type' => 'ListItem', 'position' => 2, 'name' => $head ),
-		);
-		echo '<script type="application/ld+json">'
-			. wp_json_encode(
-				array(
-					'@context'        => 'https://schema.org',
-					'@type'           => 'BreadcrumbList',
-					'itemListElement' => $crumbs,
-				),
-				JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
-			)
-			. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+		self::breadcrumb_ld( $head );
+
+		/* The two pages that carry a kind of their own, and only those two. The
+		   questions belong to /faq/ now, and the definitive list of cars belongs
+		   to /stock/ -- which is where all of them actually are. Nothing else
+		   gets a type: repeating the dealer or the organisation on every page is
+		   the duplication this is trying to avoid. */
+		if ( 'faq' === $key ) {
+			$faq = Vesla_Settings::get( 'faq' );
+			$qs  = array();
+			foreach ( (array) $faq['items'] as $item ) {
+				if ( empty( $item['q'] ) || empty( $item['a'] ) ) {
+					continue;
+				}
+				$qs[] = array(
+					'@type'          => 'Question',
+					'name'           => $item['q'],
+					'acceptedAnswer' => array( '@type' => 'Answer', 'text' => self::plain( $item['a'] ) ),
+				);
+			}
+			if ( $qs ) {
+				echo '<script type="application/ld+json">'
+					. wp_json_encode(
+						array(
+							'@context'   => 'https://schema.org',
+							'@type'      => 'FAQPage',
+							'@id'        => $url . '#faq',
+							'mainEntity' => $qs,
+						),
+						JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+					)
+					. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+			}
+		}
+
+		if ( 'stock' === $key ) {
+			/* All of them, and a different @id from the homepage's eight. Two lists
+			   describing different sets of cars are two lists; the same @id would
+			   have made them one node contradicting itself. */
+			$items = self::stock_items( 0 );
+			if ( $items ) {
+				echo '<script type="application/ld+json">'
+					. wp_json_encode(
+						array(
+							'@context'        => 'https://schema.org',
+							'@type'           => 'ItemList',
+							'@id'             => $url . '#stock-all',
+							'name'            => $head,
+							'numberOfItems'   => count( $items ),
+							'itemListElement' => $items,
+						),
+						JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+					)
+					. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+			}
+		}
 	}
 
 	/**
@@ -8282,6 +8419,8 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $desc ) );
 		}
 		printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $url ) );
+		self::share_image_ld();
+		self::breadcrumb_ld( $c['heading'] );
 	}
 
 	/**
@@ -10488,6 +10627,36 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					<p class="copy"><?php echo esc_html( str_replace( '{year}', gmdate( 'Y' ), $f['copyright'] ) ); ?></p>
 				<?php endif; ?>
 				<?php if ( $f['meta'] ) : ?><p class="foot-meta"><?php echo esc_html( $f['meta'] ); ?></p><?php endif; ?>
+
+				<?php
+				/* Privacy and Terms, listed here and nowhere else.
+				
+				   They were published and unreachable: nothing on the site linked to
+				   either, which makes them orphans -- pages a crawler only finds
+				   because the sitemap mentions them, and a reader never finds at all.
+				   The footer is where a reader looks for them, so that is where they
+				   go.
+				
+				   Built from page_live() rather than from a repeater somebody fills
+				   in: a link to a legal page that has been switched off is worse than
+				   no link, and this way the two cannot disagree. */
+				$legal = array();
+				foreach ( array( 'privacy', 'terms' ) as $lk ) {
+					if ( self::page_live( $lk ) ) {
+						$legal[] = array(
+							'url'   => self::rel( self::page_url( $lk ) ),
+							'label' => self::page_title( $lk ),
+						);
+					}
+				}
+				?>
+				<?php if ( $legal ) : ?>
+					<ul class="foot-legal">
+						<?php foreach ( $legal as $l ) : ?>
+							<li><a href="<?php echo esc_url( $l['url'] ); ?>"><?php echo esc_html( $l['label'] ); ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
 			</div>
 		</footer>
 		<?php
