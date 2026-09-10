@@ -559,6 +559,8 @@
     "est_sub": "Indicative range only — no personal details required.",
     "est_out_label": "Indicative range",
     "est_note": "Demonstration figures based on sample stock, not a valuation of your vehicle. Confirmed only after inspection at a Vesla Motors branch.",
+    "est_send_title": "Want us to look at it properly?",
+    "est_send_label": "Send us this valuation",
     "est_year_range": 16,
     "est_residual_floor": 18,
     "est_depreciation": 11,
@@ -845,6 +847,13 @@
     "finance_note": "An estimate only. The monthly figure depends on the finance approved for you — ask us for a quote.",
     "base": "cars",
     "no_photo_text": "Photographs of this car are being taken — ask us for them and we will send them today.",
-    "transition_ms": 500
+    "transition_ms": 500,
+    "video_label": "Watch the video"
+  },
+  "analytics": {
+    "provider": "",
+    "ga_id": "",
+    "plausible_domain": "",
+    "plausible_host": ""
   }
 }

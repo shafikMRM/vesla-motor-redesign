@@ -564,6 +564,48 @@ textarea{resize:vertical}
   font-family:var(--display);font-size:clamp(24px,3vw,32px);font-weight:600;
   background:var(--chrome-text);-webkit-background-clip:text;background-clip:text;color:transparent;
 }
+/* The search box sits with the filter menus and matches their height, so the
+   row reads as one set of controls rather than a box bolted onto four menus. */
+.f-find input{
+  width:100%;font:inherit;font-size:15px;padding:11px 12px;
+  background:var(--pearl);border:1px solid var(--hair);border-radius:0;color:inherit;
+}
+.f-find input:hover{border-color:var(--platinum)}
+.f-find input::-webkit-search-cancel-button{cursor:pointer}
+
+/* The video, before anybody has pressed it: a still band with a play mark, and
+   no third-party request behind it until they do. */
+.vp-video{margin-top:20px}
+.vp-video-go{
+  display:flex;align-items:center;gap:14px;padding:18px 20px;text-decoration:none;
+  background:var(--ink);color:var(--paper);border:1px solid var(--hair-dark);
+}
+.vp-video-go:hover{border-color:var(--platinum)}
+.vp-video-play{
+  flex:0 0 auto;width:38px;height:38px;border-radius:50%;
+  display:grid;place-items:center;background:var(--lemon,#F2ED28);
+}
+.vp-video-play svg{width:20px;height:20px;fill:#111;display:block}
+.vp-video-txt{
+  font-family:var(--label);text-transform:uppercase;letter-spacing:.14em;font-size:12px;
+}
+.vp-video.is-playing{aspect-ratio:16/9}
+.vp-video.is-playing iframe{width:100%;height:100%;border:0;display:block}
+
+/* The boxes under the estimate. Divided from the figure by a rule rather than
+   boxed again: it is the same form continuing, not a second thing to fill in. */
+.est-send{
+  display:flex;flex-direction:column;gap:16px;
+  margin-top:4px;padding-top:22px;border-top:1px solid var(--hair);
+}
+.est-send h4{
+  margin:0;font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.01em;
+}
+.est-send .btn{align-self:flex-start}
+
+/* Sits with the other buttons under the monthly figure. */
+.vp-fin-ask{margin-top:16px;align-self:flex-start}
+
 .form-msg{margin:0;font-size:14.5px;min-height:1.4em}
 .form-msg.ok{color:var(--platinum)}
 .form-msg.bad{color:#E88E7F}

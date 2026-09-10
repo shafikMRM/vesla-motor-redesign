@@ -789,6 +789,11 @@ class Vesla_Schema {
 								'label' => __( 'Warranty until', 'vesla-landing' ),
 								'help'  => __( 'Left empty, the car’s page says nothing about warranty rather than implying one.', 'vesla-landing' ),
 							),
+							'video' => array(
+								'type'  => 'url',
+								'label' => __( 'Video of this car — YouTube or Vimeo link', 'vesla-landing' ),
+								'help'  => __( 'Paste the address of the video as it appears in the browser bar. It is shown under the photographs, and is not loaded until somebody presses play — a video that loads itself would cost every visitor the download whether they watch it or not. Leave empty for no video.', 'vesla-landing' ),
+							),
 							'gallery' => array(
 								'type'  => 'gallery',
 								'max'   => 10,
@@ -934,6 +939,7 @@ class Vesla_Schema {
 						'label' => __( 'The folder car pages live under', 'vesla-landing' ),
 						'help'  => __( 'The middle of the address: with “cars”, a car is at /cars/toyota-hilux-2021-14/. Changing it changes every car’s address at once, and anything already linking to the old ones stops working — so change it before you start sharing links, not after.', 'vesla-landing' ),
 					),
+					'video_label' => array( 'type' => 'text', 'label' => __( 'Wording on the video button', 'vesla-landing' ), ),
 					'no_photo_text' => array(
 						'type'  => 'text',
 						'label' => __( 'Shown where a car has no photographs yet', 'vesla-landing' ),
@@ -1180,6 +1186,8 @@ class Vesla_Schema {
 					'est_sub'    => array( 'type' => 'text', 'label' => __( 'Estimator sub-heading', 'vesla-landing' ), ),
 					'est_out_label' => array( 'type' => 'text', 'label' => __( 'Wording above the estimated figure', 'vesla-landing' ), ),
 					'est_note'   => array( 'type' => 'textarea', 'label' => __( 'Small print under the estimated figure', 'vesla-landing' ), ),
+					'est_send_title' => array( 'type' => 'text', 'label' => __( 'Heading over the send-it-to-us boxes', 'vesla-landing' ), ),
+					'est_send_label' => array( 'type' => 'text', 'label' => __( 'Button under the estimate — wording', 'vesla-landing' ), ),
 					'est_year_range' => array(
 						'type'  => 'number',
 						'label' => __( 'How many years back the Year menu goes', 'vesla-landing' ),
@@ -1780,6 +1788,37 @@ class Vesla_Schema {
 					),
 					'parent_name'   => array( 'type' => 'text', 'label' => __( 'Parent company name', 'vesla-landing' ), 'help' => __( 'Leave empty if there is none.', 'vesla-landing' ), ),
 					'parent_url'    => array( 'type' => 'url',  'label' => __( 'Parent company website', 'vesla-landing' ), ),
+				),
+			),
+			'analytics' => array(
+				'title'  => __( 'Visitor statistics', 'vesla-landing' ),
+				'blurb'  => __( 'Counts how many people visit and which pages they read. Off until you fill in an account, and nothing is loaded at all while it is off — no script, no cookie, no notice to write. Whichever you choose, the code goes on the published pages as well as this one.', 'vesla-landing' ),
+				'fields' => array(
+					'provider' => array(
+						'type'    => 'select',
+						'label'   => __( 'Which service', 'vesla-landing' ),
+						'choices' => array(
+							''          => __( 'None — count nothing', 'vesla-landing' ),
+							'ga4'       => __( 'Google Analytics', 'vesla-landing' ),
+							'plausible' => __( 'Plausible', 'vesla-landing' ),
+						),
+						'help'    => __( 'Google Analytics is free and the most widely known. Plausible is paid, sets no cookies and needs no cookie banner, which is why it is offered here as well.', 'vesla-landing' ),
+					),
+					'ga_id' => array(
+						'type'  => 'text',
+						'label' => __( 'Google Analytics measurement ID', 'vesla-landing' ),
+						'help'  => __( 'Begins with G- and is found in Google Analytics under Admin, Data streams. Only used when Google Analytics is chosen above.', 'vesla-landing' ),
+					),
+					'plausible_domain' => array(
+						'type'  => 'text',
+						'label' => __( 'Plausible site domain', 'vesla-landing' ),
+						'help'  => __( 'The domain exactly as it is registered in Plausible, e.g. veslamotors.com. Only used when Plausible is chosen above.', 'vesla-landing' ),
+					),
+					'plausible_host' => array(
+						'type'  => 'url',
+						'label' => __( 'Plausible address — only if self-hosted', 'vesla-landing' ),
+						'help'  => __( 'Leave empty to use plausible.io. Fill this in only if you run Plausible on your own server.', 'vesla-landing' ),
+					),
 				),
 			),
 		);
@@ -5198,6 +5237,7 @@ class Vesla_Render {
 		add_shortcode( 'vesla_landing', array( __CLASS__, 'shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'wp_head', array( __CLASS__, 'head' ), 5 );
+		add_action( 'wp_head', array( __CLASS__, 'analytics_tag' ), 4 );
 		add_action( 'wp_head', array( __CLASS__, 'car_head' ), 5 );
 		add_filter( 'document_title_parts', array( __CLASS__, 'car_title' ) );
 
@@ -5381,6 +5421,34 @@ class Vesla_Render {
 											     alt="" width="160" height="120" loading="lazy" decoding="async">
 									</button>
 								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+
+						<?php
+						/* The video, if this car has one.
+						 *
+						 * A facade, not an iframe: an embedded player pulls several hundred
+						 * kilobytes and sets third-party cookies on every visitor, including
+						 * the ones who never press play. Nothing of YouTube's is loaded until
+						 * somebody asks for it, so a car page with a video costs the same as
+						 * one without until it is wanted.
+						 *
+						 * A link rather than a button, and one that works on its own: with no
+						 * scripting it opens the video where it lives, which is the whole
+						 * behaviour, just somewhere else.
+						 */
+						$video = self::video_embed( isset( $car['video'] ) ? $car['video'] : '' );
+						?>
+						<?php if ( $video ) : ?>
+							<div class="vp-video">
+								<a class="vp-video-go" href="<?php echo esc_url( $video['watch'] ); ?>"
+								   data-embed="<?php echo esc_url( $video['embed'] ); ?>"
+								   target="_blank" rel="noopener">
+									<span class="vp-video-play" aria-hidden="true">
+										<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+									</span>
+									<span class="vp-video-txt"><?php echo esc_html( Vesla_Settings::get( 'vehicle', 'video_label', __( 'Watch the video', 'vesla-landing' ) ) ); ?></span>
+								</a>
 							</div>
 						<?php endif; ?>
 					</div>
@@ -6624,6 +6692,49 @@ class Vesla_Render {
 		return $fills;
 	}
 
+	/**
+	 * A pasted video address, turned into the two forms the page needs.
+	 *
+	 * Whoever fills this in pastes what is in the browser bar, which is a watch
+	 * page, not an embed. Both are worked out here: the watch address for the
+	 * link itself, so it works with no scripting and opens where the video
+	 * lives, and the embed address for the player that replaces it on a press.
+	 *
+	 * Only YouTube and Vimeo, and only after the id has been matched. Building
+	 * an iframe src from whatever was typed would put an arbitrary third-party
+	 * address inside a frame on the site, which is not a thing an address box in
+	 * a settings screen should be able to do.
+	 *
+	 * Returns null when there is nothing usable, so the caller prints nothing.
+	 */
+	public static function video_embed( $url ) {
+		$url = trim( (string) $url );
+		if ( '' === $url ) {
+			return null;
+		}
+
+		/* youtu.be/ID · youtube.com/watch?v=ID · /embed/ID · /shorts/ID */
+		if ( preg_match( '#(?:youtube\.com/(?:watch\?(?:.*&)?v=|embed/|shorts/|live/)|youtu\.be/)([A-Za-z0-9_-]{6,20})#i', $url, $m ) ) {
+			$id = $m[1];
+			return array(
+				'watch' => 'https://www.youtube.com/watch?v=' . $id,
+				/* nocookie, because the visitor pressed play on a car, not on an
+				   advertising profile. */
+				'embed' => 'https://www.youtube-nocookie.com/embed/' . $id . '?autoplay=1&rel=0',
+			);
+		}
+
+		if ( preg_match( '#vimeo\.com/(?:video/)?([0-9]{6,12})#i', $url, $m ) ) {
+			$id = $m[1];
+			return array(
+				'watch' => 'https://vimeo.com/' . $id,
+				'embed' => 'https://player.vimeo.com/video/' . $id . '?autoplay=1',
+			);
+		}
+
+		return null;
+	}
+
 	public static function car_photos( $car ) {
 		$photos = array();
 
@@ -6667,7 +6778,7 @@ class Vesla_Render {
 		   grid is built from the schema rather than from a list of columns --
 		   so a field added to a car tomorrow shows up here without being
 		   added here as well. */
-		$skip = array( 'photo', 'photo_file', 'photo_alt', 'gallery', 'make', 'model', 'price', 'summary' );
+		$skip = array( 'photo', 'photo_file', 'photo_alt', 'gallery', 'video', 'make', 'model', 'price', 'summary' );
 		$out  = array();
 		foreach ( Vesla_Store::car_fields() as $key => $def ) {
 			if ( in_array( $key, $skip, true ) ) {
@@ -6926,6 +7037,64 @@ class Vesla_Render {
 			);
 		}
 		return $fold;
+	}
+
+	/**
+	 * The visitor-counting tag, or nothing at all.
+	 *
+	 * Printed rather than enqueued because it has to reach the PUBLISHED files
+	 * too, and those are written by Vesla_Publisher without WordPress's script
+	 * queue ever running. One method, called from both places, so the counted
+	 * page and the page people actually visit cannot disagree.
+	 *
+	 * Nothing is emitted while this is off -- no script tag, no request to a
+	 * third party, and so nothing to declare in a cookie notice. An account
+	 * that has been filled in but whose provider was set back to None counts
+	 * as off: the menu is the switch.
+	 */
+	public static function analytics_tag() {
+		$provider = (string) Vesla_Settings::get( 'analytics', 'provider', '' );
+
+		if ( 'ga4' === $provider ) {
+			$id = trim( (string) Vesla_Settings::get( 'analytics', 'ga_id', '' ) );
+			/* Google's own format. Checked because a wrong id here fails silently
+			   -- the script loads, reports nothing, and looks like it is working. */
+			if ( ! preg_match( '/^G-[A-Z0-9]{4,20}$/i', $id ) ) {
+				return;
+			}
+			$src = 'https://www.googletagmanager.com/gtag/js?id=' . rawurlencode( $id );
+			?>
+<script async src="<?php echo esc_url( $src ); ?>"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', <?php echo wp_json_encode( $id ); ?>);
+</script>
+			<?php
+			return;
+		}
+
+		if ( 'plausible' === $provider ) {
+			$domain = trim( (string) Vesla_Settings::get( 'analytics', 'plausible_domain', '' ) );
+			if ( '' === $domain ) {
+				return;
+			}
+			/* Whatever was typed, reduced to a bare host: somebody pasting the
+			   address out of the browser bar is the common case, and Plausible
+			   wants the domain on its own. */
+			$domain = preg_replace( '#^https?://#i', '', $domain );
+			$domain = trim( (string) preg_replace( '#[/?].*$#', '', $domain ) );
+			if ( ! preg_match( '/^[a-z0-9.-]+\.[a-z]{2,}$/i', $domain ) ) {
+				return;
+			}
+
+			$host = trim( (string) Vesla_Settings::get( 'analytics', 'plausible_host', '' ) );
+			$host = $host ? untrailingslashit( esc_url_raw( $host ) ) : 'https://plausible.io';
+			?>
+<script defer data-domain="<?php echo esc_attr( $domain ); ?>" src="<?php echo esc_url( $host . '/js/script.js' ); ?>"></script>
+			<?php
+		}
 	}
 
 	public static function head( $force = false ) {
@@ -8833,6 +9002,15 @@ class Vesla_Render {
 				<?php if ( $s['lead'] ) : ?><p class="sec-lead reveal"><?php Vesla_Render::t( 'stock.lead', $s['lead'] ); ?></p><?php endif; ?>
 
 				<div class="filters reveal" role="group" aria-label="<?php esc_attr_e( 'Filter the cars', 'vesla-landing' ); ?>">
+					<?php /* First, because it is the one control somebody arrives already
+					         knowing how to use, and the only one that will find a car by
+					         something the menus do not offer -- a trim, a year, a colour.
+					         type=search so a phone offers the right keyboard and browsers
+					         draw their own clear button. */ ?>
+					<label class="f-find"><?php esc_html_e( 'Search', 'vesla-landing' ); ?>
+						<input type="search" id="f-search" autocomplete="off" spellcheck="false"
+						       maxlength="40" placeholder="<?php esc_attr_e( 'Make, model, year…', 'vesla-landing' ); ?>">
+					</label>
 					<label><?php esc_html_e( 'Make', 'vesla-landing' ); ?>
 						<select id="f-make"><option value=""><?php esc_html_e( 'All makes', 'vesla-landing' ); ?></option></select>
 					</label>
@@ -9037,6 +9215,21 @@ class Vesla_Render {
 					<?php if ( $s['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'sell.note', $s['note'] ); ?></p><?php endif; ?>
 				</div>
 
+				<?php
+				/* Borrowed from the enquiry form rather than a second set of settings:
+				   the same three boxes should be called the same three things wherever
+				   they appear, and one of them being renamed and the other not is how
+				   that stops being true. */
+				$est_send = array(
+					'title' => (string) Vesla_Settings::get( 'sell', 'est_send_title', __( 'Want us to look at it properly?', 'vesla-landing' ) ),
+					'label' => (string) Vesla_Settings::get( 'sell', 'est_send_label', __( 'Send us this valuation', 'vesla-landing' ) ),
+				);
+				$c_labels = array(
+					'name'  => (string) Vesla_Settings::get( 'contact', 'form_l_name', __( 'Name', 'vesla-landing' ) ),
+					'phone' => (string) Vesla_Settings::get( 'contact', 'form_l_phone', __( 'Phone', 'vesla-landing' ) ),
+					'email' => (string) Vesla_Settings::get( 'contact', 'form_l_email', __( 'Email', 'vesla-landing' ) ),
+				);
+				?>
 				<?php if ( $s['est_enabled'] ) : ?>
 					<form class="est reveal" id="est" novalidate>
 						<h3><?php echo esc_html( $s['est_title'] ); ?></h3>
@@ -9063,6 +9256,42 @@ class Vesla_Render {
 							<strong id="e-out">—</strong>
 						</div>
 						<?php if ( $s['est_note'] ) : ?><p class="note"><?php echo esc_html( $s['est_note'] ); ?></p><?php endif; ?>
+
+						<?php /* The estimator used to end here, at a number.
+						         It answered the visitor's question and asked nothing back, so
+						         somebody who had just told us the make, the year, the mileage and
+						         the condition of a car they want to sell left without us knowing
+						         they existed. The details go with the enquiry, so the call back
+						         starts from the figure they were shown rather than from nothing.
+
+						         Asked AFTER the valuation, never before: the number is the reason
+						         they filled it in, and putting a name and telephone box in front of
+						         it would turn a useful tool into a form. */ ?>
+						<div class="est-send">
+							<h4><?php echo esc_html( $est_send['title'] ); ?></h4>
+							<label><?php echo esc_html( $c_labels['name'] ); ?> <span class="req" aria-hidden="true">*</span>
+								<input type="text" id="s-name" name="name" autocomplete="name" maxlength="60" spellcheck="false" aria-describedby="e-s-name">
+								<span class="field-msg" id="e-s-name"></span>
+							</label>
+							<label><?php echo esc_html( $c_labels['phone'] ); ?> <span class="req" aria-hidden="true">*</span>
+								<input type="tel" id="s-phone" name="phone" autocomplete="tel" maxlength="24"
+								       inputmode="tel" pattern="[0-9+()\-\s]{7,24}" aria-describedby="e-s-phone">
+								<span class="field-msg" id="e-s-phone"></span>
+							</label>
+							<label><?php echo esc_html( $c_labels['email'] ); ?>
+								<input type="email" id="s-email" name="email" autocomplete="email" maxlength="254" inputmode="email" spellcheck="false" aria-describedby="e-s-email">
+								<span class="field-msg" id="e-s-email"></span>
+							</label>
+							<?php /* The same box no person can see that the enquiry form carries. */ ?>
+							<div class="vesla-hp" aria-hidden="true">
+								<label>
+									<?php esc_html_e( 'Leave this field empty', 'vesla-landing' ); ?>
+									<input type="text" id="s-website" name="website" tabindex="-1" autocomplete="off">
+								</label>
+							</div>
+							<button class="btn btn-gold" type="submit" id="s-go"><?php echo esc_html( $est_send['label'] ); ?></button>
+							<p class="form-msg" id="s-out" role="status" aria-live="polite"></p>
+						</div>
 					</form>
 				<?php endif; ?>
 			</div>
@@ -9295,6 +9524,13 @@ class Vesla_Render {
 						<textarea id="q-note" name="message" rows="3" maxlength="1000" aria-describedby="e-q-note"></textarea>
 						<span class="field-msg" id="e-q-note"></span>
 					</label>
+					<?php /* What kind of enquiry this is. 'general' unless something sets it --
+					         pressing Enquire on a car makes it a car enquiry, and arriving from
+					         a finance quote makes it finance. Hidden rather than a menu: the
+					         visitor already told us by which button they pressed, and asking
+					         them to say it again is a question with a knowable answer. */ ?>
+					<input type="hidden" id="q-type" name="type" value="general">
+					<input type="hidden" id="q-details" name="details" value="">
 					<?php wp_nonce_field( 'vesla_enquiry', 'vesla_nonce' ); ?>
 					<?php /* A box no person can see, reach by keyboard, or be offered by autofill.
 					         Bots fill in every field they find; anything typed here did not come
@@ -10258,6 +10494,8 @@ class Vesla_Enquiry {
 				'car'     => isset( $_POST['car'] ) ? wp_unslash( $_POST['car'] ) : '',
 				'message' => isset( $_POST['message'] ) ? wp_unslash( $_POST['message'] ) : '',
 				'website' => isset( $_POST['website'] ) ? wp_unslash( $_POST['website'] ) : '',
+				'type'    => isset( $_POST['type'] ) ? wp_unslash( $_POST['type'] ) : '',
+				'details' => isset( $_POST['details'] ) ? wp_unslash( $_POST['details'] ) : '',
 			)
 		);
 
@@ -10305,6 +10543,11 @@ class Vesla_Enquiry {
 		$phone = sanitize_text_field( isset( $in['phone'] ) ? $in['phone'] : '' );
 		$car   = sanitize_text_field( isset( $in['car'] ) ? $in['car'] : '' );
 		$note  = sanitize_textarea_field( isset( $in['message'] ) ? $in['message'] : '' );
+
+		/* Read after the car, because an untyped post -- a prerendered page from
+		   before this field existed -- is filed by whether it names one. */
+		$type    = self::read_type( isset( $in['type'] ) ? $in['type'] : '', $car );
+		$details = self::read_details( isset( $in['details'] ) ? $in['details'] : '' );
 
 		/* The raw value is kept as well as the cleaned one. sanitize_email()
 		   returns an empty string for something like "bad" rather than
@@ -10396,8 +10639,8 @@ class Vesla_Enquiry {
 		self::rate_bump();
 
 		/* ── Send, then store regardless of whether the send worked. */
-		$sent = self::send( compact( 'name', 'phone', 'email', 'car', 'note' ) );
-		$id   = self::store( compact( 'name', 'phone', 'email', 'car', 'note' ), $sent );
+		$sent = self::send( compact( 'name', 'phone', 'email', 'car', 'note', 'type', 'details' ) );
+		$id   = self::store( compact( 'name', 'phone', 'email', 'car', 'note', 'type', 'details' ), $sent );
 
 		/* Storage is what decides what the visitor is told, not the email.
 		 *
@@ -10456,19 +10699,26 @@ class Vesla_Enquiry {
 		}
 
 		$site    = wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES );
+		$labels = self::types();
+		$kind   = isset( $labels[ $d['type'] ] ) ? $labels[ $d['type'] ] : $labels['general'];
+
+		/* The kind leads the subject: this is read on a phone as often as not,
+		   where the subject line is most of what shows in the list. */
 		$subject = sprintf(
-			/* translators: %s: the car of interest, or the sender's name. */
-			__( 'Website enquiry — %s', 'vesla-landing' ),
+			/* translators: 1: the kind of enquiry. 2: the car of interest, or the sender's name. */
+			__( '%1$s — %2$s', 'vesla-landing' ),
+			$kind,
 			$d['car'] ? $d['car'] : $d['name']
 		);
 
 		$body = implode(
 			"\n",
 			array(
+				__( 'Kind:', 'vesla-landing' ) . ' ' . $kind,
 				__( 'Name:', 'vesla-landing' ) . ' ' . $d['name'],
 				__( 'Phone:', 'vesla-landing' ) . ' ' . $d['phone'],
 				__( 'Email:', 'vesla-landing' ) . ' ' . ( $d['email'] ? $d['email'] : '—' ),
-				__( 'Car of interest:', 'vesla-landing' ) . ' ' . ( $d['car'] ? $d['car'] : '—' ),
+				__( 'Car of interest:', 'vesla-landing' ) . ' ' . ( $d['car'] ? $d['car'] : '—' ) . self::detail_block( $d['details'] ),
 				'',
 				$d['note'] ? $d['note'] : '—',
 				'',
@@ -10503,6 +10753,115 @@ class Vesla_Enquiry {
 	   4 · STORING
 	   ═══════════════════════════════════════════════════════════════════════ */
 
+	/**
+	 * What kind of enquiry this is.
+	 *
+	 * Every one of these used to arrive as the same thing, so a trade-in and
+	 * "is this still available" sat in one list looking identical and were
+	 * worked in the order they came. The key is stored; the label is only ever
+	 * for reading.
+	 */
+	public static function types() {
+		return array(
+			'general'  => __( 'General enquiry', 'vesla-landing' ),
+			'car'      => __( 'Car enquiry', 'vesla-landing' ),
+			'finance'  => __( 'Finance', 'vesla-landing' ),
+			'trade_in' => __( 'Selling / trade-in', 'vesla-landing' ),
+		);
+	}
+
+	/**
+	 * The posted type, or the best guess when nothing usable was sent.
+	 *
+	 * Guessing rather than defaulting flat to 'general' matters for the pages
+	 * already out there: a prerendered car page from before this existed posts
+	 * no type at all, but it does post a car, and that is enough to file it.
+	 */
+	private static function read_type( $raw, $car ) {
+		$key = sanitize_key( (string) $raw );
+		if ( isset( self::types()[ $key ] ) ) {
+			return $key;
+		}
+		return '' !== $car ? 'car' : 'general';
+	}
+
+	/**
+	 * The figures the visitor was looking at when they pressed send.
+	 *
+	 * Sent as one JSON object rather than a fixed set of columns, because what
+	 * is worth keeping differs by type -- a trade-in carries the car and the
+	 * range it was valued at, a finance enquiry carries deposit, term and the
+	 * monthly figure on screen. Everything is flattened to short strings: this
+	 * is read by a person, never computed with.
+	 */
+	private static function read_details( $raw ) {
+		if ( is_string( $raw ) ) {
+			$raw = json_decode( $raw, true );
+		}
+		if ( ! is_array( $raw ) ) {
+			return array();
+		}
+
+		$out = array();
+		foreach ( $raw as $label => $value ) {
+			if ( count( $out ) >= 12 ) {
+				break;
+			}
+			if ( is_array( $value ) || is_object( $value ) ) {
+				continue;
+			}
+			$label = sanitize_text_field( (string) $label );
+			$value = sanitize_text_field( (string) $value );
+			if ( '' === $label || '' === $value ) {
+				continue;
+			}
+			/* Same refusal the message body gets: this is emailed, and may be
+			   read in an HTML mail client. */
+			if ( preg_match( '/[<>]|javascript:|\son\w+\s*=/i', $label . ' ' . $value ) ) {
+				continue;
+			}
+			$out[ self::cut( $label, 40 ) ] = self::cut( $value, 120 );
+		}
+		return $out;
+	}
+
+	private static function cut( $text, $max ) {
+		return self::len( $text ) > $max ? mb_substr( $text, 0, $max ) : $text;
+	}
+
+	/**
+	 * What follows the name in the list when there is no car to name.
+	 *
+	 * A trade-in has no car of ours by definition, so it used to read
+	 * "Ahmed — general enquiry" alongside every other typeless row.
+	 */
+	private static function title_tail( $type ) {
+		$labels = self::types();
+		if ( 'general' !== $type && isset( $labels[ $type ] ) ) {
+			return mb_strtolower( $labels[ $type ] );
+		}
+		return __( 'general enquiry', 'vesla-landing' );
+	}
+
+	/**
+	 * The figures the visitor was looking at, as lines under the car.
+	 *
+	 * Appended to a line already in the message rather than added as its own
+	 * element, so an enquiry carrying nothing extra reads exactly as it did.
+	 */
+	private static function detail_block( $details ) {
+		if ( empty( $details ) ) {
+			return '';
+		}
+		$out = '';
+		foreach ( $details as $label => $value ) {
+			$out .= "
+" . $label . ': ' . $value;
+		}
+		return "
+" . $out;
+	}
+
 	private static function store( $d, $sent ) {
 		$id = wp_insert_post(
 			array(
@@ -10511,7 +10870,7 @@ class Vesla_Enquiry {
 				'post_title'   => sprintf(
 					'%s — %s',
 					$d['name'],
-					$d['car'] ? $d['car'] : __( 'general enquiry', 'vesla-landing' )
+					$d['car'] ? $d['car'] : self::title_tail( $d['type'] )
 				),
 				'post_content' => $d['note'],
 			),
@@ -10524,6 +10883,10 @@ class Vesla_Enquiry {
 		update_post_meta( $id, '_vesla_phone', $d['phone'] );
 		update_post_meta( $id, '_vesla_email', $d['email'] );
 		update_post_meta( $id, '_vesla_car', $d['car'] );
+		update_post_meta( $id, '_vesla_type', $d['type'] );
+		if ( $d['details'] ) {
+			update_post_meta( $id, '_vesla_details', $d['details'] );
+		}
 		update_post_meta( $id, '_vesla_emailed', $sent ? 'yes' : 'no' );
 
 		return $id;
@@ -10668,6 +11031,7 @@ class Vesla_Enquiry_Admin {
 			'vesla_name'   => __( 'Name', 'vesla-landing' ),
 			'vesla_phone'  => __( 'Phone', 'vesla-landing' ),
 			'vesla_email'  => __( 'Email', 'vesla-landing' ),
+			'vesla_type'   => __( 'Kind', 'vesla-landing' ),
 			'vesla_car'    => __( 'Car', 'vesla-landing' ),
 			'vesla_mailed' => __( 'Emailed', 'vesla-landing' ),
 			'date'         => __( 'Received', 'vesla-landing' ),
@@ -10683,6 +11047,23 @@ class Vesla_Enquiry_Admin {
 					'<strong><a class="row-title" href="%s">%s</a></strong>',
 					esc_url( get_edit_post_link( $post_id ) ),
 					esc_html( $name ? $name : __( '(no name)', 'vesla-landing' ) )
+				);
+				break;
+
+			case 'vesla_type':
+				$type   = (string) get_post_meta( $post_id, '_vesla_type', true );
+				$labels = Vesla_Enquiry::types();
+				/* An enquiry stored before the field existed has no type. Say so
+				   plainly rather than calling it general, which would be a guess
+				   dressed up as a fact. */
+				if ( ! isset( $labels[ $type ] ) ) {
+					echo '<span class="vesla-dash">—</span>';
+					break;
+				}
+				printf(
+					'<span class="vesla-kind vesla-kind-%s">%s</span>',
+					esc_attr( $type ),
+					esc_html( $labels[ $type ] )
 				);
 				break;
 
@@ -10771,12 +11152,27 @@ class Vesla_Enquiry_Admin {
 			<option value="yes" <?php selected( $current, 'yes' ); ?>><?php esc_html_e( 'Emailed successfully', 'vesla-landing' ); ?></option>
 		</select>
 		<?php
+		$kind = isset( $_GET['vesla_type'] ) ? sanitize_key( wp_unslash( $_GET['vesla_type'] ) ) : '';
+		?>
+		<label class="screen-reader-text" for="vesla_type"><?php esc_html_e( 'Filter by kind', 'vesla-landing' ); ?></label>
+		<select name="vesla_type" id="vesla_type">
+			<option value=""><?php esc_html_e( 'Every kind', 'vesla-landing' ); ?></option>
+			<?php foreach ( Vesla_Enquiry::types() as $key => $label ) : ?>
+				<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $kind, $key ); ?>><?php echo esc_html( $label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
 	}
 
 	public static function apply_query( $query ) {
 		if ( ! is_admin() || ! $query->is_main_query() || self::TYPE !== $query->get( 'post_type' ) ) {
 			return;
 		}
+
+		/* Both filters are on the same screen and can be set at once, so the
+		   clauses are collected and set once at the end. Setting 'meta_query'
+		   twice would silently drop the first. */
+		$meta = array();
 
 		if ( ! empty( $_GET['vesla_mailed'] ) ) {
 			$want = sanitize_text_field( wp_unslash( $_GET['vesla_mailed'] ) );
@@ -10785,17 +11181,42 @@ class Vesla_Enquiry_Admin {
 				   stored by an older version has no _vesla_emailed key, and
 				   leaving those out of the failure list is exactly the kind of
 				   quiet omission this screen exists to prevent. */
-				$query->set(
-					'meta_query',
-					'no' === $want
-						? array(
-							'relation' => 'OR',
-							array( 'key' => '_vesla_emailed', 'value' => 'no' ),
-							array( 'key' => '_vesla_emailed', 'compare' => 'NOT EXISTS' ),
-						)
-						: array( array( 'key' => '_vesla_emailed', 'value' => 'yes' ) )
-				);
+				$meta[] = 'no' === $want
+					? array(
+						'relation' => 'OR',
+						array( 'key' => '_vesla_emailed', 'value' => 'no' ),
+						array( 'key' => '_vesla_emailed', 'compare' => 'NOT EXISTS' ),
+					)
+					: array( 'key' => '_vesla_emailed', 'value' => 'yes' );
 			}
+		}
+
+		if ( ! empty( $_GET['vesla_type'] ) ) {
+			$kind = sanitize_key( wp_unslash( $_GET['vesla_type'] ) );
+			if ( isset( Vesla_Enquiry::types()[ $kind ] ) ) {
+				/* Same reasoning as the delivery filter above: an enquiry from
+				   before the field existed has no _vesla_type, and a car named on
+				   it is the only evidence of what it was. Asking for car enquiries
+				   therefore has to include those. */
+				$meta[] = 'car' === $kind
+					? array(
+						'relation' => 'OR',
+						array( 'key' => '_vesla_type', 'value' => 'car' ),
+						array(
+							'relation' => 'AND',
+							array( 'key' => '_vesla_type', 'compare' => 'NOT EXISTS' ),
+							array( 'key' => '_vesla_car', 'value' => '', 'compare' => '!=' ),
+						),
+					)
+					: array( 'key' => '_vesla_type', 'value' => $kind );
+			}
+		}
+
+		if ( $meta ) {
+			if ( count( $meta ) > 1 ) {
+				$meta['relation'] = 'AND';
+			}
+			$query->set( 'meta_query', $meta );
 		}
 
 		/* The same range the panel above is reporting on, so the rows underneath
@@ -10869,6 +11290,9 @@ class Vesla_Enquiry_Admin {
 		$email  = get_post_meta( $post->ID, '_vesla_email', true );
 		$car    = get_post_meta( $post->ID, '_vesla_car', true );
 		$mailed = get_post_meta( $post->ID, '_vesla_emailed', true );
+		$type    = (string) get_post_meta( $post->ID, '_vesla_type', true );
+		$details = get_post_meta( $post->ID, '_vesla_details', true );
+		$labels  = Vesla_Enquiry::types();
 
 		/* Read-only on purpose. These are a record of what a customer actually
 		   typed; making them editable would let the record quietly drift away
@@ -10878,6 +11302,33 @@ class Vesla_Enquiry_Admin {
 			<?php esc_html_e( 'What the customer submitted. Kept as received and not editable.', 'vesla-landing' ); ?>
 		</p>
 		<table class="vesla-meta">
+			<tr>
+				<th><?php esc_html_e( 'Kind', 'vesla-landing' ); ?></th>
+				<td>
+					<?php if ( isset( $labels[ $type ] ) ) : ?>
+						<span class="vesla-kind vesla-kind-<?php echo esc_attr( $type ); ?>"><?php echo esc_html( $labels[ $type ] ); ?></span>
+					<?php else : ?>
+						<span class="vesla-dash">—</span>
+						<br><span class="description"><?php esc_html_e( 'Received before enquiries recorded a kind.', 'vesla-landing' ); ?></span>
+					<?php endif; ?>
+				</td>
+			</tr>
+			<?php if ( is_array( $details ) && $details ) : ?>
+				<tr>
+					<th><?php esc_html_e( 'On screen', 'vesla-landing' ); ?></th>
+					<td>
+						<?php /* The figures the customer was looking at when they sent it --
+						         the valuation they were quoted, or the deposit and term behind
+						         the monthly figure. Ringing back without these means asking
+						         them to fill it in again. */ ?>
+						<ul class="vesla-details">
+							<?php foreach ( $details as $label => $value ) : ?>
+								<li><b><?php echo esc_html( $label ); ?>:</b> <?php echo esc_html( $value ); ?></li>
+							<?php endforeach; ?>
+						</ul>
+					</td>
+				</tr>
+			<?php endif; ?>
 			<tr>
 				<th><?php esc_html_e( 'Received', 'vesla-landing' ); ?></th>
 				<td>
@@ -11219,6 +11670,26 @@ class Vesla_Enquiry_Admin {
 	   EXPORT
 	   ═══════════════════════════════════════════════════════════════════════ */
 
+	/** The kind as a reader sees it, blank for rows stored before it existed. */
+	private static function kind_label( $post_id ) {
+		$type   = (string) get_post_meta( $post_id, '_vesla_type', true );
+		$labels = Vesla_Enquiry::types();
+		return isset( $labels[ $type ] ) ? $labels[ $type ] : '';
+	}
+
+	/** The figures flattened onto one cell, so a spreadsheet keeps them together. */
+	private static function details_line( $post_id ) {
+		$details = get_post_meta( $post_id, '_vesla_details', true );
+		if ( ! is_array( $details ) || ! $details ) {
+			return '';
+		}
+		$bits = array();
+		foreach ( $details as $label => $value ) {
+			$bits[] = $label . ': ' . $value;
+		}
+		return implode( '; ', $bits );
+	}
+
 	public static function export_csv() {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have permission to export enquiries.', 'vesla-landing' ) );
@@ -11257,7 +11728,9 @@ class Vesla_Enquiry_Admin {
 				__( 'Name', 'vesla-landing' ),
 				__( 'Phone', 'vesla-landing' ),
 				__( 'Email', 'vesla-landing' ),
+				__( 'Kind', 'vesla-landing' ),
 				__( 'Car', 'vesla-landing' ),
+				__( 'On screen', 'vesla-landing' ),
 				__( 'Message', 'vesla-landing' ),
 				__( 'Emailed', 'vesla-landing' ),
 			)
@@ -11271,7 +11744,9 @@ class Vesla_Enquiry_Admin {
 					trim( explode( '—', $post->post_title )[0] ),
 					self::csv_safe( get_post_meta( $post->ID, '_vesla_phone', true ) ),
 					self::csv_safe( get_post_meta( $post->ID, '_vesla_email', true ) ),
+					self::csv_safe( self::kind_label( $post->ID ) ),
 					self::csv_safe( get_post_meta( $post->ID, '_vesla_car', true ) ),
+					self::csv_safe( self::details_line( $post->ID ) ),
 					self::csv_safe( $post->post_content ),
 					'yes' === get_post_meta( $post->ID, '_vesla_emailed', true ) ? 'yes' : 'no',
 				)
@@ -11741,6 +12216,8 @@ class Vesla_Rest {
 				'car'     => isset( $p['car'] ) ? $p['car'] : '',
 				'message' => isset( $p['message'] ) ? $p['message'] : '',
 				'website' => isset( $p['website'] ) ? $p['website'] : '',
+				'type'    => isset( $p['type'] ) ? $p['type'] : '',
+				'details' => isset( $p['details'] ) ? $p['details'] : '',
 			)
 		);
 
@@ -12625,6 +13102,7 @@ class Vesla_Publisher {
    than fetched, because a link previewer reads the markup once and never
    runs a script. */
 call_user_func( $head );
+Vesla_Render::analytics_tag();
 ?>
 <link rel="preconnect" href="<?php echo esc_url( home_url() ); ?>">
 <link rel="stylesheet" href="<?php echo esc_url( $assets . 'styles.css?v=' . vesla_asset_ver( 'assets/styles.css' ) ); ?>">

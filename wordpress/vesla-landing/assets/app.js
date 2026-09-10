@@ -212,6 +212,7 @@
   var fBody  = $('#f-body');
   var fPrice = $('#f-price');
   var fSort  = $('#f-sort');
+  var fFind  = $('#f-search');
 
   /* Blanks are dropped: a car saved without a body type must not put an empty
      option in the Body menu that appears to filter to nothing. */
@@ -380,6 +381,8 @@
     $('.js-enq', el).addEventListener('click', function () {
       var f = $('#q-car');
       if (f) f.value = car.make + ' ' + car.model + ' (' + car.year + ')';
+      var t = $('#q-type');
+      if (t) t.value = 'car';
     });
 
     // If a photo 404s, drop back to the placeholder rather than a broken icon.
@@ -471,7 +474,26 @@
 
     var maxPrice = fPrice.value ? Number(fPrice.value) : Infinity;
 
+    /* Every word has to match, in any field and in any order, so "audi 2019"
+       and "2019 audi" find the same car. Matching the whole phrase against one
+       field would fail on both, which is how a search box teaches people it
+       does not work. */
+    var terms = fFind
+      ? fFind.value.toLowerCase().split(/\s+/).filter(function (t) { return t; })
+      : [];
+
+    function hay(c) {
+      return [c.make, c.model, c.year, c.body, c.fuel, c.trans]
+        .join(' ').toLowerCase();
+    }
+
     list = STOCK.filter(function (c) {
+      if (terms.length) {
+        var h = hay(c);
+        for (var i = 0; i < terms.length; i++) {
+          if (h.indexOf(terms[i]) === -1) { return false; }
+        }
+      }
       return (!fMake.value || c.make === fMake.value) &&
              (!fBody.value || c.body === fBody.value) &&
              c.price <= maxPrice;
@@ -514,12 +536,28 @@
     if (el) { el.addEventListener('change', render); }
   });
 
+  /* 'input' rather than 'change': the grid narrows as it is typed, which is
+     the whole point of a search box over another menu. The list is already in
+     memory, so there is nothing to debounce. */
+  if (fFind) {
+    fFind.addEventListener('input', render);
+    /* A search box offers a clear cross; Escape should do the same. */
+    fFind.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && fFind.value) {
+        ev.stopPropagation();
+        fFind.value = '';
+        render();
+      }
+    });
+  }
+
   var fReset = $('#f-reset');
   if (fReset) {
     fReset.addEventListener('click', function () {
       if (fMake) { fMake.value = ''; }
       if (fBody) { fBody.value = ''; }
       if (fPrice) { fPrice.value = ''; }
+      if (fFind) { fFind.value = ''; }
       if (fSort) { fSort.value = 'price-asc'; }
       render();
       markMakes();
@@ -1181,11 +1219,176 @@
     estimate();
   }
 
+  /* ---------------- sending an estimate in ----------------
+     The estimator answered a question and asked nothing back. Somebody who had
+     just described a car they want to sell -- make, year, mileage, condition --
+     left again without us knowing they had been here, which is a lead walking
+     out of a feature that works.
+
+     What they were shown goes with the enquiry. Ringing back to ask them to
+     describe the car a second time is how you lose the ones who bothered. */
+  var eSend = $('#s-go');
+  var eOutMsg = $('#s-out');
+
+  function estDetails() {
+    /* Labels rather than keys: this is read by a person in an email and in the
+       admin, never computed with, and the wording on screen is the wording
+       that means something to them. */
+    var pick = function (el) {
+      return el && el.options && el.options[el.selectedIndex]
+        ? el.options[el.selectedIndex].textContent.trim() : '';
+    };
+    var d = {};
+    d[msg('est_d_make', 'Make')]      = pick(eMake);
+    d[msg('est_d_year', 'Year')]      = pick(eYear);
+    d[msg('est_d_km', 'Mileage')]     = pick(eKm);
+    d[msg('est_d_cond', 'Condition')] = pick(eCond);
+    d[msg('est_d_est', 'Estimate shown')] = eOut ? eOut.textContent.trim() : '';
+    return d;
+  }
+
+  if (eOK && eSend && eOutMsg) {
+    var estForm = $('#est');
+
+    function estFail(message) {
+      eSend.disabled = false;
+      eOutMsg.className = 'form-msg bad';
+      eOutMsg.textContent = message || LABELS.sendFail || 'That did not send — please call us instead.';
+    }
+
+    function estSend(nonce, retriedOnce) {
+      var body = new FormData();
+      body.append('action', 'vesla_enquiry');
+      body.append('nonce', nonce);
+      body.append('name',  ($('#s-name')  || {}).value || '');
+      body.append('phone', ($('#s-phone') || {}).value || '');
+      body.append('email', ($('#s-email') || {}).value || '');
+      body.append('car', '');
+      body.append('message', '');
+      body.append('website', ($('#s-website') || {}).value || '');
+      body.append('type', 'trade_in');
+      body.append('details', JSON.stringify(estDetails()));
+
+      fetch(CFG.ajaxUrl, { method: 'POST', credentials: 'same-origin', body: body })
+        .then(function (r) { return r.json().catch(function () { return null; }); })
+        .then(function (res) {
+          var data = (res && res.data) || {};
+
+          /* The same one-retry nonce recovery the enquiry form does, for the
+             same reason: this page may have been cached for longer than a
+             nonce lives. */
+          if (res && !res.success && data.code === 'stale_nonce' && !retriedOnce) {
+            fetch(CFG.ajaxUrl + '?action=vesla_refresh_nonce', { credentials: 'same-origin' })
+              .then(function (r) { return r.json(); })
+              .then(function (fresh) {
+                if (fresh && fresh.success && fresh.data && fresh.data.nonce) {
+                  estSend(fresh.data.nonce, true);
+                } else { estFail(data.message); }
+              })
+              .catch(function () { estFail(data.message); });
+            return;
+          }
+
+          eSend.disabled = false;
+
+          if (res && res.success) {
+            eOutMsg.className = 'form-msg ok';
+            eOutMsg.textContent = data.message || CFG.formOk || '';
+            ['#s-name', '#s-phone', '#s-email'].forEach(function (id) {
+              var el = $(id);
+              if (el) { el.value = ''; setFieldError(el, ''); }
+            });
+            return;
+          }
+
+          /* The server names its fields q-name, q-phone, q-email whichever form
+             they came from. Mapped onto this form's boxes so the verdict lands
+             against the box that caused it. */
+          if (data.fields) {
+            var map = { 'q-name': 's-name', 'q-phone': 's-phone', 'q-email': 's-email' };
+            var firstEl = null;
+            Object.keys(data.fields).forEach(function (id) {
+              var el = $('#' + (map[id] || id));
+              if (el) {
+                setFieldError(el, data.fields[id]);
+                if (!firstEl) { firstEl = el; }
+              }
+            });
+            if (firstEl) { firstEl.focus(); }
+          }
+          estFail(data.message);
+        })
+        .catch(function () { estFail(''); });
+    }
+
+    /* The estimator is a <form>, so Enter in a box submits it. Catching submit
+       rather than the button's click means the keyboard works too. */
+    if (estForm) {
+      estForm.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        eSend.disabled = true;
+        eOutMsg.className = 'form-msg';
+        eOutMsg.textContent = LABELS.sending || 'Sending…';
+        /* One nonce on the page, in the enquiry form; ids are unique, so this
+           finds it from here without reaching into that form's scope. */
+        var el = $('#vesla_nonce');
+        estSend(el ? el.value : '', false);
+      });
+    }
+  }
+
   /* ---------------- enquiry form ----------------
      Checked here as the visitor types, then posted to WordPress, which checks
      everything again before it is trusted. */
   var enq = $('#enq');
   var out = $('#q-out');
+
+  /* ---------------- arriving with something already said ----------------
+     A car's page has no enquiry form on it: Enquire and the finance quote both
+     send the visitor here, to #contact. vehicle.js has always written the car
+     into sessionStorage on the way out -- deliberately, so the address stays
+     clean and shareable -- but nothing on this side ever read it back, so the
+     form it arrived at was empty every time and the buyer retyped the name of
+     the car they had just been looking at.
+
+     Read defensively and cleared once used: a stale car from an hour ago
+     attaching itself to an unrelated enquiry is worse than an empty box. */
+  if (enq) {
+    try {
+      var carried = sessionStorage.getItem('vesla-enq');
+      sessionStorage.removeItem('vesla-enq');
+      /* The older key, from before this carried anything but a name. */
+      var legacy = sessionStorage.getItem('vesla-car');
+      sessionStorage.removeItem('vesla-car');
+
+      var got = carried ? JSON.parse(carried) : (legacy ? { car: legacy } : null);
+
+      if (got && typeof got === 'object') {
+        var cEl = $('#q-car');
+        if (cEl && typeof got.car === 'string') { cEl.value = got.car.slice(0, 80); }
+
+        var tEl = $('#q-type');
+        if (tEl && typeof got.type === 'string') { tEl.value = got.type; }
+
+        /* Rebuilt from scratch rather than passed along, so only a flat object
+           of short strings can reach the post body. */
+        var dEl = $('#q-details');
+        if (dEl && got.details && typeof got.details === 'object' && !Array.isArray(got.details)) {
+          var clean = {};
+          Object.keys(got.details).slice(0, 12).forEach(function (k) {
+            var v = got.details[k];
+            if (typeof v === 'string' || typeof v === 'number') {
+              clean[String(k).slice(0, 40)] = String(v).slice(0, 120);
+            }
+          });
+          dEl.value = JSON.stringify(clean);
+        }
+      }
+    } catch (e) {
+      /* Private mode refuses sessionStorage outright; an empty form is the
+         right outcome, not a dead page. */
+    }
+  }
 
   /* Every field is checked on its own and says what is wrong with it, in its
      own place. A single line at the bottom of the form saying "please check
@@ -1403,6 +1606,12 @@
       body.append('message', note);
       /* the hidden field no person can see; anything in it came from a bot */
       body.append('website', (enq.querySelector('#q-website') || {}).value || '');
+      /* What kind of enquiry, and whatever figures the visitor was looking at.
+         Both are hidden inputs the page fills in -- pressing Enquire on a car,
+         or arriving from a finance quote -- so the server is told rather than
+         made to guess from whether a car was named. */
+      body.append('type', (enq.querySelector('#q-type') || {}).value || 'general');
+      body.append('details', (enq.querySelector('#q-details') || {}).value || '');
       return body;
     }
 

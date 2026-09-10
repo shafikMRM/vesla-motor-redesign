@@ -180,6 +180,103 @@
 
     /* ---------------- the monthly figure ---------------- */
     var fin = $('.vp-fin');
+    /* The enquiry button carries which car it came from, so the form on the
+       landing page arrives already filled in. sessionStorage rather than a query
+       string: the address stays clean and shareable.
+
+       It now carries what KIND of enquiry it is as well, and -- from the finance
+       block below -- the figures that were on screen. The showroom could
+       previously tell that somebody asked about a car, but not that they had
+       been working out a monthly payment on it first, which is the difference
+       between a question and a buyer. */
+    function carry(type, details) {
+      try {
+        sessionStorage.setItem('vesla-enq', JSON.stringify({
+          car: (enq && enq.dataset.car) || '',
+          type: type,
+          details: details || null
+        }));
+      } catch (e) {
+        /* Private mode refuses storage; the form simply arrives empty. */
+      }
+    }
+
+    var enq = $('.vp-act .btn-solid');
+    if (enq && enq.dataset.car) {
+      enq.addEventListener('click', function () { carry('car', null); });
+    }
+
+    /* ---------------- the video ----------------
+       The markup ships a link to where the video lives, so with no scripting
+       pressing it simply opens YouTube. Where there IS scripting, the press is
+       caught and the player is put in place instead -- nothing of YouTube's is
+       fetched until this runs, which is the point of the facade. */
+    var vgo = $('.vp-video-go');
+    if (vgo && vgo.dataset.embed) {
+      vgo.addEventListener('click', function (ev) {
+        /* Let the modified clicks through: somebody middle-clicking or
+           ctrl-clicking is asking for a tab, not an inline player. */
+        if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button !== 0) { return; }
+        ev.preventDefault();
+
+        var frame = document.createElement('iframe');
+        frame.src = vgo.dataset.embed;
+        frame.title = vgo.textContent.trim();
+        frame.setAttribute('allow', 'accelerometer; autoplay; encrypted-media; picture-in-picture');
+        frame.setAttribute('allowfullscreen', '');
+        frame.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        frame.loading = 'lazy';
+
+        var box = vgo.parentNode;
+        box.classList.add('is-playing');
+        box.innerHTML = '';
+        box.appendChild(frame);
+      });
+    }
+
+    /* ---------------- sending the car to somebody ----------------
+       Built here rather than in the markup so it never exists in a state where
+       it cannot work: with no scripting there is no button, which is better
+       than one that does nothing when pressed.
+
+       navigator.share where the browser has it -- on a phone that opens
+       WhatsApp, Messages and the rest, which is how a car actually gets sent to
+       the person paying for it. On a desktop it falls back to copying the
+       address, and says so. */
+    var act = $('.vp-act');
+    if (act && (navigator.share || (navigator.clipboard && navigator.clipboard.writeText))) {
+      var L2 = CFG.labels || {};
+      var share = document.createElement('button');
+      share.type = 'button';
+      share.className = 'btn btn-line vp-share';
+      share.textContent = L2.share || 'Share';
+
+      share.addEventListener('click', function () {
+        var url = window.location.href;
+        var title = (document.querySelector('h1') || {}).textContent || document.title;
+
+        if (navigator.share) {
+          /* A cancelled share rejects. That is the visitor changing their
+             mind, not a failure, so it is swallowed rather than reported. */
+          navigator.share({ title: title, url: url }).catch(function () {});
+          return;
+        }
+        navigator.clipboard.writeText(url).then(function () {
+          var was = share.textContent;
+          share.textContent = L2.shareCopied || 'Link copied';
+          share.disabled = true;
+          setTimeout(function () {
+            share.textContent = was;
+            share.disabled = false;
+          }, 2000);
+        }).catch(function () {
+          share.textContent = L2.shareFailed || 'Could not copy';
+        });
+      });
+
+      act.appendChild(share);
+    }
+
     if (fin && CFG.finance && CFG.finance.on) {
       /* The car's own figures where it has them, the site's where it has
          not. Written on the section by the server, so the two can never
@@ -237,16 +334,30 @@
       down.addEventListener('input', run);
       years.addEventListener('input', run);
       run();
-    }
 
-    /* The enquiry button carries which car it came from, so the form on the
-       landing page arrives already filled in. sessionStorage rather than a query
-       string: the address stays clean and shareable. */
-    var enq = $('.vp-act .btn-solid');
-    if (enq && enq.dataset.car) {
-      enq.addEventListener('click', function () {
-        try { sessionStorage.setItem('vesla-car', enq.dataset.car); } catch (e) {}
-      });
+      /* The calculator worked out a monthly figure and then let the visitor
+         leave with it. Somebody who has moved both sliders has told us their
+         deposit and the term they want; asking them to say it again on the
+         phone is how that interest goes cold.
+
+         The link goes wherever the Enquire button goes -- read off that button
+         rather than configured twice, so the two can never point at different
+         pages. */
+      var ask = document.createElement('a');
+      ask.className = 'btn btn-line vp-fin-ask';
+      ask.textContent = L.finAsk || 'Ask us about these figures';
+      ask.href = (enq && enq.getAttribute('href')) || '';
+      if (ask.href) {
+        ask.addEventListener('click', function () {
+          var d = {};
+          d[L.finDown || 'Deposit']      = $('#vf-down-v').textContent.trim();
+          d[L.finYears || 'Years']       = $('#vf-years-v').textContent.trim();
+          d[L.finPerMonth || 'Per month'] = $('#vf-month').textContent.trim();
+          d[L.finRate || 'Rate quoted']  = F.rate + '%';
+          carry('finance', d);
+        });
+        $('.vp-fin-in', fin).appendChild(ask);
+      }
     }
 
     /* ---------------- the header and the footer ----------------

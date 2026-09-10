@@ -323,3 +323,19 @@ select.vesla-input option[value=""]{ color:#787c82; }
   flex:0 1 auto;align-self:center;
   font-size:12px;line-height:1.3;color:#646970;max-width:15ch;
 }
+
+/* ---------- the kind of enquiry ----------
+   A quiet chip, not a colour-coded status: none of these is better or worse
+   than another, they are just different work. */
+.vesla-kind{
+  display:inline-block;padding:2px 8px;border-radius:2px;
+  font-size:11px;line-height:1.7;letter-spacing:.02em;white-space:nowrap;
+  background:#f0f0f1;color:#3c434a;border:1px solid #dcdcde;
+}
+.vesla-kind-trade_in{background:#fcf3e4;border-color:#f0d9b0;color:#7a5310}
+.vesla-kind-finance{background:#eaf3fb;border-color:#c5ddf0;color:#14568a}
+
+/* The figures the customer was looking at when they sent it. */
+.vesla-details{margin:0;padding:0;list-style:none}
+.vesla-details li{padding:2px 0}
+.vesla-details b{font-weight:600}
