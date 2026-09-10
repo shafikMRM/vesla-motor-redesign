@@ -323,18 +323,16 @@ class Vesla_Schema {
 						'help'  => __( 'Shown in the contact list and the footer, and used by the “Call sales” button on phones. Write it the way you want it read, e.g. +971 58 106 5885.', 'vesla-landing' ),
 						
 					),
-					'phone_toll' => array(
-						'type'  => 'text',
-						'label' => __( 'Toll-free number', 'vesla-landing' ),
-						'help'  => __( 'The freephone number, shown in the top bar and the footer. Leave empty to hide it.', 'vesla-landing' ),
-						
-					),
-					'phone_toll_dial' => array(
-						'type'  => 'text',
-						'label' => __( 'Toll-free number — what actually gets dialled', 'vesla-landing' ),
-						'help'  => __( 'Digits only, because a phone cannot dial letters. For 800 – VESLA this is +97180083752.', 'vesla-landing' ),
-						
-					),
+					/* phone_toll and phone_toll_dial were here. The top bar was the
+					   only thing that read them -- the help text claimed the footer
+					   did too, and it did not -- so with the bar's buttons gone they
+					   drove nothing at all. A setting that does nothing is worse than
+					   no setting: it invites somebody to type a number in and wonder
+					   why it never appears.
+
+					   The toll-free number itself is not lost. It is a row in the
+					   Contact section's channels, which is what puts it on the front
+					   page, the Contact page and the footer. */
 					'phone_landline' => array(
 						'type'  => 'text',
 						'label' => __( 'Landline number', 'vesla-landing' ),
@@ -399,16 +397,10 @@ class Vesla_Schema {
 						),
 						
 					),
-					'cta_label' => array(
-						'type'  => 'text',
-						'label' => __( 'Button in the top right — wording', 'vesla-landing' ),
-						
-					),
-					'cta_link' => array(
-						'type'  => 'url',
-						'label' => __( 'Button in the top right — jumps to', 'vesla-landing' ),
-						
-					),
+					/* cta_label and cta_link were here, and drew the button in the top
+					   right. The button is gone, so they are too -- see the note beside
+					   the toll-free pair in the brand section. The menu below is what
+					   the header offers now. */
 				),
 			),
 
@@ -427,15 +419,16 @@ class Vesla_Schema {
 							'classic' => __( 'Classic — heading, paragraph and the shield', 'vesla-landing' ),
 							'video'   => __( 'Film — the same words over a film', 'vesla-landing' ),
 						),
-						'help'    => __( 'Both use the wording and the figures below. Changing this changes how they are presented, not what they say — there is one set of words and it is edited in one place. The film style needs a film and a poster picture before it will turn on. One thing it also gives up: the film style has no shield beside the heading, so the opening animation has nothing to settle onto and ends in a plain cross-fade instead. That is the trade, and it is the honest behaviour rather than a fault.', 'vesla-landing' ),
+						'help'    => __( 'Both use the wording and the figures below. Changing this changes how they are presented, not what they say — there is one set of words and it is edited in one place. The film style needs a film and a poster picture before it will turn on.', 'vesla-landing' ),
 					),
 					'video' => array(
-						'type'      => 'video',
-						'label'     => __( 'Film for the opening section', 'vesla-landing' ),
-						'mimes'     => array( 'video/mp4' ),
-						'max_bytes' => 10485760,   // 10 MB
-						'warn_bytes' => 4194304,   // 4 MB
-						'help'      => __( 'MP4, no larger than 10MB. It is decoration: it plays muted, on a loop, with no controls, and the words sit over it. Everything a reader needs is in the text and the poster, so a film that never loads costs nothing but the film.', 'vesla-landing' ),
+						'type'        => 'video',
+						'label'       => __( 'Film for the opening section', 'vesla-landing' ),
+						'mimes'       => array( 'video/mp4' ),
+						'max_bytes'   => 26214400,   // 25 MB — refused above this
+						'heavy_bytes' => 10485760,   // 10 MB — saved, warned about strongly
+						'warn_bytes'  => 4194304,    //  4 MB — saved, cost named
+						'help'        => __( 'MP4, no larger than 25MB. It is decoration: it plays muted, on a loop, with no controls, and the words sit over it. Everything a reader needs is in the text and the poster, so a film that never loads costs nothing but the film — but the longer the file, the longer most people see a still picture instead of it. Measured figures are given when you choose one.', 'vesla-landing' ),
 					),
 					'poster' => array(
 						'type'  => 'image',
@@ -533,6 +526,37 @@ class Vesla_Schema {
 			/* ───────────────────────────────────────────────────────────────
 			   STOCK
 			   ─────────────────────────────────────────────────────────────── */
+			'spotlight' => array(
+				'title'  => __( 'Spotlight', 'vesla-landing' ),
+				/* The cars are picked here but they are not edited here; this
+				   button is how somebody looking for them finds them. */
+				'screen_link'       => 'edit.php?post_type=vesla_vehicle',
+				'screen_link_label' => __( 'Edit the cars', 'vesla-landing' ),
+				'blurb'  => __( 'A turning row of three to five cars, above the grid. It shows two either side of the one facing forward, moves on its own, and stops the moment anybody touches it. Every car in it is also in the grid below, so nothing is only reachable through here.', 'vesla-landing' ),
+				'fields' => array(
+					'enabled' => array( 'type' => 'toggle', 'label' => __( 'Show this section', 'vesla-landing' ), ),
+					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
+					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
+					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+					'cars' => array(
+						'type'   => 'repeater',
+						/* Five, not eight. The flow places two either side of the one
+						   facing forward, so five is exactly full; a sixth car would sit
+						   at a distance where it is neither readable nor gone, which is
+						   what the strip of eight this replaced looked like from the
+						   third card out. */
+						'label'  => __( 'Cars in the Spotlight', 'vesla-landing' ),
+						'help'   => __( 'Three to five, in the order you want them shown — the middle one faces forward when the page loads. Each one needs a photograph, because up here the photograph is the whole card. Fewer than three and the Spotlight stays off. Leave this empty and the five most recently added cars that have a photograph are used instead, so it is never blank.', 'vesla-landing' ),
+						'row_label' => __( 'Spotlight car', 'vesla-landing' ),
+						'row_title' => array( 'car' ),
+						'max'    => 5,
+						'fields' => array(
+							'car' => array( 'type' => 'car', 'label' => __( 'Car', 'vesla-landing' ), ),
+						),
+					),
+				),
+			),
+
 			'stock' => array(
 				'title'  => __( 'Cars for sale', 'vesla-landing' ),
 				/* The cars themselves are edited under Vehicles. This button is how
@@ -545,6 +569,40 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+
+					/* ── the strip of makes above the grid ──
+					   The list of makes is not entered anywhere: it is built from the
+					   cars, the same way the Make menu is, so adding a Bentley to the
+					   stock puts Bentley in the strip and selling the last one takes
+					   it out again. There is nothing to keep in step.
+
+					   The only thing that cannot be worked out from the cars is the
+					   marque's logo, because that is a picture somebody has to supply.
+					   Until one is attached a make shows as its name set in the
+					   site's own type, which is a deliberate fallback rather than a
+					   placeholder: a strip of wordmarks is a respectable thing to
+					   ship, and it is what the strip falls back to for any make whose
+					   logo is missing. */
+					'brands_enabled' => array(
+						'type'    => 'toggle',
+						'label'   => __( 'Show the strip of makes above the grid', 'vesla-landing' ),
+						'default' => 1,
+						'help'    => __( 'A row of the makes you have in stock, above the cars. Tapping one filters the grid to that make; tapping it again clears it. It scrolls sideways when there are more makes than fit.', 'vesla-landing' ),
+					),
+					'brands_all_label' => array(
+						'type'    => 'text',
+						'label'   => __( 'Wording on the “everything” tile', 'vesla-landing' ),
+						'default' => 'All makes',
+						'help'    => __( 'The first tile in the strip, which clears the filter.', 'vesla-landing' ),
+					),
+					/* The logos are NOT here. They live on the make itself, under
+					   Vehicles → Car brands, because that list already exists, is
+					   already tied to every car of that make, and appears and
+					   disappears with the stock. A second list of makes kept by hand
+					   in the settings would be a list that disagrees with the cars
+					   the first time somebody adds a marque and forgets. */
+
+
 					'per_page' => array(
 						'type'  => 'number',
 						'label' => __( 'How many cars to show before the “Show more” button', 'vesla-landing' ),
@@ -607,7 +665,7 @@ class Vesla_Schema {
 								'label' => __( 'Describe the photograph', 'vesla-landing' ),
 								'help'  => __( 'What is in the picture, for somebody who cannot see it — “silver saloon, front three-quarter view, in the showroom”. Not the car’s name: that is the heading right beside it, and repeating it tells a blind visitor nothing they did not already have.', 'vesla-landing' ),
 							),
-							'make'  => array( 'group' => __( 'What the car is', 'vesla-landing' ), 'type' => 'text', 'label' => __( 'Make', 'vesla-landing' ), 'help' => __( 'e.g. Audi. This also becomes an option in the “Make” filter.', 'vesla-landing' ), ),
+							'make'  => array( 'group' => __( 'What the car is', 'vesla-landing' ), 'type' => 'brand', 'label' => __( 'Brand', 'vesla-landing' ), 'help' => __( 'Chosen from the brands under Vehicles → Car brands. Add the brand there first, with its logo, and it appears on this list. This is also what fills the “Make” filter and the strip of makes above the cars.', 'vesla-landing' ), ),
 							'model' => array( 'type' => 'text', 'label' => __( 'Model', 'vesla-landing' ), ),
 							'year'  => array( 'type' => 'number', 'label' => __( 'Year', 'vesla-landing' ), 'min' => 1950, 'max' => 2100, ),
 							'price' => array( 'type' => 'number', 'label' => __( 'Price', 'vesla-landing' ), 'help' => __( 'Numbers only, no commas or currency — the currency and the thousands separators are added for you.', 'vesla-landing' ), 'min' => 0, 'max' => 100000000, ),
@@ -1178,12 +1236,43 @@ class Vesla_Schema {
 			   ─────────────────────────────────────────────────────────────── */
 			'contact' => array(
 				'title'  => __( 'Contact section & enquiry form', 'vesla-landing' ),
-				'blurb'  => __( 'The dark section at the bottom, with your contact details on the left and the enquiry form on the right.', 'vesla-landing' ),
+				'blurb'  => __( 'The dark section at the bottom, with your contact details on the left and the enquiry form on the right — and the separate Contact page, which is built from the same details.', 'vesla-landing' ),
 				'fields' => array(
 					'enabled' => array( 'type' => 'toggle', 'label' => __( 'Show this section', 'vesla-landing' ), ),
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+
+					/* ── the separate Contact page ──
+					   A page of its own at /contact/, built from everything already
+					   entered here rather than from a second set of fields: the same
+					   channels, the same hours, the same enquiry form, the same
+					   branches and map. Only its own opening lines are new, because a
+					   page needs a heading of its own -- the section's heading is
+					   written to be read after somebody has scrolled the whole front
+					   page, and that is not what a visitor arriving cold at /contact/
+					   has done. */
+					'page_enabled' => array(
+						'type'    => 'toggle',
+						'label'   => __( 'Also publish a separate Contact page', 'vesla-landing' ),
+						'default' => 1,
+						'help'    => __( 'A page of its own at /contact/, carrying the same details, hours, form and branches as this section — entered once, shown in both places. The header’s Contact button points at it.', 'vesla-landing' ),
+					),
+					'page_eyebrow' => array(
+						'type'    => 'text',
+						'label'   => __( 'Contact page — small line above the heading', 'vesla-landing' ),
+						'default' => 'Talk to us',
+					),
+					'page_heading' => array(
+						'type'    => 'text',
+						'label'   => __( 'Contact page — heading', 'vesla-landing' ),
+						'default' => 'Come and see the car.',
+					),
+					'page_lead' => array(
+						'type'    => 'rich',
+						'label'   => __( 'Contact page — paragraph under the heading', 'vesla-landing' ),
+						'default' => 'Call, message or write — whichever suits. Someone who knows the stock answers, not a call centre, and if the car you are asking about has gone we will say so rather than sell you another one.',
+					),
 					'hours' => array(
 						'type'   => 'repeater',
 						'label'  => __( 'Opening hours', 'vesla-landing' ),
@@ -1916,6 +2005,15 @@ $cols				PRIMARY KEY  (id),
 			update_option( 'vesla_vehicle_section', 1, false );
 		}
 
+		/* Once per site. The Spotlight's controls used to be five fields inside
+		   Cars for sale, from when it was a "featured strip" bolted to the grid.
+		   Moving the names without moving the stored values would empty the
+		   heading and silently drop every car somebody had chosen. */
+		if ( ! get_option( 'vesla_spotlight_section' ) ) {
+			self::move_spotlight_settings();
+			update_option( 'vesla_spotlight_section', 1, false );
+		}
+
 		/* Once per site. The feature list used to be repeater rows, one row
 		   per feature; it is now a block of wording plus a tick against each
 		   line that is offered. Without this the list reads as empty after
@@ -1934,6 +2032,138 @@ $cols				PRIMARY KEY  (id),
 				update_option( 'vesla_photos_upgrade_report', $done, false );
 			}
 		}
+
+		/* Once per site. The sample photographs that ship inside the plugin
+		   have no attachment record, so WordPress never made sized copies of
+		   them and they carry no srcset -- which meant a 300px card was
+		   downloading a 514KB full-size JPEG, five times over, on a page that
+		   also shows them again in the grid. Adopting them into the media
+		   library is the fix at the source: WordPress makes the sized variants
+		   and the browser picks a small one. */
+		if ( ! get_option( 'vesla_bundled_photos_adopted' ) && is_admin() ) {
+			$done = self::adopt_bundled_photos();
+			update_option( 'vesla_bundled_photos_adopted', 1, false );
+			if ( ! empty( $done['adopted'] ) ) {
+				update_option( 'vesla_bundled_photos_report', $done, false );
+			}
+		}
+	}
+
+	/**
+	 * Bring the plugin's own sample photographs into the media library.
+	 *
+	 * A file inside the plugin folder is not an attachment, so it has no sized
+	 * variants and no srcset, and every card that shows it downloads the full
+	 * thing however small the card is. Copying each one in once gives it both.
+	 *
+	 * The bundled file is left in photo_file rather than cleared, for the same
+	 * reason upgrade_photos() leaves it: if the attachment is ever deleted from
+	 * the library, the render path falls back to it and the car still has a
+	 * picture instead of a letter.
+	 *
+	 * Files are shared between cars where they repeat, so the same photograph
+	 * is never copied in twice.
+	 */
+	public static function adopt_bundled_photos() {
+		global $wpdb;
+		$report = array( 'checked' => 0, 'adopted' => 0, 'reused' => 0, 'failed' => 0 );
+
+		if ( ! self::ready() ) {
+			return $report;
+		}
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+
+		/* A car is a post with meta, not a row in the cars table -- the table
+		   exists but the stock does not live in it. Reading the wrong one gave
+		   a confident "checked 0" against four cars that plainly needed it,
+		   which is the kind of clean pass that means nothing was looked at. */
+		$ids = get_posts( array(
+			'post_type'      => Vesla_Vehicle::TYPE,
+			'post_status'    => array( 'publish', 'draft', 'pending', 'private' ),
+			'numberposts'    => -1,
+			'fields'         => 'ids',
+			'orderby'        => 'ID',
+			'order'          => 'ASC',
+		) );
+		if ( ! $ids ) {
+			return $report;
+		}
+
+		$seen = array();   // bundled path => attachment id, so a shared photo is copied once
+
+		foreach ( $ids as $post_id ) {
+			$row = array(
+				'id'         => $post_id,
+				'photo'      => get_post_meta( $post_id, Vesla_Vehicle::META . 'photo', true ),
+				'photo_file' => get_post_meta( $post_id, Vesla_Vehicle::META . 'photo_file', true ),
+			);
+			$file = trim( (string) $row['photo_file'] );
+			if ( ! empty( $row['photo'] ) || '' === $file ) {
+				continue;
+			}
+			/* Only the plugin's own files. Anything else is either already an
+			   attachment or a URL, and upgrade_photos() owns those. */
+			if ( 0 !== strpos( $file, 'assets/' ) ) {
+				continue;
+			}
+			$report['checked']++;
+
+			if ( isset( $seen[ $file ] ) ) {
+				update_post_meta( $post_id, Vesla_Vehicle::META . "photo", $seen[ $file ] );
+				$report['reused']++;
+				continue;
+			}
+
+			$src = VESLA_DIR . $file;
+			if ( ! file_exists( $src ) ) {
+				$report['failed']++;
+				continue;
+			}
+
+			/* Copied into the uploads folder rather than attached where it
+			   lies: an attachment pointing inside a plugin folder is one
+			   plugin update away from being a broken image. */
+			$up = wp_upload_dir();
+			if ( ! empty( $up['error'] ) ) {
+				$report['failed']++;
+				continue;
+			}
+			$name = wp_unique_filename( $up['path'], basename( $file ) );
+			$dest = trailingslashit( $up['path'] ) . $name;
+			if ( ! @copy( $src, $dest ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors
+				$report['failed']++;
+				continue;
+			}
+
+			$type = wp_check_filetype( $dest );
+			$id   = wp_insert_attachment(
+				array(
+					'post_mime_type' => $type['type'] ? $type['type'] : 'image/jpeg',
+					'post_title'     => sanitize_text_field( pathinfo( $name, PATHINFO_FILENAME ) ),
+					'post_status'    => 'inherit',
+				),
+				$dest
+			);
+			if ( is_wp_error( $id ) || ! $id ) {
+				@unlink( $dest ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+				$report['failed']++;
+				continue;
+			}
+			/* This is what makes the sized copies, and therefore the srcset. */
+			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $dest ) );
+
+			update_post_meta( $post_id, Vesla_Vehicle::META . "photo", $id );
+			$seen[ $file ] = $id;
+			$report['adopted']++;
+		}
+
+		if ( $report['adopted'] || $report['reused'] ) {
+			self::forget_cars();
+			do_action( 'vesla_content_saved' );
+		}
+		return $report;
 	}
 
 	/**
@@ -1997,6 +2227,34 @@ $cols				PRIMARY KEY  (id),
 	 * held is left for the schema's own default to fill, rather than being
 	 * written as an empty string -- an empty heading is not a heading.
 	 */
+	private static function move_spotlight_settings() {
+		$all = self::read();
+		if ( empty( $all['stock'] ) || ! empty( $all['spotlight'] ) ) {
+			return;
+		}
+
+		$map = array(
+			'featured_enabled'  => 'enabled',
+			'spotlight_eyebrow' => 'eyebrow',
+			'spotlight_heading' => 'heading',
+			'spotlight_lead'    => 'lead',
+			'featured'          => 'cars',
+		);
+
+		/* On by default, the way featured_enabled was: a site that never touched
+		   the old toggle had the strip, and must not lose it here. */
+		$moved = array( 'enabled' => 1 );
+		foreach ( $map as $was => $now ) {
+			if ( isset( $all['stock'][ $was ] ) && '' !== $all['stock'][ $was ] ) {
+				$moved[ $now ] = $all['stock'][ $was ];
+			}
+			unset( $all['stock'][ $was ] );
+		}
+
+		$all['spotlight'] = $moved;
+		self::write( $all );
+	}
+
 	private static function move_vehicle_settings() {
 		$all = self::read();
 		if ( empty( $all['stock'] ) || ! empty( $all['vehicle'] ) ) {
@@ -3789,18 +4047,35 @@ class Vesla_Settings {
 					return '';
 				}
 
-				/* Above the cap it is refused; above the warning line it is kept
-				   and the cost is named. The difference matters: a four-megabyte
+				/* Above the cap it is refused; above either warning line it is
+				   kept and the cost is named. The difference matters: a heavy
 				   film is a bad idea rather than a broken one, and refusing it
-				   would be this screen overruling a decision that is the
-				   administrator's to make. */
-				$warn = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
-				if ( $warn && $bytes > $warn ) {
+				   would be this screen overruling a decision that belongs to
+				   the administrator.
+
+				   The two warning lines are set from measurement rather than
+				   taste. Timed on this page at four sizes, on a throttled
+				   connection, the figure that moves is not LCP -- it is how
+				   long somebody looks at the poster before the film appears. */
+				$heavy = ! empty( $def['heavy_bytes'] ) ? (int) $def['heavy_bytes'] : 0;
+				$warn  = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
+
+				if ( $heavy && $bytes > $heavy ) {
+					self::complain(
+						'vesla_video_heavy',
+						sprintf(
+							/* translators: 1: the file's size. 2: the size above which this warns strongly. */
+							__( 'The film was saved, but it is %1$s, and above %2$s the film is something most visitors will never see move. Measured on this page: a 12MB film first appears about 17 seconds into the visit on a slow connection and about 6 seconds on 4G; a 25MB one takes about 24 seconds and 7 seconds. Until then the poster is what is on screen, so nothing is broken — but a film nobody reaches is bandwidth spent on a still picture. Under 4MB it arrives while people are still reading the heading.', 'vesla-landing' ),
+							size_format( $bytes, 1 ),
+							size_format( $heavy )
+						)
+					);
+				} elseif ( $warn && $bytes > $warn ) {
 					self::complain(
 						'vesla_video_heavy',
 						sprintf(
 							/* translators: 1: the file's size. 2: the size above which this warns. */
-							__( 'The film was saved, but it is %1$s. Anything above %2$s at the top of the front page is felt on a phone on mobile data: it competes with the words and the pictures for the same connection. It plays muted with no controls, so quality past "recognisable" is being paid for and not seen — re-exporting at a lower bitrate costs nothing visible.', 'vesla-landing' ),
+							__( 'The film was saved, but it is %1$s. Above %2$s it starts to be felt on a phone on mobile data, and the film appears later: measured on this page, about 14 seconds into the visit on a slow connection against about 8 seconds for a small clip. It plays muted with no controls, so quality past "recognisable" is paid for and not seen.', 'vesla-landing' ),
 							size_format( $bytes, 1 ),
 							size_format( $warn )
 						)
@@ -4508,6 +4783,117 @@ class Vesla_Admin {
 				<?php
 				break;
 
+			case 'car':
+				/* A select of the cars in stock, storing the car's own id. Used
+				   by the featured strip, where the order of the rows is the
+				   order they appear in -- which is why this is a repeater of
+				   selects rather than a list of tickboxes. Tickboxes cannot be
+				   put in an order. */
+				$car_list = Vesla_Rest::cars();
+				$car_value = (string) $value;
+				?>
+				<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" class="vesla-input">
+					<option value=""><?php esc_html_e( '— choose a car —', 'vesla-landing' ); ?></option>
+					<?php foreach ( (array) $car_list as $one ) : ?>
+						<?php
+						$one_id    = (string) ( isset( $one['id'] ) ? $one['id'] : '' );
+						$one_label = trim(
+							( ! empty( $one['year'] ) ? $one['year'] . ' ' : '' )
+							. ( isset( $one['make'] ) ? $one['make'] : '' ) . ' '
+							. ( isset( $one['model'] ) ? $one['model'] : '' )
+						);
+						if ( '' === $one_id ) { continue; }
+						?>
+						<option value="<?php echo esc_attr( $one_id ); ?>" <?php selected( $car_value, $one_id ); ?>>
+							<?php echo esc_html( $one_label ); ?>
+						</option>
+					<?php endforeach; ?>
+					<?php
+					/* A car that has been sold or deleted since it was featured.
+					   Kept and named rather than dropped, so the row does not
+					   silently become a different car when somebody saves. */
+					if ( '' !== $car_value && ! in_array( $car_value, array_map( 'strval', wp_list_pluck( (array) $car_list, 'id' ) ), true ) ) :
+						?>
+						<option value="<?php echo esc_attr( $car_value ); ?>" selected>
+							<?php
+							printf(
+								/* translators: %s: a car's reference number. */
+								esc_html__( 'Car %s — no longer in stock', 'vesla-landing' ),
+								esc_html( $car_value )
+							);
+							?>
+						</option>
+					<?php endif; ?>
+				</select>
+				<?php
+				break;
+
+			case 'brand':
+				/* A select of the brands that exist, not a box to type a make
+				   into. The order is deliberate: a brand is created once on
+				   the Car brands screen, with its logo, and a car then picks
+				   from that list. Typing the make on the car was the other way
+				   round -- it invented brands as a side effect of saving a
+				   car, which is how "Porche" becomes a second marque nobody
+				   meant to create.
+
+				   What is STORED is unchanged: the brand's name, as a string,
+				   exactly as the text field stored it. Everything downstream
+				   -- the grid, the filters, the strip, the published data, the
+				   term the car is attached to on save -- reads that string and
+				   none of it had to change. */
+				$brand_terms = get_terms( array(
+					'taxonomy'   => 'vesla_make',
+					'hide_empty' => false,
+					'fields'     => 'names',
+				) );
+				if ( is_wp_error( $brand_terms ) ) {
+					$brand_terms = array();
+				}
+				$brand_value = (string) $value;
+				$brand_link  = admin_url( 'edit-tags.php?taxonomy=vesla_make&post_type=vesla_vehicle' );
+				?>
+				<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" class="vesla-input">
+					<option value=""><?php esc_html_e( '— choose a brand —', 'vesla-landing' ); ?></option>
+					<?php foreach ( $brand_terms as $brand_name ) : ?>
+						<option value="<?php echo esc_attr( $brand_name ); ?>" <?php selected( $brand_value, $brand_name ); ?>>
+							<?php echo esc_html( $brand_name ); ?>
+						</option>
+					<?php endforeach; ?>
+					<?php
+					/* A make this car already holds that is not on the list --
+					   a brand renamed or deleted since. Kept and marked rather
+					   than dropped: silently changing what a car is because
+					   somebody opened its screen would be the worst kind of
+					   data loss, the kind nobody notices. */
+					if ( '' !== $brand_value && ! in_array( $brand_value, (array) $brand_terms, true ) ) :
+						?>
+						<option value="<?php echo esc_attr( $brand_value ); ?>" selected>
+							<?php
+							printf(
+								/* translators: %s: the make stored on this car. */
+								esc_html__( '%s — no longer in the brand list', 'vesla-landing' ),
+								esc_html( $brand_value )
+							);
+							?>
+						</option>
+					<?php endif; ?>
+				</select>
+				<?php if ( ! $brand_terms ) : ?>
+					<p class="vesla-help">
+						<?php
+						printf(
+							/* translators: 1: opening link tag. 2: closing link tag. */
+							esc_html__( 'There are no brands yet. %1$sAdd one under Car brands%2$s — with its logo — and it will be on this list.', 'vesla-landing' ),
+							'<a href="' . esc_url( $brand_link ) . '">', // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inline.
+							'</a>'
+						);
+						?>
+					</p>
+				<?php endif; ?>
+				<?php
+				break;
+
 			case 'select':
 				?>
 				<select id="<?php echo esc_attr( $id ); ?>" name="<?php echo esc_attr( $name ); ?>" class="vesla-input">
@@ -4576,8 +4962,9 @@ class Vesla_Admin {
 				$vid_src  = $vid_id ? wp_get_attachment_url( $vid_id ) : '';
 				$vid_path = $vid_id ? get_attached_file( $vid_id ) : '';
 				$vid_size = ( $vid_path && file_exists( $vid_path ) ) ? (int) filesize( $vid_path ) : 0;
-				$vid_warn = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
-				$vid_cap  = ! empty( $def['max_bytes'] ) ? (int) $def['max_bytes'] : 10485760;
+				$vid_warn  = ! empty( $def['warn_bytes'] ) ? (int) $def['warn_bytes'] : 0;
+				$vid_heavy = ! empty( $def['heavy_bytes'] ) ? (int) $def['heavy_bytes'] : 0;
+				$vid_cap   = ! empty( $def['max_bytes'] ) ? (int) $def['max_bytes'] : 26214400;
 				?>
 				<div class="vesla-image" data-vesla-image data-vesla-media="video">
 					<div class="vesla-image-preview<?php echo $vid_src ? '' : ' is-empty'; ?>">
@@ -4597,19 +4984,30 @@ class Vesla_Admin {
 						</button>
 					</div>
 					<?php if ( $vid_size ) : ?>
+						<?php /* Three states, and the wording of each is measured rather
+						         than guessed: the figures come from timing this page at
+						         four film sizes on a throttled connection. */ ?>
 						<p class="vesla-field-note<?php echo ( $vid_warn && $vid_size > $vid_warn ) ? ' is-warn' : ''; ?>">
 							<?php
-							if ( $vid_warn && $vid_size > $vid_warn ) {
+							if ( $vid_heavy && $vid_size > $vid_heavy ) {
+								printf(
+									/* translators: 1: the file's size. 2: the size above which this warns strongly. 3: the hard limit. */
+									esc_html__( 'This film is %1$s, which is above %2$s and near the %3$s limit. Measured on this page, a film this size first appears roughly 20 to 24 seconds into a visit on a slow connection, and 6 to 7 seconds on 4G. Until then the poster is what people see — nothing is broken, but this is a film most visitors will never watch move.', 'vesla-landing' ),
+									esc_html( size_format( $vid_size, 1 ) ),
+									esc_html( size_format( $vid_heavy ) ),
+									esc_html( size_format( $vid_cap ) )
+								);
+							} elseif ( $vid_warn && $vid_size > $vid_warn ) {
 								printf(
 									/* translators: 1: the file's size. 2: the size above which this warns. */
-									esc_html__( 'This film is %1$s. Above %2$s at the top of the front page is felt on a phone on mobile data — it competes with the words and the pictures for one connection. It plays muted with no controls, so quality past "recognisable" is paid for and not seen.', 'vesla-landing' ),
+									esc_html__( 'This film is %1$s, above the %2$s comfortable mark. Measured on this page it first appears around 14 seconds into a visit on a slow connection, against about 8 seconds for a small clip. It plays muted with no controls, so quality past "recognisable" is paid for and not seen.', 'vesla-landing' ),
 									esc_html( size_format( $vid_size, 1 ) ),
 									esc_html( size_format( $vid_warn ) )
 								);
 							} else {
 								printf(
 									/* translators: 1: the file's size. 2: the hard limit. */
-									esc_html__( 'This film is %1$s. The limit is %2$s.', 'vesla-landing' ),
+									esc_html__( 'This film is %1$s, comfortably inside the %2$s limit — it will be playing while people are still reading the heading.', 'vesla-landing' ),
 									esc_html( size_format( $vid_size, 1 ) ),
 									esc_html( size_format( $vid_cap ) )
 								);
@@ -4629,6 +5027,12 @@ class Vesla_Admin {
 			case 'text':
 			default:
 				$input_type = ( 'email' === $type ) ? 'email' : 'text';
+
+				/* The datalist that briefly lived here is gone with the field
+				   it served. It let the Make be typed with suggestions, which
+				   was the right fix for the wrong design: a car should not be
+				   able to invent a brand at all. The 'brand' case above is a
+				   list of what exists and nothing else. */
 				?>
 				<input type="<?php echo esc_attr( $input_type ); ?>" id="<?php echo esc_attr( $id ); ?>"
 				       name="<?php echo esc_attr( $name ); ?>" value="<?php echo esc_attr( $value ); ?>"
@@ -6976,6 +7380,11 @@ class Vesla_Render {
 		self::header_bar();
 		self::hero();
 		self::trust();
+		/* The showpiece first, then the filter, then the grid. The strip of
+		   makes stays next to the thing it filters; the featured flow is not a
+		   filter and belongs above both. */
+		self::spotlight();
+		self::brand_strip();
 		self::stock();
 		self::certified();
 		self::why();
@@ -6992,6 +7401,101 @@ class Vesla_Render {
 		self::footer();
 		self::floating();
 		return ob_get_clean();
+	}
+
+	/**
+	 * The Contact page: /contact/, its own address and its own heading.
+	 *
+	 * Built entirely from what the Contact section already holds -- the same
+	 * channels, hours, enquiry form, branches and map. Nothing here is a
+	 * second copy of anything: contact() and map_section() are the same
+	 * methods the front page calls, so a change to the phone number or the
+	 * opening hours reaches both places because there is only one place to
+	 * change it. Only the opening lines are the page's own, because a heading
+	 * written to be read after scrolling the whole front page is the wrong
+	 * heading for somebody arriving here cold from a search result.
+	 *
+	 * No opening animation and no loading curtain. Both are arrival pieces for
+	 * the front page; somebody who has come here has come to find a phone
+	 * number, and putting a film in front of that would be theatre at the
+	 * expense of the one thing the page is for.
+	 */
+	/**
+	 * The Contact page's own three lines, with their defaults.
+	 *
+	 * In one place because three different callers need them -- the page, its
+	 * head and the file's title -- and Vesla_Settings::get() does not consult
+	 * the schema's 'default'. It reads what is stored and takes a fallback
+	 * from the caller, which is this codebase's idiom; the schema default is
+	 * what fills the editor's field on a fresh install. Written out three
+	 * times, the two would drift the first time anybody edited one of them.
+	 */
+	private static function contact_page_copy() {
+		return array(
+			'eyebrow' => (string) Vesla_Settings::get( 'contact', 'page_eyebrow', __( 'Talk to us', 'vesla-landing' ) ),
+			'heading' => (string) Vesla_Settings::get( 'contact', 'page_heading', __( 'Come and see the car.', 'vesla-landing' ) ),
+			'lead'    => (string) Vesla_Settings::get( 'contact', 'page_lead', __( 'Call, message or write — whichever suits. Someone who knows the stock answers, not a call centre, and if the car you are asking about has gone we will say so rather than sell you another one.', 'vesla-landing' ) ),
+		);
+	}
+
+	public static function contact_page() {
+		$c = self::contact_page_copy();
+		self::header_bar();
+		?>
+		<main class="cpage" id="top">
+			<section class="cpage-head">
+				<div class="shell">
+					<?php if ( '' !== $c['eyebrow'] ) : ?>
+						<p class="eyebrow reveal"><?php echo esc_html( $c['eyebrow'] ); ?></p>
+					<?php endif; ?>
+					<h1 class="reveal"><?php echo esc_html( $c['heading'] ); ?></h1>
+					<?php if ( '' !== $c['lead'] ) : ?>
+						<p class="cpage-lead reveal"><?php Vesla_Render::t( 'contact.page_lead', $c['lead'] ); ?></p>
+					<?php endif; ?>
+				</div>
+			</section>
+		</main>
+		<?php
+		/* Forced: this page is the section, so switching the section off on the
+		   front page must not leave this page with a heading and nothing under
+		   it. */
+		self::contact( true );
+		self::map_section();
+		self::footer();
+		self::floating();
+	}
+
+	/**
+	 * The Contact page's own head: title, description, canonical, sharing.
+	 *
+	 * Its own, and that matters -- the front page's title and description
+	 * describe a showroom's whole stock, and a search result for "vesla motors
+	 * contact" that reads like the front page is a result nobody clicks. The
+	 * canonical is the published address rather than whatever WordPress is
+	 * installed at, for the same reason every other canonical here is.
+	 */
+	public static function contact_head() {
+		$c    = self::contact_page_copy();
+		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
+		/* Vesla_Publisher's, not this class's: the published address, which is
+		   what every canonical on this site is written from. WordPress sits at
+		   /cms and a canonical pointing there would name the admin install as
+		   the real page. */
+		$url  = trailingslashit( Vesla_Publisher::site_url() ) . 'contact/';
+		$desc = self::plain( $c['lead'] );
+		$desc = $desc ? wp_html_excerpt( $desc, 155, '…' ) : '';
+		$head = trim( $c['heading'] . ' — ' . $name );
+
+		printf( '<link rel="canonical" href="%s">' . "\n", esc_url( $url ) );
+		if ( $desc ) {
+			printf( '<meta name="description" content="%s">' . "\n", esc_attr( $desc ) );
+		}
+		printf( '<meta property="og:type" content="website">' . "\n" );
+		printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $head ) );
+		if ( $desc ) {
+			printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $desc ) );
+		}
+		printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $url ) );
 	}
 
 	/**
@@ -7046,35 +7550,87 @@ class Vesla_Render {
 		$limit = $limit ? (int) $limit : (int) Vesla_Settings::get( 'stock', 'per_page', 8 );
 		$limit = max( 1, $limit );
 
-		$currency = (string) Vesla_Settings::get( 'stock', 'currency', '' );
-		$badge    = (string) Vesla_Settings::get( 'stock', 'badge', '' );
-		$note     = (string) Vesla_Settings::get( 'stock', 'price_note', '' );
-		$warranty = (string) Vesla_Settings::get( 'stock', 'warranty_note', '' );
-		$enquire  = (string) Vesla_Settings::get( 'stock', 'enquire_label', '' );
-		$seats_w  = (string) Vesla_Settings::get( 'messages', 'seats_word', 'seats' );
-		$wa       = preg_replace( '/\D/', '', (string) Vesla_Settings::get( 'brand', 'whatsapp', '' ) );
-		$wa_text  = (string) Vesla_Settings::get( 'messages', 'wa_text', '' );
+		$ctx = self::card_context();
+		$out = '';
+		foreach ( $cars as $i => $car ) {
+			$out .= self::card_html( $car, $ctx, array(
+				'index' => $i,
+				'later' => $i >= $limit,
+				'eager' => $i < 3,
+			) );
+		}
+		return $out;
+	}
 
-		$money = function ( $v ) use ( $currency ) {
-			return $v ? trim( $currency . ' ' . number_format_i18n( (int) $v ) ) : '';
-		};
+	/**
+	 * Everything a card needs that is the same for every card.
+	 *
+	 * Read once and handed to card_html() rather than looked up inside it:
+	 * eight settings reads per card across twenty-four cards is two hundred
+	 * lookups to render one grid, and every one of them returns the same
+	 * answer.
+	 */
+	private static function card_context() {
+		return array(
+			'currency' => (string) Vesla_Settings::get( 'stock', 'currency', '' ),
+			'badge'    => (string) Vesla_Settings::get( 'stock', 'badge', '' ),
+			'note'     => (string) Vesla_Settings::get( 'stock', 'price_note', '' ),
+			'warranty' => (string) Vesla_Settings::get( 'stock', 'warranty_note', '' ),
+			'enquire'  => (string) Vesla_Settings::get( 'stock', 'enquire_label', '' ),
+			'seats_w'  => (string) Vesla_Settings::get( 'messages', 'seats_word', 'seats' ),
+			'wa'       => preg_replace( '/\D/', '', (string) Vesla_Settings::get( 'brand', 'whatsapp', '' ) ),
+			'wa_text'  => (string) Vesla_Settings::get( 'messages', 'wa_text', '' ),
+		);
+	}
+
+	/**
+	 * ONE CAR'S CARD, AND THE ONLY CARD TEMPLATE ON THIS SITE.
+	 *
+	 * The grid calls this and so does the featured strip above it. That is the
+	 * point of it existing: two places drawing a car from two copies of this
+	 * markup would drift the first time anybody changed the price line, and
+	 * they would drift silently, because both would still look like cards.
+	 *
+	 * @param array $car  A car as Vesla_Rest::cars() returns it.
+	 * @param array $ctx  card_context(), or null to read it here.
+	 * @param array $args index — position, for the entrance stagger.
+	 *                    later — fold it away past the first page (grid only).
+	 *                    eager — fetch its photograph at high priority rather
+	 *                            than lazily. True for what is on screen at
+	 *                            once and false for everything else.
+	 */
+	public static function card_html( $car, $ctx = null, $args = array() ) {
+		if ( null === $ctx ) {
+			$ctx = self::card_context();
+		}
+		$args = array_merge( array( 'index' => 0, 'later' => false, 'eager' => false ), $args );
+
+		$i        = (int) $args['index'];
+		$later    = (bool) $args['later'];
+		$eager    = (bool) $args['eager'];
+		$badge    = $ctx['badge'];
+		$note     = $ctx['note'];
+		$warranty = $ctx['warranty'];
+		$enquire  = $ctx['enquire'];
+		$wa       = $ctx['wa'];
+		$wa_text  = $ctx['wa_text'];
+
+		$name  = trim( $car['make'] . ' ' . $car['model'] );
+		$price = $car['price'] ? trim( $ctx['currency'] . ' ' . number_format_i18n( (int) $car['price'] ) ) : '';
+		$img   = $car['image'];
+
+		$specs = array();
+		if ( $car['km'] ) { $specs[] = number_format_i18n( $car['km'] ) . ' km'; }
+		if ( $car['body'] ) { $specs[] = $car['body']; }
+		if ( $car['trans'] ) { $specs[] = $car['trans']; }
+		$last = array();
+		if ( $car['fuel'] ) { $last[] = $car['fuel']; }
+		if ( $car['seats'] ) { $last[] = $car['seats'] . ' ' . $ctx['seats_w']; }
+		if ( $last ) { $specs[] = implode( ' · ', $last ); }
 
 		ob_start();
-		foreach ( $cars as $i => $car ) {
-			$name  = trim( $car['make'] . ' ' . $car['model'] );
-			$price = $money( $car['price'] );
-			$img   = $car['image'];
-
-			$specs = array();
-			if ( $car['km'] ) { $specs[] = number_format_i18n( $car['km'] ) . ' km'; }
-			if ( $car['body'] ) { $specs[] = $car['body']; }
-			if ( $car['trans'] ) { $specs[] = $car['trans']; }
-			$last = array();
-			if ( $car['fuel'] ) { $last[] = $car['fuel']; }
-			if ( $car['seats'] ) { $last[] = $car['seats'] . ' ' . $seats_w; }
-			if ( $last ) { $specs[] = implode( ' · ', $last ); }
-			?>
-			<article class="card<?php echo $i >= $limit ? ' card-later' : ''; ?>"
+		?>
+			<article class="card<?php echo $later ? ' card-later' : ''; ?>"
 			         style="animation-delay:<?php echo (int) ( min( $i, 9 ) * 45 ); ?>ms">
 				<div class="card-media<?php echo $img && $img['url'] ? ' has-photo' : ''; ?>">
 					<?php if ( $badge ) : ?><span class="tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
@@ -7088,7 +7644,7 @@ class Vesla_Render {
 						     width="<?php echo (int) ( $img['width'] ? $img['width'] : 640 ); ?>"
 						     height="<?php echo (int) ( $img['height'] ? $img['height'] : 400 ); ?>"
 						     <?php if ( ! empty( $img['srcset'] ) ) : ?>srcset="<?php echo esc_attr( $img['srcset'] ); ?>"<?php endif; ?>
-						     <?php echo $i < 3 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>
+						     <?php echo $eager ? 'fetchpriority="high"' : 'loading="lazy"'; ?>
 						     decoding="async">
 					<?php else : ?>
 						<div class="ph" aria-hidden="true"><?php echo esc_html( mb_substr( $name, 0, 1 ) ); ?></div>
@@ -7140,8 +7696,7 @@ class Vesla_Render {
 					</div>
 				</div>
 			</article>
-			<?php
-		}
+		<?php
 		return ob_get_clean();
 	}
 
@@ -7338,21 +7893,38 @@ class Vesla_Render {
 
 	/* Where the mark is going, measured from the DOM at the moment of asking.
 
-	   Nothing is hard-coded and nothing can be: .hero-logo img is
-	   width:min(100%,clamp(200px,26vw,340px)), so its size AND its centre
-	   both move with the viewport. Returns null when there is nothing to land
-	   on -- under 821px .hero-logo is display:none and reports a zero-sized
-	   rectangle -- and the caller cross-fades instead of inventing a target.
+	   THE HEADER'S MARK, not the hero's. The hero shield was the obvious
+	   target and the wrong one: it is display:none under 821px and it does not
+	   exist at all under the film hero style, so the settle fell back to a
+	   plain cross-fade for every phone visitor and for everybody seeing the
+	   film. That is most of the traffic getting the fallback rather than the
+	   thing that was built. The header mark is present at every width and
+	   under both styles, so there is now no ordinary case without a target.
 
-	   Both pictures are the SAME image file, so whatever padding the artwork
-	   carries is carried identically at both ends and cancels. That is the
-	   whole reason this is a ratio of two rectangles and not a table of
-	   measured constants: the film needed those, this does not. */
+	   #bar rather than a bare .brand-mark: the footer prints the same lockup
+	   through the same function, and an unqualified selector would sometimes
+	   find the footer's copy instead and send the mark off the bottom of the
+	   page.
+
+	   Nothing is hard-coded and nothing can be -- the bar's mark moves with
+	   the viewport like everything else, and getBoundingClientRect is read at
+	   the moment of the settle rather than stored.
+
+	   Both pictures come from logo_img()/logo_url(), which resolve the same
+	   brand.logo attachment, so they are the SAME artwork at two rendered
+	   sizes and whatever padding it carries cancels between them. That is why
+	   this is a ratio of two rectangles rather than a table of measured
+	   constants. If the header is ever given a different mark, this stops
+	   being true and the scale needs deriving instead of assuming. */
 	var landing = function () {
-		var img = document.querySelector('.hero-logo img');
+		var img = document.querySelector('#bar .brand-mark');
 		if (!img) { return null; }
 		var s = img.getBoundingClientRect();
-		if (!s.width || !s.height) { return null; }   // display:none under 821px
+		/* Kept, though there is no longer a width at which this is expected to
+		   fire: the bar's mark is not hidden at any breakpoint. It stands for a
+		   header that has been removed or restyled away, and the answer to that
+		   is still a cross-fade rather than a guess. */
+		if (!s.width || !s.height) { return null; }
 
 		/* The mark's own UNTRANSFORMED box. offsetWidth rather than a
 		   rectangle, because by this point the mark is carrying the drift and
@@ -7577,8 +8149,6 @@ class Vesla_Render {
 
 	private static function header_bar() {
 		$menu = (array) Vesla_Settings::get( 'header', 'menu', array() );
-		$toll = Vesla_Settings::get( 'brand', 'phone_toll', '' );
-		$dial = Vesla_Settings::get( 'brand', 'phone_toll_dial', '' );
 		?>
 		<a class="skip" href="<?php echo esc_url( self::menu_href( '#stock' ) ); ?>"><?php esc_html_e( 'Skip to the cars', 'vesla-landing' ); ?></a>
 
@@ -7594,16 +8164,12 @@ class Vesla_Render {
 					<?php endforeach; ?>
 				</nav>
 
-				<div class="bar-cta">
-					<?php if ( $toll && $dial ) : ?>
-						<a class="btn btn-ghost" href="<?php echo esc_url( 'tel:' . $dial ); ?>"><?php echo esc_html( $toll ); ?></a>
-					<?php endif; ?>
-					<?php if ( Vesla_Settings::get( 'header', 'cta_label', '' ) ) : ?>
-						<a class="btn btn-gold" href="<?php echo esc_url( self::menu_href( Vesla_Settings::get( 'header', 'cta_link', '#contact' ) ) ); ?>">
-							<?php echo esc_html( Vesla_Settings::get( 'header', 'cta_label', '' ) ); ?>
-						</a>
-					<?php endif; ?>
-				</div>
+				<?php /* The bar's two buttons -- the toll-free number and the CTA --
+				         were removed here on request. The header is the lockup and the
+				         menu now. Contact is still reachable from the menu, and the
+				         phone numbers are still on the Contact page and in the footer,
+				         so nothing has been taken away from the reader, only from this
+				         row. */ ?>
 
 				<button class="burger" id="burger" type="button"
 				        aria-label="<?php esc_attr_e( 'Menu', 'vesla-landing' ); ?>" aria-expanded="false" aria-controls="nav">
@@ -7901,6 +8467,332 @@ class Vesla_Render {
 	}
 
 	/* ── stock ─────────────────────────────────────────────────────────── */
+
+	/**
+	 * The Spotlight: a turning row of photographs above the grid.
+	 *
+	 * THREE TO FIVE CARS, AND THE COUNT IS THE DESIGN. The flow places two
+	 * either side of the one facing forward, so five is exactly full. A sixth
+	 * would sit at a distance where it is neither readable nor gone, which is
+	 * what the old strip of eight looked like from the third card out.
+	 *
+	 * PHOTOGRAPHS, NOT CARDS. The grid below is where a car's spec, its
+	 * Enquire and its WhatsApp belong; there is no sense in a second copy of
+	 * all that above it, half of it turned forty degrees away and unreadable.
+	 * Up here the picture is the argument, with the name and the price under
+	 * the one facing forward and nothing at all under the rest. That is also
+	 * why a car with no photograph cannot be in it -- in the grid a missing
+	 * photo falls back to a letter on a tile and is one of twenty-four; here
+	 * it would be the whole slide.
+	 *
+	 * WHAT IS IN THE MARKUP IS A PLAIN ROW OF LINKED PHOTOGRAPHS. The 3D flow
+	 * and the automatic turn are both added by script, by putting .is-flow on
+	 * the stage; without it the row is an ordinary horizontal scroller. That
+	 * order matters for more than taste: a crawler and a reader with no
+	 * JavaScript both get five real photographs with five real hrefs in normal
+	 * flow, rather than a stack of absolutely positioned tiles on top of each
+	 * other.
+	 *
+	 * No structured data is emitted here. These cars are already in the
+	 * ItemList the page publishes, and a second node for the same car would
+	 * collide on @id -- which is the rule the earlier search-engine work
+	 * settled and this does not get to reopen.
+	 */
+	private static function spotlight() {
+		if ( ! Vesla_Settings::enabled( 'spotlight' ) ) {
+			return;
+		}
+		$cars = Vesla_Rest::cars();
+		if ( ! $cars ) {
+			return;
+		}
+
+		$shot = static function ( $car ) {
+			return ! empty( $car['image'] ) && ! empty( $car['image']['url'] );
+		};
+
+		$by_id = array();
+		foreach ( $cars as $one ) {
+			$by_id[ (string) $one['id'] ] = $one;
+		}
+
+		/* Chosen by hand, in the order they were chosen -- minus any that has
+		   since been sold or has lost its photograph. */
+		$picked = array();
+		foreach ( (array) Vesla_Settings::get( 'spotlight', 'cars', array() ) as $row ) {
+			$cid = isset( $row['car'] ) ? trim( (string) $row['car'] ) : '';
+			if ( '' !== $cid && isset( $by_id[ $cid ] ) && ! isset( $picked[ $cid ] ) && $shot( $by_id[ $cid ] ) ) {
+				$picked[ $cid ] = $by_id[ $cid ];
+			}
+		}
+		$picked = array_slice( array_values( $picked ), 0, 5 );
+
+		/* Nothing chosen, or everything chosen has been sold: the five most
+		   recently added that have a photograph.
+
+		   A car's id rises as stock is added, which is the only "newest" this
+		   data actually knows -- the year on a car is its model year, not when
+		   it arrived on the floor. */
+		if ( ! $picked ) {
+			$newest = array();
+			foreach ( $cars as $one ) {
+				if ( $shot( $one ) ) {
+					$newest[] = $one;
+				}
+			}
+			usort( $newest, static function ( $a, $b ) {
+				return (int) $b['id'] - (int) $a['id'];
+			} );
+			$picked = array_slice( $newest, 0, 5 );
+		}
+
+		/* Three is the fewest this shape has. Two photographs cannot be two
+		   either side of a middle one; they are a pair, and a pair belongs in
+		   the grid. Below three the Spotlight stays off rather than showing a
+		   lopsided version of itself, and the help text on the setting says
+		   so, so an empty section is an answer rather than a puzzle. */
+		if ( count( $picked ) < 3 ) {
+			return;
+		}
+
+		$count = count( $picked );
+		$start = (int) floor( ( $count - 1 ) / 2 );
+		$cur   = (string) Vesla_Settings::get( 'stock', 'currency', '' );
+		$eyeb  = (string) Vesla_Settings::get( 'spotlight', 'eyebrow', '' );
+		$head  = (string) Vesla_Settings::get( 'spotlight', 'heading', '' );
+		$lead  = (string) Vesla_Settings::get( 'spotlight', 'lead', '' );
+		/* The badge stays with the cars: it is the same chip the grid's cards
+		   carry, and one wording for it is the point of it being one setting. */
+		$badge = (string) Vesla_Settings::get( 'stock', 'badge', '' );
+		?>
+		<section class="sec sec-mist spot" id="spotlight"<?php echo $head ? ' aria-labelledby="spot-h"' : ' aria-label="' . esc_attr__( 'Spotlight', 'vesla-landing' ) . '"'; ?>>
+			<div class="shell">
+				<?php if ( $eyeb ) : ?><p class="eyebrow reveal"><?php echo esc_html( $eyeb ); ?></p><?php endif; ?>
+				<?php if ( $head ) : ?><h2 class="reveal" id="spot-h"><?php echo esc_html( $head ); ?></h2><?php endif; ?>
+				<?php if ( $lead ) : ?><p class="sec-lead reveal"><?php Vesla_Render::t( 'spotlight.lead', $lead ); ?></p><?php endif; ?>
+				<?php
+				/* role=group with a carousel roledescription, NOT role=listbox.
+				   A listbox's options may not contain interactive content, and
+				   every one of these tiles holds a link. The keyboard behaviour
+				   asked for is here either way -- the stage takes focus and the
+				   arrow keys move it -- but claiming a role the markup
+				   contradicts would make it worse for a screen reader, not
+				   better. */
+				?>
+				<div class="spot-stage" id="spot" tabindex="0"
+				     role="group" aria-roledescription="<?php esc_attr_e( 'carousel', 'vesla-landing' ); ?>"
+				     aria-label="<?php esc_attr_e( 'Spotlight — use the left and right arrow keys', 'vesla-landing' ); ?>"
+				     data-start="<?php echo (int) $start; ?>">
+					<div class="spot-track" id="spot-track">
+						<?php
+						foreach ( $picked as $n => $car ) :
+							$name  = trim( $car['make'] . ' ' . $car['model'] );
+							$price = $car['price'] ? trim( $cur . ' ' . number_format_i18n( (int) $car['price'] ) ) : '';
+							$img   = $car['image'];
+							$href  = Vesla_Render::page_on( $car ) ? Vesla_Render::rel( Vesla_Render::permalink( $car ) ) : '';
+							?>
+							<figure class="spot-item" role="group"
+							        aria-roledescription="<?php esc_attr_e( 'slide', 'vesla-landing' ); ?>"
+							        aria-label="<?php echo esc_attr( sprintf( __( '%1$d of %2$d', 'vesla-landing' ), $n + 1, $count ) ); ?>">
+								<div class="spot-shot">
+									<?php if ( $badge ) : ?><span class="spot-tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
+									<?php
+									/* ONE eager photograph, the one facing forward.
+									   Everything else is lazy -- the same measurement the
+									   old strip was built on: at three eager it put 1.5MB
+									   and five requests in front of the first paint.
+
+									   width and height are always written, and the tile
+									   carries an aspect-ratio to match, so the stage can
+									   be measured before a single photograph has landed.
+									   Without that the flow lifts the tiles out of flow
+									   at whatever height they happen to be, and the page
+									   below jumps as each one arrives. */
+									?>
+									<img src="<?php echo esc_url( $img['url'] ); ?>"
+									     alt="<?php echo esc_attr( $img['alt'] ? $img['alt'] : $name ); ?>"
+									     width="<?php echo (int) ( $img['width'] ? $img['width'] : 640 ); ?>"
+									     height="<?php echo (int) ( $img['height'] ? $img['height'] : 400 ); ?>"
+									     <?php if ( ! empty( $img['srcset'] ) ) : ?>srcset="<?php echo esc_attr( $img['srcset'] ); ?>"<?php endif; ?>
+									     sizes="(max-width:820px) 78vw, 460px"
+									     <?php echo $n === $start ? 'fetchpriority="high"' : 'loading="lazy"'; ?>
+									     decoding="async">
+								</div>
+								<figcaption class="spot-cap">
+									<h3 class="spot-name">
+										<?php
+										/* One link per tile, wrapping the name and stretched
+										   across the photograph by CSS -- so there is ONE
+										   link a crawler and a screen reader see, not two
+										   pointing at the same place. A tile whose car has
+										   no page of its own is plainly not a link, rather
+										   than a link that goes nowhere. */
+										?>
+										<?php if ( $href ) : ?>
+											<a class="spot-link" href="<?php echo esc_url( $href ); ?>"><?php echo esc_html( $name ); ?></a>
+										<?php else : ?>
+											<?php echo esc_html( $name ); ?>
+										<?php endif; ?>
+									</h3>
+									<?php if ( $price ) : ?><p class="spot-price"><?php echo esc_html( $price ); ?></p><?php endif; ?>
+								</figcaption>
+							</figure>
+						<?php endforeach; ?>
+					</div>
+				</div>
+				<?php
+				/* The dots are meaningless without the flow -- there is nothing to
+				   step through in a row that scrolls -- so the script reveals them,
+				   the way the old scrubber was revealed.
+
+				   THERE IS NO PAUSE BUTTON, by request. The dots are the stop
+				   control instead: pressing one stops the turn for good, and so
+				   does a drag or an arrow key. Hovering or focusing the stage
+				   holds it while you are there. Content that moves on its own
+				   does need SOME way to stop it, and that is the way. */
+				?>
+				<div class="spot-nav" id="spot-nav">
+					<div class="spot-dots" id="spot-dots" role="group"
+					     aria-label="<?php esc_attr_e( 'Choose a car', 'vesla-landing' ); ?>">
+						<?php foreach ( $picked as $n => $car ) : ?>
+							<button type="button" class="spot-dot" data-go="<?php echo (int) $n; ?>"
+							        aria-current="<?php echo $n === $start ? 'true' : 'false'; ?>"
+							        aria-label="<?php echo esc_attr( sprintf( __( 'Show the %s', 'vesla-landing' ), trim( $car['make'] . ' ' . $car['model'] ) ) ); ?>"></button>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
+	/**
+	 * The strip of makes, above the grid.
+	 *
+	 * Built from the cars rather than from a list somebody maintains: the
+	 * makes are counted off Vesla_Rest::cars(), which is the same source the
+	 * grid and the Make menu use. Add a Bentley and Bentley appears; sell the
+	 * last one and it goes. There is nothing here to keep in step, which is
+	 * the whole reason it is not a settings repeater of its own.
+	 *
+	 * The one thing that cannot be derived is the marque's logo, because that
+	 * is a picture somebody has to supply. Where one is attached it is used;
+	 * where it is not, the make is set in the site's own type. That is a
+	 * fallback rather than a placeholder -- a strip of wordmarks is a
+	 * respectable thing to ship, and it means the strip is never broken by a
+	 * missing file.
+	 *
+	 * Buttons rather than links: this filters what is already on the page, it
+	 * does not navigate. Without scripting the grid already shows every car,
+	 * so nothing here is load-bearing -- the same bargain the Make menu beside
+	 * it has always made.
+	 */
+	private static function brand_strip() {
+		if ( ! Vesla_Settings::enabled( 'stock' ) || ! Vesla_Settings::get( 'stock', 'brands_enabled', 1 ) ) {
+			return;
+		}
+		$cars = Vesla_Rest::cars();
+		if ( ! $cars ) {
+			return;
+		}
+
+		$counts = array();
+		foreach ( $cars as $car ) {
+			$make = trim( (string) ( isset( $car['make'] ) ? $car['make'] : '' ) );
+			if ( '' === $make ) {
+				continue;
+			}
+			if ( ! isset( $counts[ $make ] ) ) {
+				$counts[ $make ] = 0;
+			}
+			$counts[ $make ]++;
+		}
+		/* One make is not a choice, and a strip offering it would be a row of
+		   one tile that filters to what is already shown. */
+		if ( count( $counts ) < 2 ) {
+			return;
+		}
+		/* Most stock first, so the strip opens on what the showroom actually
+		   has rather than on whatever is alphabetically lucky. Ties keep their
+		   alphabetical order, which arsort preserves for equal values here
+		   because the array was built in insertion order. */
+		arsort( $counts );
+
+		/* Logos come off the make's own term, under Vehicles → Car brands.
+
+		   Not from a list in the settings, which is what this used to read and
+		   which was the wrong shape: a hand-kept list of makes beside an
+		   automatic one is two lists that disagree the first time somebody
+		   adds a marque and forgets. The term already exists for every make in
+		   stock, is already tied to every car of that make, and appears and
+		   disappears with the cars -- so the mapping cannot drift, because
+		   there is no second mapping to drift from.
+
+		   Anything pointing at a deleted attachment resolves to '' and falls
+		   back to the wordmark rather than printing a broken image. */
+		$logos = array();
+		foreach ( array_keys( $counts ) as $make ) {
+			$url = Vesla_Vehicle::brand_logo( $make );
+			if ( $url ) {
+				$logos[ strtolower( $make ) ] = $url;
+			}
+		}
+
+		$all = Vesla_Settings::get( 'stock', 'brands_all_label', __( 'All makes', 'vesla-landing' ) );
+
+		/* The tiles arrive one after another, and the delay is written inline
+		   rather than left to motion.js's auto-stagger. Two reasons, both
+		   found by measuring: the auto-stagger only tagged two of the seven
+		   tiles, and even where it did, nothing came of it -- styles.css sets
+		   `transition` on html.m-on .reveal as a shorthand, which resets
+		   transition-delay to zero, and at (0,2,1) it outranks both motion.css's
+		   var(--m-rd) rule and the hand-written .d1/.d2/.d3 classes.
+
+		   An inline delay is the one thing that beats all of that, and for a
+		   row whose length is known at render time it is also the plainest
+		   thing to read. Capped so a showroom carrying twenty makes does not
+		   leave the last of them arriving two seconds late. */
+		$step = 70;
+		$cap  = 9;
+		$i    = 0;
+		$delay = function () use ( &$i, $step, $cap ) {
+			$ms = min( $i, $cap ) * $step;
+			$i++;
+			return $ms ? ' style="transition-delay:' . (int) $ms . 'ms"' : '';
+		};
+		?>
+		<section class="makes" aria-label="<?php esc_attr_e( 'Browse by make', 'vesla-landing' ); ?>">
+			<div class="shell">
+				<div class="makes-row" id="makes">
+					<button type="button" class="make is-on reveal" data-make="" aria-pressed="true"<?php echo $delay(); // phpcs:ignore WordPress.Security.EscapeOutput -- integer built above. ?>>
+						<span class="make-name"><?php echo esc_html( $all ); ?></span>
+						<em class="make-n"><?php echo esc_html( number_format_i18n( array_sum( $counts ) ) ); ?></em>
+					</button>
+					<?php foreach ( $counts as $make => $n ) : ?>
+						<?php $logo = isset( $logos[ strtolower( $make ) ] ) ? $logos[ strtolower( $make ) ] : ''; ?>
+						<button type="button" class="make reveal" data-make="<?php echo esc_attr( $make ); ?>" aria-pressed="false"<?php echo $delay(); // phpcs:ignore WordPress.Security.EscapeOutput -- integer built above. ?>>
+							<?php if ( $logo ) : ?>
+								<?php /* alt is empty and the name follows in text: the logo is
+								         a picture of a word that is already there, and a screen
+								         reader should hear it once. */ ?>
+								<img class="make-logo" src="<?php echo esc_url( $logo ); ?>" alt="" loading="lazy" decoding="async">
+								<span class="make-name is-quiet"><?php echo esc_html( $make ); ?></span>
+							<?php else : ?>
+								<span class="make-name"><?php echo esc_html( $make ); ?></span>
+							<?php endif; ?>
+							<em class="make-n"><?php echo esc_html( number_format_i18n( $n ) ); ?></em>
+						</button>
+					<?php endforeach; ?>
+				</div>
+				<?php /* The scroll indicator. Decorative and driven by script, so it
+				         is hidden from assistive technology and starts hidden: without
+				         JavaScript the row still scrolls natively and this would be a
+				         bar that never moved. */ ?>
+				<div class="makes-bar" id="makes-bar" aria-hidden="true"><span></span></div>
+			</div>
+		</section>
+		<?php
+	}
 
 	private static function stock() {
 		if ( ! Vesla_Settings::enabled( 'stock' ) ) {
@@ -8298,8 +9190,14 @@ class Vesla_Render {
 
 	/* ── contact ───────────────────────────────────────────────────────── */
 
-	private static function contact() {
-		if ( ! Vesla_Settings::enabled( 'contact' ) ) {
+	/**
+	 * @param bool $force Render even when the section is switched off on the
+	 *                    front page. The Contact page is this section's whole
+	 *                    reason for existing, so "do not show it on the front
+	 *                    page" must not empty the page built around it.
+	 */
+	private static function contact( $force = false ) {
+		if ( ! $force && ! Vesla_Settings::enabled( 'contact' ) ) {
 			return;
 		}
 		$c = Vesla_Settings::get( 'contact' );
@@ -8493,7 +9391,13 @@ class Vesla_Render {
 			</div>
 
 			<div class="shell foot-bar">
-				<p class="copy"><?php echo esc_html( str_replace( '{year}', gmdate( 'Y' ), $f['copyright'] ) ); ?></p>
+				<?php /* Conditional, like the line beside it. Emptying the field in
+				         the admin is how this line is removed, and an unconditional
+				         <p> would leave an empty element holding its own line height
+				         where the text used to be -- a gap rather than a removal. */ ?>
+				<?php if ( trim( (string) $f['copyright'] ) !== '' ) : ?>
+					<p class="copy"><?php echo esc_html( str_replace( '{year}', gmdate( 'Y' ), $f['copyright'] ) ); ?></p>
+				<?php endif; ?>
 				<?php if ( $f['meta'] ) : ?><p class="foot-meta"><?php echo esc_html( $f['meta'] ); ?></p><?php endif; ?>
 			</div>
 		</footer>
@@ -8635,6 +9539,112 @@ final class Vesla_Vehicle {
 		add_action( 'trashed_post', array( __CLASS__, 'changed' ) );
 		add_action( 'untrashed_post', array( __CLASS__, 'changed' ) );
 		add_action( 'deleted_post', array( __CLASS__, 'changed' ) );
+
+		/* ── the Car brands screen ── */
+		add_action( 'vesla_make_add_form_fields', array( __CLASS__, 'brand_add_field' ) );
+		add_action( 'vesla_make_edit_form_fields', array( __CLASS__, 'brand_edit_field' ) );
+		add_action( 'created_vesla_make', array( __CLASS__, 'brand_save' ) );
+		add_action( 'edited_vesla_make', array( __CLASS__, 'brand_save' ) );
+		add_filter( 'manage_edit-vesla_make_columns', array( __CLASS__, 'brand_columns' ) );
+		add_filter( 'manage_vesla_make_custom_column', array( __CLASS__, 'brand_column' ), 10, 3 );
+		/* A logo changes what the strip paints, so it invalidates the same
+		   caches a car does. */
+		add_action( 'created_vesla_make', array( __CLASS__, 'changed' ) );
+		add_action( 'edited_vesla_make', array( __CLASS__, 'changed' ) );
+		add_action( 'delete_vesla_make', array( __CLASS__, 'changed' ) );
+	}
+
+	/* ── the Car brands screen ───────────────────────────────────────────
+	   The picker is the same one the settings screen uses -- admin.js binds
+	   .vesla-image-pick by delegation on the document, so a control printed
+	   on a taxonomy screen works without a line of new script, provided the
+	   media library is loaded. */
+
+	private static function brand_control( $id ) {
+		$url = $id ? wp_get_attachment_image_url( (int) $id, 'medium' ) : '';
+		?>
+		<div class="vesla-image" data-vesla-image style="max-width:320px">
+			<div class="vesla-image-preview<?php echo $url ? '' : ' is-empty'; ?>">
+				<?php if ( $url ) : ?>
+					<img src="<?php echo esc_url( $url ); ?>" alt="">
+				<?php else : ?>
+					<span><?php esc_html_e( 'No logo yet', 'vesla-landing' ); ?></span>
+				<?php endif; ?>
+			</div>
+			<div class="vesla-image-act">
+				<button type="button" class="button vesla-image-pick"><?php esc_html_e( 'Choose logo', 'vesla-landing' ); ?></button>
+				<button type="button" class="button-link vesla-image-clear"<?php echo $id ? '' : ' hidden'; ?>>
+					<?php esc_html_e( 'Remove', 'vesla-landing' ); ?>
+				</button>
+			</div>
+			<input type="hidden" name="<?php echo esc_attr( self::LOGO_META ); ?>"
+			       value="<?php echo esc_attr( $id ? (int) $id : '' ); ?>" class="vesla-image-id">
+		</div>
+		<p class="description">
+			<?php esc_html_e( 'Shown in the strip of makes above the cars. A transparent PNG or an SVG sits best — the tiles are white, so a logo with its own white box will show its edges. Leave it empty and the brand appears as its name instead.', 'vesla-landing' ); ?>
+		</p>
+		<?php
+	}
+
+	public static function brand_add_field() {
+		wp_enqueue_media();
+		?>
+		<div class="form-field">
+			<label><?php esc_html_e( 'Logo', 'vesla-landing' ); ?></label>
+			<?php self::brand_control( 0 ); ?>
+		</div>
+		<?php
+	}
+
+	public static function brand_edit_field( $term ) {
+		wp_enqueue_media();
+		$id = get_term_meta( $term->term_id, self::LOGO_META, true );
+		?>
+		<tr class="form-field">
+			<th scope="row"><label><?php esc_html_e( 'Logo', 'vesla-landing' ); ?></label></th>
+			<td><?php self::brand_control( $id ); ?></td>
+		</tr>
+		<?php
+	}
+
+	public static function brand_save( $term_id ) {
+		/* Nonce checked by WordPress before these hooks run; the capability is
+		   the one the taxonomy itself is registered with. */
+		if ( ! isset( $_POST[ self::LOGO_META ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			return;
+		}
+		$id = absint( wp_unslash( $_POST[ self::LOGO_META ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( $id ) {
+			update_term_meta( $term_id, self::LOGO_META, $id );
+		} else {
+			delete_term_meta( $term_id, self::LOGO_META );
+		}
+	}
+
+	public static function brand_columns( $columns ) {
+		/* The logo first, because it is the one thing this screen is for and
+		   the one thing you cannot tell from the name. */
+		$out = array();
+		foreach ( $columns as $key => $label ) {
+			if ( 'name' === $key ) {
+				$out['vesla_logo'] = __( 'Logo', 'vesla-landing' );
+			}
+			$out[ $key ] = $label;
+		}
+		unset( $out['description'], $out['slug'] );
+		return $out;
+	}
+
+	public static function brand_column( $content, $column, $term_id ) {
+		if ( 'vesla_logo' !== $column ) {
+			return $content;
+		}
+		$id  = (int) get_term_meta( $term_id, self::LOGO_META, true );
+		$url = $id ? wp_get_attachment_image_url( $id, 'thumbnail' ) : '';
+		if ( ! $url ) {
+			return '<span style="opacity:.5">' . esc_html__( 'shown as its name', 'vesla-landing' ) . '</span>';
+		}
+		return '<img src="' . esc_url( $url ) . '" alt="" style="max-width:56px;max-height:34px;object-fit:contain;vertical-align:middle">';
 	}
 
 	public static function changed( $post_id = 0 ) {
@@ -8686,19 +9696,79 @@ final class Vesla_Vehicle {
 		);
 
 		foreach ( self::TAX as $tax => $field ) {
+			/* Makes get a screen of their own; body and fuel do not.
+
+			   All three are still filled in from the car's own fields on save,
+			   so none of them is somewhere anybody has to type. What makes the
+			   make different is that it now carries a picture: the marque's
+			   logo, which cannot be worked out from a car and has to be
+			   attached once, somewhere. A term is the right somewhere. It
+			   already exists for every make in stock, it is already tied to
+			   every car of that make, and it appears and disappears with the
+			   stock -- so the list of brands can never drift out of step with
+			   the cars the way a hand-kept list in the settings would. */
+			$is_make = ( 'vesla_make' === $tax );
+
 			register_taxonomy(
 				$tax,
 				self::TYPE,
 				array(
-					'labels' => array( 'name' => self::tax_label( $field ) ),
+					'labels' => $is_make
+						? array(
+							'name'          => __( 'Car brands', 'vesla-landing' ),
+							'singular_name' => __( 'Car brand', 'vesla-landing' ),
+							'menu_name'     => __( 'Car brands', 'vesla-landing' ),
+							'all_items'     => __( 'All car brands', 'vesla-landing' ),
+							'edit_item'     => __( 'Edit car brand', 'vesla-landing' ),
+							'update_item'   => __( 'Update car brand', 'vesla-landing' ),
+							'add_new_item'  => __( 'Add a car brand', 'vesla-landing' ),
+							'new_item_name' => __( 'Brand name — spelled as it is on the cars', 'vesla-landing' ),
+							'search_items'  => __( 'Search car brands', 'vesla-landing' ),
+							'not_found'     => __( 'No brands yet. They appear here as you add cars.', 'vesla-landing' ),
+							'back_to_items' => __( '← Back to car brands', 'vesla-landing' ),
+						)
+						: array( 'name' => self::tax_label( $field ) ),
 					'public'            => false,
-					'show_ui'           => false,   // filled in from the car's own fields
+					'show_ui'           => $is_make,
+					'show_in_menu'      => $is_make,
 					'show_admin_column' => false,
 					'hierarchical'      => false,
 					'rewrite'           => false,
+					/* No free-tagging box on the car's own screen: the make is
+					   typed into the car's Make field and this is kept in step
+					   from there. Two places to set one thing is how they end up
+					   disagreeing. */
+					'meta_box_cb'       => false,
 				)
 			);
 		}
+	}
+
+	/** Where a brand's logo is kept, on the make term. */
+	const LOGO_META = 'vesla_brand_logo';
+
+	/**
+	 * The logo for a make, by name, or '' when there is not one.
+	 *
+	 * Looked up by name rather than by term id because that is what a car
+	 * carries -- the make is a string on the car and a term beside it, and the
+	 * string is the one the grid, the filters and the strip all read.
+	 */
+	public static function brand_logo( $make, $size = 'medium' ) {
+		$make = trim( (string) $make );
+		if ( '' === $make ) {
+			return '';
+		}
+		$term = get_term_by( 'name', $make, 'vesla_make' );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return '';
+		}
+		$id = (int) get_term_meta( $term->term_id, self::LOGO_META, true );
+		if ( ! $id ) {
+			return '';
+		}
+		$url = wp_get_attachment_image_url( $id, $size );
+		return $url ? $url : '';
 	}
 
 	private static function tax_label( $field ) {
@@ -8735,8 +9805,77 @@ final class Vesla_Vehicle {
 				$def,
 				'vesla_car_' . $key
 			);
+
+			/* The Make field is the link to the brand, and nothing on this
+			   screen said so. It is the whole mapping -- there is no second
+			   control, and a car cannot point at the wrong brand -- but an
+			   invisible mapping is one nobody trusts, and being asked twice
+			   where to map a car to its brand is what that looks like. So it
+			   says so, and shows what this car currently resolves to. */
+			if ( 'make' === $key ) {
+				self::brand_hint( (string) get_post_meta( $post->ID, self::META . 'make', true ) );
+			}
 		}
 		echo '</div></div>';
+	}
+
+	/**
+	 * What brand this car resolves to, printed under the Make field.
+	 *
+	 * Four states, and each says what to do next rather than only what is
+	 * true: nothing typed, a brand with a logo, a brand without one, and a
+	 * make that is not a brand yet because the car has not been saved.
+	 */
+	private static function brand_hint( $make ) {
+		$make = trim( $make );
+		/* An ordinary paragraph, NOT a flex row. Flex made every text node
+		   between the tags its own box, so the sentence broke into five
+		   fragments that wrapped independently and read as gibberish. The
+		   logo only ever needed to sit on the line, which vertical-align
+		   does. */
+		echo '<div class="vesla-row"><div class="vesla-label"></div><div class="vesla-control"><p class="vesla-help" id="vesla-brand-hint">';
+
+		if ( '' === $make ) {
+			esc_html_e( 'Pick the brand this car belongs to. Brands are added once, with their logos, under Vehicles → Car brands.', 'vesla-landing' );
+			echo '</p></div></div>';
+			return;
+		}
+
+		$term = get_term_by( 'name', $make, 'vesla_make' );
+		$url  = $term && ! is_wp_error( $term ) ? self::brand_logo( $make, 'thumbnail' ) : '';
+		$link = admin_url( 'edit-tags.php?taxonomy=vesla_make&post_type=' . self::TYPE );
+
+		if ( $url ) {
+			printf(
+				'<img src="%s" alt="" style="max-width:40px;max-height:26px;object-fit:contain;vertical-align:middle;margin-right:8px">',
+				esc_url( $url )
+			);
+			printf(
+				/* translators: %s: the make, e.g. Audi. */
+				esc_html__( 'This car is a %s, and that brand has a logo — it shows in the strip above the cars.', 'vesla-landing' ),
+				'<strong>' . esc_html( $make ) . '</strong>' // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inline.
+			);
+		} elseif ( $term && ! is_wp_error( $term ) ) {
+			printf(
+				/* translators: 1: the make. 2: opening link tag. 3: closing link tag. */
+				esc_html__( 'This car is a %1$s. That brand has no logo yet, so it shows as its name — %2$sadd one under Car brands%3$s.', 'vesla-landing' ),
+				'<strong>' . esc_html( $make ) . '</strong>', // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inline.
+				'<a href="' . esc_url( $link ) . '">', // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inline.
+				'</a>'
+			);
+		} else {
+			/* Only reachable for a car whose brand has been renamed or deleted
+			   since it was set -- the picker cannot produce this state. */
+			printf(
+				/* translators: 1: the make stored on this car. 2: opening link tag. 3: closing link tag. */
+				esc_html__( 'This car says %1$s, which is no longer one of the brands — it has been renamed or removed. Pick its brand again, or restore it under %2$sCar brands%3$s.', 'vesla-landing' ),
+				'<strong>' . esc_html( $make ) . '</strong>', // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inline.
+				'<a href="' . esc_url( $link ) . '">', // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inline.
+				'</a>'
+			);
+		}
+
+		echo '</p></div></div>';
 	}
 
 	public static function save( $post_id, $post ) {
@@ -11068,6 +12207,14 @@ class Vesla_Publisher {
 			return $cars;
 		}
 
+		/* The Contact page, after the cars and before the sitemap: the sitemap
+		   lists it, and listing a page that has not been written yet is how a
+		   crawler is sent to a 404. */
+		$cpage = self::publish_contact( $dir );
+		if ( is_wp_error( $cpage ) ) {
+			return $cpage;
+		}
+
 		$index = self::write_index_files( $dir, $cars['slugs'] );
 		if ( is_wp_error( $index ) ) {
 			return $index;
@@ -11237,6 +12384,55 @@ class Vesla_Publisher {
 	}
 
 	/** One car's page, as a complete document. */
+	/**
+	 * The Contact page as a static file, and the folder to put it in.
+	 *
+	 * Written the same way as the front page and for the same reason: to a
+	 * temporary file and moved into place, so a visitor arriving mid-write
+	 * never gets half a page.
+	 */
+	private static function publish_contact( $dir ) {
+		if ( ! Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
+			return true;
+		}
+		$folder = $dir . DIRECTORY_SEPARATOR . 'contact';
+		if ( ! is_dir( $folder ) && ! wp_mkdir_p( $folder ) ) {
+			return new WP_Error(
+				'vesla_contact_dir',
+				sprintf(
+					/* translators: %s: a folder path. */
+					__( 'The Contact page was not written: its folder could not be created at %s.', 'vesla-landing' ),
+					$folder
+				)
+			);
+		}
+		$html = self::build_contact();
+		if ( ! $html ) {
+			return new WP_Error( 'vesla_contact_empty', __( 'The Contact page came out empty and was not written.', 'vesla-landing' ) );
+		}
+		$file = $folder . DIRECTORY_SEPARATOR . 'index.html';
+		$tmp  = $file . '.tmp-' . wp_generate_password( 6, false );
+		if ( false === file_put_contents( $tmp, $html ) ) {
+			return new WP_Error( 'vesla_contact_write', __( 'Could not write the Contact page.', 'vesla-landing' ) );
+		}
+		if ( ! @rename( $tmp, $file ) ) {
+			@unlink( $tmp );
+			return new WP_Error( 'vesla_contact_move', __( 'Could not put the new Contact page in place.', 'vesla-landing' ) );
+		}
+		return true;
+	}
+
+	private static function build_contact() {
+		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
+		$head = Vesla_Settings::get( 'contact', 'page_heading', __( 'Come and see the car.', 'vesla-landing' ) );
+		return self::document(
+			trim( $head . ' — ' . $name ),
+			array( 'Vesla_Render', 'contact_head' ),
+			array( 'Vesla_Render', 'contact_page' ),
+			'contact'
+		);
+	}
+
 	private static function build_car( $car ) {
 		Vesla_Render::$forced = $car;
 		$html = self::document(
@@ -11303,6 +12499,16 @@ class Vesla_Publisher {
 		$when = gmdate( 'Y-m-d', (int) get_option( 'vesla_content_saved_at', time() ) );
 
 		$urls = array( array( 'loc' => $site, 'pri' => '1.0', 'freq' => 'daily' ) );
+
+		/* Listed only when it is actually written. A sitemap entry for a page
+		   that does not exist is a crawler sent to a 404 by the site itself,
+		   which is worse than not listing it -- and the same setting governs
+		   both, so the two cannot disagree. Monthly and 0.5: the address and
+		   the opening hours change, but not weekly the way the stock does. */
+		if ( Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
+			$urls[] = array( 'loc' => $site . 'contact/', 'pri' => '0.5', 'freq' => 'monthly' );
+		}
+
 		foreach ( $slugs as $slug ) {
 			$urls[] = array(
 				'loc'  => $site . Vesla_Render::base() . '/' . $slug . '/',

@@ -102,6 +102,13 @@
       }
     ]
   },
+  "spotlight": {
+    "enabled": 1,
+    "eyebrow": "Spotlight",
+    "heading": "Five worth a second look.",
+    "lead": "A handful off the floor, turning on their own. Open one to see the rest of it.",
+    "cars": []
+  },
   "stock": {
     "enabled": 1,
     "eyebrow": "Available now",

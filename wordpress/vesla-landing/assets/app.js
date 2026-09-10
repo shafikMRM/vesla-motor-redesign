@@ -223,6 +223,9 @@
   }
 
   function fillSelect(el, values) {
+    /* Called for each filter menu, and there are no filter menus on a page
+       without a stock grid. Nothing to fill is not a failure. */
+    if (!el) { return; }
     values.forEach(function (v) {
       var o = document.createElement('option');
       o.value = v;
@@ -455,6 +458,17 @@
   }
 
   function render() {
+    /* The one guard that covers the whole feature, rather than a null check on
+       every menu it reads. This file runs on the Contact page and on a car's
+       page, and neither has a stock grid or the four filter menus that drive
+       it; without this, the first `.value` on a null threw and took the rest
+       of app.js down with it -- the reveal observer included, which is what
+       left the Contact page's markup complete and its every word invisible.
+
+       Returning early is right rather than defensive: no grid means there is
+       nothing on this page for render() to draw. */
+    if (!grid || !fMake || !fBody || !fPrice || !fSort) { return; }
+
     var maxPrice = fPrice.value ? Number(fPrice.value) : Infinity;
 
     list = STOCK.filter(function (c) {
@@ -487,17 +501,415 @@
     });
   }
 
+  /* Guarded, because this file now runs on pages that have no stock grid.
+     The Contact page is one; a car's page is another. Unguarded, the first of
+     these threw on a null and took EVERYTHING BELOW IT with it -- the reveal
+     observer included, so every .reveal on the page stayed at opacity 0 and
+     the Contact page rendered as four empty coloured bands. The page was
+     complete in the markup and invisible on screen.
+
+     A missing filter menu is not an error here, it is a page that does not
+     have filters. */
   [fMake, fBody, fPrice, fSort].forEach(function (el) {
-    el.addEventListener('change', render);
+    if (el) { el.addEventListener('change', render); }
   });
 
-  $('#f-reset').addEventListener('click', function () {
-    fMake.value = '';
-    fBody.value = '';
-    fPrice.value = '';
-    fSort.value = 'price-asc';
-    render();
-  });
+  var fReset = $('#f-reset');
+  if (fReset) {
+    fReset.addEventListener('click', function () {
+      if (fMake) { fMake.value = ''; }
+      if (fBody) { fBody.value = ''; }
+      if (fPrice) { fPrice.value = ''; }
+      if (fSort) { fSort.value = 'price-asc'; }
+      render();
+      markMakes();
+    });
+  }
+
+  /* ---------------- the strip of makes ----------------
+     A second face on the Make menu rather than a second filter. Both write to
+     the same select and both call the same render(), so they can never
+     disagree about what is being shown -- and the menu, the Reset button and
+     the strip all stay in step because every one of them ends up here.
+
+     Delegated to the row, not bound per tile: the strip is server-rendered and
+     never rebuilt, but delegation costs one listener instead of a dozen and
+     survives the row being redrawn if it ever is. */
+  var makesRow = $('#makes');
+  var makeTiles = makesRow ? Array.prototype.slice.call(makesRow.querySelectorAll('.make')) : [];
+
+  function markMakes() {
+    if (!makesRow || !fMake) { return; }
+    var cur = fMake.value || '';
+    makeTiles.forEach(function (t) {
+      var on = (t.getAttribute('data-make') || '') === cur;
+      t.classList.toggle('is-on', on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  if (makesRow && fMake) {
+    makesRow.addEventListener('click', function (e) {
+      var tile = (e.target && e.target.closest) ? e.target.closest('.make') : null;
+      if (!tile) { return; }
+      var make = tile.getAttribute('data-make') || '';
+
+      /* Tapping the chosen make again clears it. Without this the only way
+         back to everything is the "All makes" tile, which may have been
+         scrolled off the left by then. */
+      fMake.value = (make !== '' && fMake.value === make) ? '' : make;
+      render();
+      markMakes();
+
+      /* Bring the cars into view, but only when they are not already there.
+         Scrolling a page somebody is already looking at is the kind of help
+         nobody asked for. */
+      var top = $('#stock');
+      if (top) {
+        var box = top.getBoundingClientRect();
+        if (box.top > window.innerHeight * 0.6 || box.bottom < 0) {
+          top.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+
+    /* The menu is the other way in, so it has to write back to the strip. */
+    fMake.addEventListener('change', markMakes);
+    markMakes();
+  }
+
+  /* The strip's own scroll bar.
+     Drawn rather than borrowed: Chrome's overlay scrollbars appear only while
+     a scroll is in progress and ignore ::-webkit-scrollbar styling, so the
+     native one cannot be relied on to say "there is more along here". This
+     one is always visible while the row overflows, and hidden when it does
+     not, because a track under a row that fits is a control for nothing. */
+  if (makesRow) {
+    var makesBar = $('#makes-bar');
+    var makesThumb = makesBar ? makesBar.firstElementChild : null;
+
+    var paintBar = function () {
+      if (!makesBar || !makesThumb) { return; }
+      var scroll = makesRow.scrollWidth;
+      var seen = makesRow.clientWidth;
+      if (scroll <= seen + 1) { makesBar.classList.remove('is-on'); return; }
+      makesBar.classList.add('is-on');
+
+      var ratio = seen / scroll;                       // how much of it is on screen
+      var travel = scroll - seen;
+      var at = travel > 0 ? (makesRow.scrollLeft / travel) : 0;
+      /* translate is in unscaled units, so it moves by a share of the FULL
+         track and the scale then squashes the thumb from the left. */
+      makesThumb.style.transform =
+        'translateX(' + (at * (1 - ratio) * 100).toFixed(3) + '%) scaleX(' + ratio.toFixed(4) + ')';
+    };
+
+    makesRow.addEventListener('scroll', paintBar, { passive: true });
+    window.addEventListener('resize', paintBar);
+    /* Fonts land after first paint and change how wide the tiles are, so the
+       first measurement is taken again once things have settled. */
+    paintBar();
+    setTimeout(paintBar, 400);
+    setTimeout(paintBar, 1400);
+  }
+
+  /* ---------------- the Spotlight ----------------
+     The markup is a plain horizontal row of linked photographs. This turns it
+     into a cover flow and starts it turning, and nothing else: if this
+     function returns early at any point, what stays on the page is that row,
+     scrolling sideways, with every link intact. That is the whole no-script
+     story and it is also the reduced-motion story.
+
+     TWO EITHER SIDE OF THE MIDDLE ONE. Five tiles, five positions, nothing
+     hidden off the edge -- which is why the section is capped at five in the
+     settings rather than clipped here. */
+  (function () {
+    var stage = $('#spot');
+    var track = $('#spot-track');
+    var nav = $('#spot-nav');
+    if (!stage || !track) { return; }
+
+    var items = Array.prototype.slice.call(track.querySelectorAll('.spot-item'));
+    if (items.length < 3) { return; }
+
+    var dots = nav ? Array.prototype.slice.call(nav.querySelectorAll('.spot-dot')) : [];
+
+    /* The gate, read from the setting rather than from the browser alone --
+       the same rule the opening, the film hero and the reveals answer to. Off,
+       the Spotlight turns for everyone; on, somebody who has asked for less
+       movement keeps the flat scroller, which is a complete and usable version
+       of this: five photographs, five links, no motion at all. */
+    var respectRM = !!(CFG && CFG.reduced);
+    var wantsLess = false;
+    if (respectRM) {
+      try { wantsLess = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) {}
+    }
+    if (wantsLess) { return; }
+
+    var active = parseInt(stage.getAttribute('data-start'), 10);
+    if (isNaN(active)) { active = Math.floor(items.length / 2); }
+
+    /* Height has to be reserved before the flow lifts the tiles out of flow,
+       or everything below jumps up by a tile's height the moment this runs.
+       Measured from the tallest while they are still in normal flow -- which
+       is the only moment they can be measured. The tiles carry an
+       aspect-ratio, so this is right even before a photograph has landed. */
+    var tallest = 0;
+    items.forEach(function (el) { tallest = Math.max(tallest, el.offsetHeight); });
+    var wide = items[0].offsetWidth;
+    if (tallest) { stage.style.setProperty('--spot-h', tallest + 'px'); }
+    if (wide) { stage.style.setProperty('--spot-w', wide + 'px'); }
+
+    stage.classList.add('is-flow');
+    if (nav) { nav.classList.add('is-on'); }
+
+    var num = function (name, fallback) {
+      var v = parseFloat(getComputedStyle(stage).getPropertyValue(name));
+      return isNaN(v) ? fallback : v;
+    };
+
+    /* Where each tile sat last time, so a tile that has just gone round the
+       back can be moved there without animating across the whole stage. */
+    var was = [];
+
+    function layout() {
+      var half = items.length / 2;
+      var tilt = num('--spot-tilt', 34);
+      var shift = num('--spot-shift', 300);
+      var gap = num('--spot-gap', 104);
+      var depth = num('--spot-depth', 70);
+
+      items.forEach(function (el, i) {
+        /* The shortest way round the ring, not the plain difference. This is
+           what makes two-either-side true at every position instead of only in
+           the middle of the row. */
+        var off = i - active;
+        if (off > half) { off -= items.length; }
+        if (off < -half) { off += items.length; }
+        var abs = Math.abs(off);
+        var dir = off === 0 ? 0 : (off > 0 ? 1 : -1);
+        var x, ry, z;
+
+        if (off === 0) {
+          x = 0; ry = 0; z = depth;
+        } else {
+          x = dir * (shift + (abs - 1) * gap);
+          ry = -dir * tilt;
+          z = -abs * 44;
+        }
+
+        /* A tile that has just crossed from one end of the ring to the other
+           would otherwise slide the full width of the stage to get there,
+           which is the single thing a ring exists to avoid. That one move is
+           made with the transition off; every other move keeps it. */
+        var jumped = was[i] !== undefined && Math.abs(off - was[i]) > 1;
+        if (jumped) { el.style.transition = 'none'; }
+        el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,' + z.toFixed(1) + 'px) rotateY(' + ry + 'deg)';
+        if (jumped) {
+          /* Reading a layout property forces the move to be applied before the
+             transition goes back on, which is the whole trick. */
+          void el.offsetWidth;
+          el.style.transition = '';
+        }
+        was[i] = off;
+        el.style.zIndex = String(100 - abs);
+        el.setAttribute('data-side', String(off));
+
+        /* Two out each side is the whole stage. At five tiles on a ring
+           nothing is ever further than two from the middle, so this never
+           fires at the size the settings allow -- it is here so that a set
+           somebody widens later degrades into a flow rather than a pile.
+           Hidden from the tab order too, so nobody tabs into a photograph
+           they cannot see. */
+        var gone = abs > 2;
+        /* Faded by distance rather than one flat value for every side card.
+           The numbers are for a LIGHT ground: on pearl a card at .16 has all
+           but dissolved into the page, and the pair beyond the first has to
+           stay substantial enough to read as a card turning away rather than
+           as a smudge. They were .46 and .16 while this sat on black. */
+        var fade = [1, 0.70, 0.38][Math.min(abs, 2)];
+        el.style.opacity = gone ? '0' : String(fade);
+        el.style.pointerEvents = gone ? 'none' : '';
+        el.setAttribute('aria-hidden', gone ? 'true' : 'false');
+
+        /* ONLY THE ONE FACING FORWARD CAN BE REACHED BY KEYBOARD. Its name is
+           the only one drawn -- the side tiles' captions are at opacity 0 --
+           and a link nobody can see is the worst thing to put in the tab
+           order: focus lands somewhere off screen with nothing to read. The
+           side tiles are still reachable, by the arrow keys that move the
+           flow, which is what the stage announces itself as. */
+        var lit = off === 0;
+        var focusables = el.querySelectorAll('a,button');
+        for (var f = 0; f < focusables.length; f++) {
+          if (lit) { focusables[f].removeAttribute('tabindex'); }
+          else { focusables[f].setAttribute('tabindex', '-1'); }
+        }
+      });
+
+      for (var d = 0; d < dots.length; d++) {
+        dots[d].setAttribute('aria-current', d === active ? 'true' : 'false');
+      }
+    }
+
+    /* A tile brought forward should have its photograph by the time it
+       arrives, so its neighbours stop being lazy. */
+    function warm() {
+      for (var i = Math.max(0, active - 1); i <= Math.min(items.length - 1, active + 1); i++) {
+        var img = items[i].querySelector('img[loading="lazy"]');
+        if (img) { img.removeAttribute('loading'); }
+      }
+    }
+
+    function go(i) {
+      var n = items.length;
+      active = ((i % n) + n) % n;
+      layout();
+      warm();
+    }
+
+    /* ── the automatic turn ──────────────────────────────────────────────
+       It goes round one way and keeps going. On a ring that is a single step
+       like any other -- the tile leaving the far side reappears on the near
+       side with its transition off, so there is no sweep and no rewind.
+
+       Two different kinds of stop, deliberately not the same thing:
+
+         stopped  somebody said so -- the pause button, or any deliberate move
+                  of their own. It stays stopped until they say otherwise. A
+                  carousel that shrugs off the visitor and carries on after a
+                  few seconds is the thing everybody hates about carousels.
+         busy()   hover, focus inside it, scrolled away, or the tab in the
+                  background. Temporary, and it resumes by itself.
+
+       The pause button is not a nicety either: content that starts moving on
+       its own and keeps going needs a way to stop it, and hover is not one for
+       somebody who is not using a mouse. */
+    var HOLD = 2000;   /* asked for: two seconds a card */
+    var timer = null;
+    var stopped = false;
+    var why = { hover: false, focus: false, away: false, buried: false };
+
+    function busy() { return why.hover || why.focus || why.away || why.buried; }
+
+    function beat() { go(active + 1); }
+
+    function run() {
+      if (timer) { window.clearInterval(timer); timer = null; }
+      if (stopped || busy()) { return; }
+      timer = window.setInterval(beat, HOLD);
+    }
+
+    /* Every deliberate move comes through here, so there is one place that
+       decides what a deliberate move means -- and with the pause button gone
+       this is the only thing that stops the turn for good. */
+    function drive(i) {
+      stopped = true;
+      run();
+      go(i);
+    }
+
+    function hold(key, on) { why[key] = on; run(); }
+
+    stage.addEventListener('pointerenter', function () { hold('hover', true); });
+    stage.addEventListener('pointerleave', function () { hold('hover', false); });
+    stage.addEventListener('focusin', function () { hold('focus', true); });
+    stage.addEventListener('focusout', function () { hold('focus', false); });
+    document.addEventListener('visibilitychange', function () {
+      hold('buried', !!document.hidden);
+    });
+
+    /* Nothing turns while it is off screen. Without this the Spotlight spends
+       the whole page walking back and forth for nobody, and whoever scrolls
+       back to it finds it somewhere they did not leave it. */
+    if ('IntersectionObserver' in window) {
+      why.away = true;
+      new IntersectionObserver(function (entries) {
+        hold('away', !entries[0].isIntersecting);
+      }, { threshold: 0.25 }).observe(stage);
+    }
+
+    /* ── driving it by hand ─────────────────────────────────────────────── */
+
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { drive(active + 1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft') { drive(active - 1); e.preventDefault(); }
+      if (e.key === 'Home') { drive(0); e.preventDefault(); }
+      if (e.key === 'End') { drive(items.length - 1); e.preventDefault(); }
+    });
+
+    for (var d = 0; d < dots.length; d++) {
+      dots[d].addEventListener('click', function (e) {
+        var i = parseInt(e.currentTarget.getAttribute('data-go'), 10);
+        if (!isNaN(i)) { drive(i); }
+      });
+    }
+
+    /* wheel — only when the gesture is mostly horizontal, or the page can
+       never be scrolled past this thing with a trackpad. */
+    var wheelLock = false;
+    stage.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) { return; }
+      if (Math.abs(e.deltaX) < 4 || wheelLock) { return; }
+      e.preventDefault();
+      wheelLock = true;
+      drive(active + (e.deltaX > 0 ? 1 : -1));
+      window.setTimeout(function () { wheelLock = false; }, 170);
+    }, { passive: false });
+
+    /* drag and swipe
+
+       THE POINTER IS CAPTURED ONLY ONCE A DRAG HAS ACTUALLY STARTED, and that
+       is the whole reason a tap on a side tile now works. Capturing on
+       pointerdown -- which is what this did -- retargets the click that
+       follows to the element holding the capture, so every click arrived at
+       the stage with the tile nowhere in its path: `closest('.spot-item')`
+       found nothing, the handler below returned, and clicking a side tile did
+       exactly nothing. It also meant the middle tile's link could not be
+       opened with a mouse at all. Capturing at six pixels keeps the drag
+       working past the edge of the stage and leaves an ordinary click alone. */
+    var startX = null, startIdx = 0, moved = 0, caught = null;
+    stage.addEventListener('pointerdown', function (e) {
+      startX = e.clientX; startIdx = active; moved = 0; caught = null;
+    });
+    stage.addEventListener('pointermove', function (e) {
+      if (startX === null) { return; }
+      var dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      if (moved <= 6) { return; }
+      if (caught === null) {
+        caught = e.pointerId;
+        try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      drive(startIdx - Math.round(dx / (num('--spot-gap', 118) + 30)));
+    });
+    ['pointerup', 'pointercancel'].forEach(function (ev) {
+      stage.addEventListener(ev, function (e) {
+        startX = null;
+        if (caught !== null) {
+          try { stage.releasePointerCapture(e.pointerId); } catch (err) {}
+          caught = null;
+        }
+      });
+    });
+
+    /* Click a side tile to bring it forward. The middle one is left alone so
+       its link opens the car, which is the whole point of it -- and a drag
+       that ends on a tile is not a click. */
+    track.addEventListener('click', function (e) {
+      if (moved > 6) { e.preventDefault(); moved = 0; return; }
+      var item = e.target.closest ? e.target.closest('.spot-item') : null;
+      if (!item) { return; }
+      var i = items.indexOf(item);
+      if (i < 0 || i === active) { return; }
+      e.preventDefault();
+      drive(i);
+    });
+
+    window.addEventListener('resize', layout);
+    layout();
+    warm();
+    run();
+  })();
 
   render();
 
@@ -514,6 +926,12 @@
     var sfx = $('#sfx-pick');
     var btn = $('#sound');
     var lbl = $('#sound-lbl');
+
+    /* Only the front page has a sound toggle. On the Contact page and on a
+       car's page these are null, and paint() went straight at btn -- throwing
+       before the reveal observer further down had been set up, which is what
+       left a fully-rendered Contact page with every word at opacity 0. */
+    if (!btn || !lbl) { return; }
 
     /* The mute survives a reload where storage is available. file:// pages are
        denied localStorage in some browsers and throw on the read, not just the
@@ -694,18 +1112,25 @@
   var eCond = $('#e-cond');
   var eOut  = $('#e-out');
 
+  /* The estimator belongs to the "sell us your car" section. A page without
+     that section has none of these, and every line below would throw on the
+     first of them. */
+  var eOK = !!( eMake && eYear && eKm && eCond && eOut );
+
   fillSelect(eMake, uniq('make'));
 
   var THIS_YEAR = new Date().getFullYear();
   /* How far back the Year menu goes is a setting: a dealer taking older cars
      in part-exchange needs more than the sixteen years this used to assume. */
   var YEAR_RANGE = Math.max(1, parseInt((CFG.estimator || {}).yearRange, 10) || 16);
-  for (var y = THIS_YEAR; y >= THIS_YEAR - YEAR_RANGE; y--) {
-    var o = document.createElement('option');
-    o.value = y;
-    o.textContent = y;
-    if (y === THIS_YEAR - 4) o.selected = true;
-    eYear.appendChild(o);
+  if (eOK) {
+    for (var y = THIS_YEAR; y >= THIS_YEAR - YEAR_RANGE; y--) {
+      var o = document.createElement('option');
+      o.value = y;
+      o.textContent = y;
+      if (y === THIS_YEAR - 4) o.selected = true;
+      eYear.appendChild(o);
+    }
   }
 
   function medianPrice(make) {
@@ -749,10 +1174,12 @@
       : '—';
   }
 
-  [eMake, eYear, eKm, eCond].forEach(function (el) {
-    el.addEventListener('change', estimate);
-  });
-  estimate();
+  if (eOK) {
+    [eMake, eYear, eKm, eCond].forEach(function (el) {
+      el.addEventListener('change', estimate);
+    });
+    estimate();
+  }
 
   /* ---------------- enquiry form ----------------
      Checked here as the visitor types, then posted to WordPress, which checks

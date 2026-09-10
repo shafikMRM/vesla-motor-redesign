@@ -324,7 +324,6 @@ h3{line-height:1.25;margin-bottom:8px}
   transition:transform .35s var(--glide);
 }
 .nav a:hover::after,.nav a.is-active::after{transform:scaleX(1);transform-origin:left}
-.bar-cta{display:flex;gap:10px}
 .burger{display:none;width:44px;height:44px;background:none;border:0;cursor:pointer;padding:10px}
 .burger span{display:block;height:2px;background:var(--ink);margin:5px 0;transition:transform .3s var(--glide),opacity .2s}
 .burger[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
@@ -1184,10 +1183,15 @@ html.has-js .card-later{display:none}
    Every stop is scaled from the one number the editor sets. */
 .hero-v-scrim{
   position:absolute; inset:0; pointer-events:none;
+  /* The far end used to clear almost completely, which was right while only
+     the copy sat over the film. The figures span the whole shell now, so the
+     last of them was landing on the brightest part of the frame with nothing
+     behind it -- readable on a dark car, washed out on a pale one. Lifted
+     enough to hold a label, still light enough that the film is a film. */
   background:linear-gradient(90deg,
     rgba(13,13,14,calc(var(--scrim,.35) * 1.15)) 0%,
     rgba(13,13,14,calc(var(--scrim,.35) * .82)) 42%,
-    rgba(13,13,14,calc(var(--scrim,.35) * .20)) 100%);
+    rgba(13,13,14,calc(var(--scrim,.35) * .52)) 100%);
 }
 /* On a narrow screen the words run the full width, so a gradient that clears
    to the right would clear straight through them. It becomes a vertical one
@@ -1249,6 +1253,412 @@ html.m-on .hero-v .reveal.in{transform:none}
 }
 .hero-v .hero-stats b{font-size:clamp(24px,2.6vw,34px)}
 .hero-v .hero-stats span{color:rgba(238,238,236,.80)}
+
+/* ─ the Spotlight ─
+
+   A cover flow of photographs above the grid: two either side of the one
+   facing forward, turning on its own, on a ring so that arrangement is true at
+   every position rather than only in the middle of a row.
+
+   THE TILE IS ONE OBJECT: a photograph sitting on a plate of the shield's own
+   black, with the name in the display face and the price in the brand yellow.
+   That is where the lemon is allowed to be type — #F2ED28 is about 1.1:1 on
+   paper and unreadable, but on #141415 it is the mark's own colour doing the
+   one job it is for. It is also why the section itself stays on the sheet's
+   pearl: the black is spent on five plates, where it frames the photographs,
+   instead of on a full-width band that ran the whole top of the site — hero,
+   trust strip, this — together into one slab.
+
+   THE PLATE IS ON EVERY TILE, not only the middle one. Five complete cards
+   turning is the thing; five photographs with one card among them is not, and
+   the two the reader is not being offered are already carried away by the
+   angle and the dimming.
+
+   WHAT WAS NOT TAKEN FROM THE REFERENCE: the reflection and the glass sheen.
+   Both belong to a stage of square album art. Depth here is the rotation, two
+   layered shadows and the fall-off with distance — nothing was invented to
+   make it feel three-dimensional.
+
+   NO-SCRIPT IS THE DEFAULT STATE. Everything below the .is-flow line is the
+   enhancement. Without it this is a plain horizontal scroller of cards, which
+   is what a crawler and a reader with no JavaScript get. */
+
+/* Tighter than a full .sec at both ends. This is a strip introducing the grid,
+   not a chapter of its own, and at the default 72–120px it opened a hole above
+   the photographs and another under the dots. */
+.spot{
+  padding:clamp(40px,5vw,68px) 0 clamp(30px,3.6vw,48px);
+  /* A LIT STAGE, which is what the section is called.
+
+     Two layers over the sheet's pearl. The first is a pool of light: white
+     where the card facing forward stands, falling to a cool graphite at the
+     edges, so the flow is lit from the middle and the two cards going away
+     from you go into shadow rather than just going pale. The second is a wide,
+     very faint bloom of the brand yellow behind that pool — a tenth of an
+     opacity, which is under the threshold where anybody would call it a yellow
+     background and over the one where the ground stops being grey.
+
+     NO NEW HUE. Steel-blue and a warm amber were both tried on this site and
+     both had to be pulled; the palette is the logo's black and the logo's
+     lemon and the neutrals between them, and a "premium" colour from outside
+     that is the same mistake a third time. The premium here is the light. */
+  background:
+    radial-gradient(58% 44% at 50% 40%, rgba(242,237,40,.11) 0%, rgba(242,237,40,0) 68%),
+    radial-gradient(118% 82% at 50% 38%, #FFFFFF 0%, #F6F6F4 38%, #E9E9E5 74%, #DEDEDB 100%);
+  /* Seats it against the white the makes strip below starts on. */
+  border-bottom:1px solid var(--hair);
+}
+.spot h2{margin-bottom:10px}
+.spot .sec-lead{margin-bottom:clamp(22px,2.8vw,34px)}
+
+.spot-stage{
+  /* The flat row. Scrolls sideways, snaps, and never traps a vertical swipe. */
+  display:block;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-x pan-y;
+  padding-bottom:12px;
+}
+.spot-track{display:flex; gap:var(--gap); align-items:flex-start}
+.spot-item{
+  flex:0 0 auto;
+  /* Wider than the grid's cards. The flow is five things across a 1280px shell
+     and the middle one is the whole point of the section, so it is sized to
+     carry a photograph rather than to sit in a row of twenty-four. */
+  width:clamp(264px,36vw,520px);
+  scroll-snap-align:center;
+  margin:0;
+  /* the stretched link needs a containing block in the flat state too */
+  position:relative;
+  background:var(--ink);
+  /* Two shadows, not one: a tight contact shadow so the card sits ON the
+     pearl, and a wide soft one so it sits ABOVE it. A single mid shadow gives
+     neither, which is what made these read as flat rectangles. */
+  box-shadow:0 1px 2px rgba(10,10,11,.10), 0 14px 34px rgba(10,10,11,.13);
+}
+.spot-shot{
+  /* The ratio is written here as well as on the img, so the stage can be
+     measured before a single photograph has arrived. Without it the flow
+     lifts the tiles out of flow at whatever height they happen to be and
+     everything below jumps as each one lands. */
+  aspect-ratio:16/10;
+  overflow:hidden;
+  background:var(--void);
+  position:relative;
+}
+.spot-shot img{width:100%; height:100%; object-fit:cover; display:block}
+
+/* The same chip the grid's cards carry, so this reads as the same object. */
+.spot-tag{
+  position:absolute; top:12px; left:12px;
+  font-family:var(--label); text-transform:uppercase; letter-spacing:.14em;
+  font-size:10.5px; font-weight:600;
+  background:var(--ink); color:var(--platinum);
+  padding:5px 10px;
+  box-shadow:0 1px 0 rgba(255,255,255,.18) inset;
+}
+
+/* The plate. Name against price, the way a card's top row is — not stacked and
+   centred, which read as a caption under a picture rather than as part of it. */
+.spot-cap{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:16px;
+  padding:15px 18px 16px;
+  /* The one hairline of pure lemon in the section: a 2px rule along the top of
+     the plate, which is the join between the photograph and the black. */
+  border-top:2px solid var(--amber);
+}
+.spot-name{
+  font-family:var(--display);
+  font-weight:500;
+  font-size:clamp(17px,1.5vw,21px);
+  line-height:1.15;
+  margin:0;
+  color:#F2F2F0;
+  min-width:0;
+}
+.spot-link{color:inherit; text-decoration:none}
+/* The link is stretched over the whole tile, so the photograph is the target
+   and there is still only ONE link in the markup. */
+.spot-link::after{content:""; position:absolute; inset:0}
+.spot-price{
+  font-family:var(--display);
+  font-size:clamp(16px,1.4vw,20px);
+  font-weight:600;
+  white-space:nowrap;
+  color:var(--amber);
+  margin:0;
+}
+
+/* The dots drive the flow, so they are meaningless until there is one. */
+.spot-nav{display:none}
+
+/* ── the flow, added by script ───────────────────────────────────────────── */
+.spot-stage.is-flow{
+  /* Spacing sized for a 520px card. At 32 degrees one projects about 441px
+     wide, so the first side card would have to sit 480px out before the two
+     stopped touching — and they are MEANT to overlap here, which is what makes
+     it a flow rather than a row, so 336 is deliberately inside that. The five
+     together then fill the shell instead of leaving a lane of empty ground
+     down each side. */
+  --spot-tilt:32deg;      /* how far the side cards turn away */
+  --spot-shift:336px;     /* how far the first side card sits from the middle */
+  --spot-gap:118px;       /* and the second one after it */
+  --spot-depth:70px;      /* the middle card's lift toward the reader */
+  --spot-ease:cubic-bezier(.22,.68,.24,1);
+  --spot-speed:620ms;     /* Paced against the two seconds between steps: the
+                             card is moving for 620ms and still for about 1.4s,
+                             which is what keeps this a sequence of cards rather
+                             than something permanently in motion. Longer than
+                             a flow you drive yourself, though — a step you did
+                             not ask for has to be gentler than one you did. */
+
+  position:relative;
+  height:var(--spot-h,420px);
+  overflow:visible;
+  perspective:1500px;
+  perspective-origin:50% 46%;
+  /* pan-y only: a horizontal drag is ours, a vertical one is the page's, and
+     the page must always win the vertical. */
+  touch-action:pan-y;
+  cursor:grab;
+  user-select:none;
+  padding-bottom:0;
+}
+.spot-stage.is-flow:active{cursor:grabbing}
+.spot-stage:focus-visible{outline:2px solid var(--accent-deep); outline-offset:6px}
+
+.spot-stage.is-flow .spot-track{
+  position:absolute; inset:0;
+  transform-style:preserve-3d;
+  display:block;
+  gap:0;
+  /* THIS IS WHY CLICKING A SIDE CARD DOES ANYTHING AT ALL. The track is a
+     preserve-3d parent stretched over the whole stage, and every card except
+     the middle one is pushed BEHIND its plane by a negative translateZ. Hit
+     testing inside a 3D context sorts by depth, so the track — sitting at z=0
+     with nothing drawn on it — was in front of all four side cards and
+     swallowed every click aimed at them. The click still reached the handler,
+     which is what made this hard to see: it arrived with the track as its
+     target, `closest('.spot-item')` found nothing, and the handler quietly
+     returned. Taking the track out of hit testing lets the depth sort reach
+     the cards; events still bubble up through it exactly as before. */
+  pointer-events:none;
+}
+.spot-stage.is-flow .spot-item{pointer-events:auto}
+.spot-stage.is-flow .spot-item{
+  position:absolute;
+  top:0; left:50%;
+  width:var(--spot-w,520px);
+  margin-left:calc(var(--spot-w,520px) / -2);
+  transform-origin:50% 50%;
+  transition:transform var(--spot-speed) var(--spot-ease),
+             opacity var(--spot-speed) var(--spot-ease),
+             box-shadow var(--spot-speed) var(--spot-ease);
+  will-change:transform;
+}
+/* The one facing forward is the only one that reads as a page you could act
+   on, so it is the only one lifted off the sheet. */
+.spot-stage.is-flow .spot-item[data-side="0"]{
+  box-shadow:0 2px 4px rgba(10,10,11,.12), 0 34px 70px rgba(10,10,11,.26);
+}
+.spot-stage.is-flow .spot-item[data-side="0"]:hover .spot-cap{
+  border-top-color:var(--amber-lit);
+}
+/* The plate stays on the outermost pair — it is what makes them read as cards
+   rather than as loose photographs — but its WORDING goes. Those two sit
+   mostly behind the pair in front of them, and three names and three prices
+   landing on the same band of the picture is not depth, it is a smudge you
+   keep trying to read. The card is still there; the reading matter is not. */
+.spot-stage.is-flow .spot-item[data-side="2"] .spot-cap > *,
+.spot-stage.is-flow .spot-item[data-side="-2"] .spot-cap > *{
+  opacity:0;
+  transition:opacity 300ms var(--spot-ease);
+}
+
+/* ── the dots ────────────────────────────────────────────────────────────── */
+.spot-nav.is-on{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:clamp(18px,2.2vw,26px) auto 0;
+}
+.spot-dots{display:flex; align-items:center; gap:10px}
+.spot-dot{
+  /* A bar rather than a circle: it is the same shape language as the rules and
+     the underlines everywhere else on this page, and it gives the one that is
+     current somewhere to grow. */
+  width:22px; height:3px;
+  padding:0;
+  background:rgba(10,10,11,.18);
+  border:0;
+  border-radius:0;
+  cursor:pointer;
+  transition:background-color .3s ease, width .3s var(--pop);
+}
+.spot-dot:hover{background:rgba(10,10,11,.40)}
+.spot-dot[aria-current="true"]{background:var(--accent-deep); width:40px}
+.spot-dot:focus-visible{outline:2px solid var(--accent-deep); outline-offset:4px}
+
+@media (max-width:820px){
+  .spot-item{width:clamp(236px,80vw,360px)}
+  .spot-cap{padding:12px 14px 13px; gap:10px}
+  .spot-stage.is-flow{--spot-shift:224px; --spot-gap:58px; --spot-tilt:28deg; --spot-depth:44px}
+}
+
+/* ─ the strip of makes ─
+
+   A row of tiles above the grid, one per make in stock. It scrolls sideways
+   when there are more than fit, with the scrollbar left visible under the
+   tiles rather than hidden: a strip that can be scrolled and does not say so
+   is a strip whose last few makes nobody finds.
+
+   Tiles are buttons, and everything that moves on them is transform and
+   opacity, so hovering a row of twelve costs nothing on the layout path. */
+.makes{padding:clamp(30px,4.5vw,56px) 0 0}
+/* The grid's section carries a full section's worth of top padding, sized for
+   following another section. Following the strip it is following its own
+   heading's preamble, and the two together left a hole. */
+.makes + .sec{padding-top:clamp(26px,3.2vw,44px)}
+.makes-row{
+  display:flex;
+  /* Stretch, so a tile carrying a logo does not stand taller than the ones
+     showing a wordmark. A logo tile holds three things and a wordmark tile
+     two, and left to themselves they sit at different heights -- which is
+     exactly the state the strip is in while the logos are being uploaded one
+     at a time. */
+  align-items:stretch;
+  gap:clamp(10px,1.2vw,16px);
+  overflow-x:auto;
+  overflow-y:hidden;
+  /* the padding-bottom is the scrollbar's room; without it the track sits on
+     the tiles' shadow */
+  padding:3px 3px clamp(12px,1.4vw,16px);
+  scroll-snap-type:x proximity;
+  -webkit-overflow-scrolling:touch;
+
+  /* The native bar is hidden and one is drawn underneath instead. Styling
+     ::-webkit-scrollbar was the obvious answer and it does not work: Chrome
+     uses overlay scrollbars, which appear only while a scroll is happening
+     and ignore the styling. Measured on an overflowing row -- 674px of tiles
+     in 532px of space -- and nothing was drawn at rest. A strip that can be
+     scrolled and does not say so is a strip whose last makes nobody finds,
+     so the affordance has to be ours to be dependable. */
+  scrollbar-width:none;
+}
+.makes-row::-webkit-scrollbar{display:none}
+
+/* The bar itself. Hidden until the row actually overflows -- a full-width
+   track under a row that fits is a control for nothing. */
+.makes-bar{
+  display:none;
+  height:4px; border-radius:99px;
+  background:rgba(20,20,21,.10);
+  overflow:hidden;
+  margin:2px 3px 0;
+}
+.makes-bar.is-on{display:block}
+.makes-bar span{
+  display:block; height:100%; width:100%;
+  border-radius:99px;
+  background:var(--amber);
+  transform-origin:left center;
+  /* transform only: the thumb is moved and squashed, never resized, so
+     scrolling the strip costs nothing on the layout path. */
+  transition:transform .12s linear;
+}
+
+.make{
+  flex:0 0 auto;
+  scroll-snap-align:start;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:7px;
+  min-width:clamp(94px,10.5vw,128px);
+  min-height:clamp(78px,8.5vw,102px);
+  padding:clamp(12px,1.4vw,17px) clamp(12px,1.5vw,18px);
+  background:var(--paper);
+  border:1px solid var(--hair);
+  border-radius:14px;
+  cursor:pointer;
+  font:inherit; color:inherit;
+  transition:transform .3s var(--glide), border-color .3s ease, box-shadow .3s ease;
+}
+.make:hover{transform:translateY(-3px); border-color:rgba(20,20,21,.26); box-shadow:0 10px 24px rgba(0,0,0,.07)}
+.make:focus-visible{outline:2px solid var(--amber); outline-offset:3px}
+/* The chosen one carries the accent, and only one can. */
+.make.is-on{border-color:var(--amber); box-shadow:inset 0 0 0 1px var(--amber)}
+
+/* Marque logos arrive in every colour and weight there is, so they are held
+   back to grey until the tile is wanted. It stops six competing brand palettes
+   from shouting over the page, and it makes the chosen one obvious. */
+.make-logo{
+  height:clamp(24px,2.8vw,34px); width:auto; max-width:100%;
+  object-fit:contain; display:block;
+  filter:grayscale(1); opacity:.66;
+  transition:filter .3s ease, opacity .3s ease;
+}
+.make:hover .make-logo,.make.is-on .make-logo{filter:none; opacity:1}
+
+.make-name{
+  font-family:var(--label); text-transform:uppercase;
+  letter-spacing:.12em; font-size:12px; line-height:1.1;
+  white-space:nowrap;
+}
+/* Under a logo the name is still printed, quietly, so the tile reads at a
+   glance and a marque nobody recognises is still named. */
+.make-name.is-quiet{font-size:9.5px; letter-spacing:.14em; opacity:.5}
+.make-n{font-style:normal; font-size:11px; opacity:.45; letter-spacing:.04em}
+
+@media (max-width:820px){
+  .makes{padding-top:clamp(24px,7vw,36px)}
+  .make{min-width:86px; min-height:74px}
+}
+
+/* ─ the Contact page ─
+
+   Its own opening, and deliberately quiet: a page somebody has navigated to
+   on purpose does not need to sell itself, it needs to be legible and to get
+   out of the way of the phone number. So the head is type and space and one
+   hairline, and everything under it — the details, the hours, the form, the
+   branches, the map — is the front page's own sections, unchanged.
+
+   The bar is fixed, so the head clears it the way the hero does rather than
+   starting underneath it. */
+.cpage{background:var(--void);color:var(--paper)}
+.cpage-head{
+  padding:calc(var(--bar) + clamp(52px,8vw,112px)) 0 clamp(38px,5.5vw,68px);
+  border-bottom:1px solid var(--hair-dark);
+}
+.cpage-head h1{
+  font-family:var(--display);
+  font-size:clamp(36px,6vw,72px);
+  line-height:1.03;
+  font-weight:500;
+  margin:.16em 0 0;
+  /* Held to a measure. A display face at 72px running the whole width of a
+     1920 shell is a banner, not a heading. */
+  max-width:18ch;
+}
+.cpage-lead{
+  margin-top:clamp(16px,2.2vw,26px);
+  max-width:58ch;
+  font-size:clamp(15.5px,1.3vw,18.5px);
+  line-height:1.68;
+  color:rgba(240,240,238,.72);
+}
+/* The section below carries its own top padding for the front page, where
+   something always precedes it. Here it follows a head that has already
+   spaced itself, so the doubled gap is taken back. */
+.cpage + .sec-dark{padding-top:clamp(46px,6vw,78px)}
+
+@media (max-width:820px){
+  .cpage-head{padding-top:calc(var(--bar) + clamp(34px,9vw,60px))}
+  .cpage-head h1{max-width:none}
+}
 
 /* ─ the opening ─
 
@@ -1340,16 +1750,18 @@ html.vesla-open-run{overflow:hidden}
    arrives behind the shield rather than being switched on underneath it. Only
    the page's own reveal state is borrowed; nothing new is animated.
 
-   .hero-logo is deliberately NOT held. It is the thing being landed on, so it
-   must be at its final size and position before the mark is measured against
-   it -- and a held .reveal carries a translate and a scale, which
-   getBoundingClientRect reports. Holding the shield would land the mark on a
-   target 2% small and 14px low.
+   .hero-logo used to be excluded here, because it was the thing being landed
+   on and had to be at its final size and position before the mark was
+   measured against it -- a held .reveal carries a translate and a scale, and
+   getBoundingClientRect reports both. The target is the header's mark now,
+   which is outside .hero and never held, so the exception has no reason to
+   exist and the hero shield rises with the rest of the section instead of
+   sitting there already arrived.
 
    Scoped to html.m-on because that is what puts .reveal into a hidden state in
    the first place. With motion off there is nothing held and nothing to rise,
    and this must not invent either. */
-html.m-on.vesla-open-hold .hero .reveal:not(.hero-logo){
+html.m-on.vesla-open-hold .hero .reveal{
   opacity:0;
   transform:translateY(14px) scale(.98);
   transition:none;
@@ -1431,6 +1843,11 @@ html.m-on.vesla-open-hold .hero .reveal:not(.hero-logo){
   border-top:1px solid var(--hair-dark);
 }
 .foot-bar p{margin:0;font-size:12.5px;color:rgba(240,240,238,.38)}
+/* space-between puts a lone child at the start, so emptying the copyright
+   line slid the small line from the right of the bar to the left. It is
+   labelled "Small line on the right" in the admin and was drawn there; this
+   keeps it there when it is the only thing left. */
+.foot-bar > :only-child{margin-left:auto}
 .foot-meta{font-family:var(--label);text-transform:uppercase;letter-spacing:.16em;font-size:11px}
 /* ---------- touch targets ----------
    The audit put the smallest interactive box at 31px on a phone. Everything
@@ -1719,7 +2136,7 @@ h3{font-size:var(--fs-h3)}
       the filters stop being a row, the phone action bar appears, and the two
       decorative shields step aside because the header already carries one. */
 @media (max-width:820px){
-  .bar-cta{display:none}
+  /* .bar-cta was hidden here; the element no longer exists. */
   .burger{display:block}
   .nav{
     position:fixed;inset:var(--bar) 0 auto;flex-direction:column;gap:0;
