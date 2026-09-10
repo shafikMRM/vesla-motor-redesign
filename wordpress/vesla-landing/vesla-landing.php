@@ -569,6 +569,21 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /stock/ as a page in its own right, showing the whole grid, with the filters and the search in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
 
 					/* ── the strip of makes above the grid ──
 					   The list of makes is not entered anywhere: it is built from the
@@ -1080,6 +1095,21 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /certified/ as a page in its own right, showing the five stages in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
 					'stages'  => array(
 						'type'   => 'repeater',
 						'label'  => __( 'The stages', 'vesla-landing' ),
@@ -1130,6 +1160,21 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Main paragraph', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /about/ as a page in its own right, showing the record, the ownership and the branches in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
 					'note'    => array(
 						'type'  => 'rich',
 						'label' => __( 'Small note in the box underneath', 'vesla-landing' ),
@@ -1204,6 +1249,21 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'First paragraph', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /sell/ as a page in its own right, showing the estimator and how you buy in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
 					'body'    => array( 'type' => 'rich', 'label' => __( 'Second paragraph', 'vesla-landing' ), ),
 					'note'    => array( 'type' => 'rich', 'label' => __( 'Small note underneath', 'vesla-landing' ), ),
 					'est_enabled' => array(

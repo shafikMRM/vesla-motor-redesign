@@ -114,6 +114,9 @@
     "eyebrow": "Available now",
     "heading": "Find your next car.",
     "lead": "Filter the floor. Every car listed here has been through the five-stage certification route.",
+    "page_enabled": 0,
+    "page_heading": "",
+    "page_intro": "[Open the Stock page here — what is on the floor and how a buyer should narrow it down. One or two sentences.]",
     "per_page": 8,
     "more_label": "Show more",
     "empty_text": "Nothing matches that combination. Try widening the filters.",
@@ -447,6 +450,9 @@
     "eyebrow": "Before it reaches the floor",
     "heading": "Five stages, every car.",
     "lead": "The certification route is the same whether the car is a AED 30,000 hatchback or a AED 200,000 SUV. Nothing is priced until it has been through all five.",
+    "page_enabled": 0,
+    "page_heading": "",
+    "page_intro": "[Open the Certified page here — what a buyer should understand about the checking before they read the stages. Two or three sentences.]",
     "stages": [
       {
         "title": "Thorough inspection",
@@ -498,6 +504,9 @@
     "eyebrow": "The record",
     "heading": "Thirty-six years on the same street corner of the trade.",
     "lead": "Vesla Motors is the retail end of the group’s automotive platform. It has been trading in Dubai since 1988, and it does one thing: buy good used cars, put them right, and sell them with the paperwork to prove it.",
+    "page_enabled": 0,
+    "page_heading": "",
+    "page_intro": "[Open the About page here — the one thing about thirty-six years on the same street that a buyer should take away. Two or three sentences.]",
     "note": "Founding year, branch count and the Dubizzle Top Dealer award are taken from veslamotors.com. Annual sales volume is described there as “thousands of cars annually” and is not stated as a figure, so it is not shown here.",
     "glance": [
       {
@@ -554,6 +563,9 @@
     "eyebrow": "Selling instead",
     "heading": "We buy cars too.",
     "lead": "Thirty-six years of buying means we know what a car is worth in this market, and we would rather make you a straight offer than haggle you down.",
+    "page_enabled": 0,
+    "page_heading": "",
+    "page_intro": "[Open the Sell your car page here — why somebody should bring a car to Vesla rather than sell it privately. Two or three sentences.]",
     "body": "Bring the car to either branch for a physical valuation, or start with the estimator here to get a sense of the range before you drive over. Trade-ins are set against anything on the floor.",
     "note": "The estimator is a demonstration model, not a quotation. A real valuation follows a physical inspection at a branch.",
     "est_enabled": 1,
