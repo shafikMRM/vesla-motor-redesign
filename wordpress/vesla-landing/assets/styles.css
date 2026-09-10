@@ -615,6 +615,33 @@ textarea{resize:vertical}
 .prose ul,.prose ol{margin:0 0 14px 20px}
 .prose li{margin:0 0 6px}
 
+/* ---------- the finance page ----------
+   Documents beside the calculator rather than under it: a reader comparing
+   what to bring against what it costs is looking at both. */
+.fin-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));
+  gap:var(--gap-lg);align-items:start;margin-top:clamp(32px,4vw,56px);
+}
+.fin-docs{list-style:none;margin:18px 0 0;padding:0}
+.fin-docs li{padding:14px 0;border-bottom:1px solid var(--hair)}
+.fin-docs b{display:block;font-weight:600}
+.fin-docs span{display:block;margin-top:3px;font-size:14px;color:var(--steel)}
+
+/* The two sliders pair off; the price box takes the full width because a
+   figure typed in is what everything else is a proportion of. */
+.fin-calc .fin-price,.fin-calc h3,.fin-calc .est-out,
+.fin-calc .note,.fin-calc .fin-ask-wrap{grid-column:1 / -1}
+.fin-row{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.fin-calc input[type=number]{width:100%}
+.fin-ask-wrap{margin:0}
+/* Matched to the car page's slider rather than left at the browser default,
+   which draws it in the operating system's blue -- the one colour on the page
+   that belongs to nothing else on the site. 44px for the same reason it is
+   44px there: the whole track is the tap target and this one sets a deposit. */
+.fin-row input[type=range]{width:100%;accent-color:var(--amber);min-height:44px}
+.fin-row output{font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:560px){ .fin-row{grid-template-columns:1fr} }
+
 /* ---------- the estimator, made shorter ----------
    Four full-width selects stacked made a very tall column out of four very
    short values -- a make, a year and two ranges -- beside a half-empty one.

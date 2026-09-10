@@ -889,5 +889,41 @@
     "page_heading": "Terms",
     "page_intro": "",
     "body": "[The terms of business go here.]"
+  },
+  "finance": {
+    "page_enabled": 0,
+    "page_heading": "Finance",
+    "page_intro": "[Open the Finance page here — in one or two sentences, what buying on finance at Vesla involves.]",
+    "steps_title": "How it works",
+    "steps": [
+      {
+        "title": "[Step one]",
+        "text": "[What happens first — who the buyer speaks to and what is decided.]"
+      },
+      {
+        "title": "[Step two]",
+        "text": "[What happens next.]"
+      },
+      {
+        "title": "[Step three]",
+        "text": "[How it finishes and when the car is handed over.]"
+      }
+    ],
+    "docs_title": "What to bring",
+    "docs": [
+      {
+        "item": "[Document]",
+        "note": "[Anything the buyer should know about it]"
+      },
+      {
+        "item": "[Document]",
+        "note": ""
+      }
+    ],
+    "calc_enabled": 1,
+    "calc_title": "What it would cost a month",
+    "calc_price_label": "Price of the car",
+    "calc_note": "An estimate only. The monthly figure depends on the finance you are approved for, and on the rate offered on the day.",
+    "ask_label": "Ask us about these figures"
   }
 }

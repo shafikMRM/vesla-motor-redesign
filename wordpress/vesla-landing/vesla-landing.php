@@ -1895,6 +1895,63 @@ class Vesla_Schema {
 					'parent_url'    => array( 'type' => 'url',  'label' => __( 'Parent company website', 'vesla-landing' ), ),
 				),
 			),
+			'finance' => array(
+				'title'  => __( 'Finance', 'vesla-landing' ),
+				'blurb'  => __( 'The finance page. The calculator on it uses the same rate, deposit and term as the one on every car page — those are set under Vehicle pages, and changing them there changes both. Everything on this screen is the wording around it.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the finance page', 'vesla-landing' ),
+						'help'  => __( 'Publishes /finance/ the next time the site is republished. Nothing on the homepage changes: finance has no section there, so this page is reached from the menu.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'steps_title' => array( 'type' => 'text', 'label' => __( 'Heading over the steps', 'vesla-landing' ) ),
+					'steps' => array(
+						'type'   => 'repeater',
+						'label'  => __( 'How it works — the steps', 'vesla-landing' ),
+						'row_label' => __( 'Step', 'vesla-landing' ),
+						'row_title' => array( 'title' ),
+						'help'   => __( 'PLACEHOLDER — the starter rows are questions, not answers. Nobody here knows how your finance is arranged, and a plugin guessing at it would put a false promise on a page a buyer makes a decision from.', 'vesla-landing' ),
+						'fields' => array(
+							'title' => array( 'type' => 'text', 'label' => __( 'Step', 'vesla-landing' ) ),
+							'text'  => array( 'type' => 'textarea', 'label' => __( 'What happens', 'vesla-landing' ) ),
+						),
+					),
+					'docs_title' => array( 'type' => 'text', 'label' => __( 'Heading over the documents list', 'vesla-landing' ) ),
+					'docs' => array(
+						'type'   => 'repeater',
+						'label'  => __( 'What to bring', 'vesla-landing' ),
+						'row_label' => __( 'Document', 'vesla-landing' ),
+						'row_title' => array( 'item' ),
+						'help'   => __( 'PLACEHOLDER — what a bank asks for is a question for your bank, not for this plugin.', 'vesla-landing' ),
+						'fields' => array(
+							'item' => array( 'type' => 'text', 'label' => __( 'Document', 'vesla-landing' ) ),
+							'note' => array( 'type' => 'text', 'label' => __( 'Small note beside it', 'vesla-landing' ) ),
+						),
+					),
+					'calc_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Show the calculator on this page', 'vesla-landing' ),
+						'help'  => __( 'The same sum as the one on a car page, with the price typed in rather than taken from a car. The rate, the deposit and the term come from Vehicle pages, so the two can never quote differently.', 'vesla-landing' ),
+					),
+					'calc_title' => array( 'type' => 'text', 'label' => __( 'Heading over the calculator', 'vesla-landing' ) ),
+					'calc_price_label' => array( 'type' => 'text', 'label' => __( 'Wording on the price box', 'vesla-landing' ) ),
+					'calc_note' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Small print under the monthly figure', 'vesla-landing' ),
+						'help'  => __( 'This is an estimate a buyer may act on. Say plainly that it is one, and that the real figure depends on the finance they are approved for.', 'vesla-landing' ),
+					),
+					'ask_label' => array( 'type' => 'text', 'label' => __( 'Wording on the button under the figure', 'vesla-landing' ) ),
+				),
+			),
 			'privacy' => array(
 				'title'  => __( 'Privacy policy', 'vesla-landing' ),
 				'blurb'  => __( 'The privacy page, off until you switch it on. What is in it now is WordPress own starter text, written for a blog with comments and profile pictures — none of which this site has. Replace it before switching the page on.', 'vesla-landing' ),
@@ -7926,6 +7983,13 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				'owner'    => 'stock',
 				'sections' => array( 'brand_strip', 'stock' ),
 			),
+			/* Finance has no section on the homepage at all -- it is reached from
+			   the menu, not scrolled to. Its renderer exists only for this page. */
+			'finance' => array(
+				'slug'     => 'finance',
+				'owner'    => 'finance',
+				'sections' => array( 'finance_page' ),
+			),
 			/* These two are not a section of the homepage rendered somewhere else:
 			   they are a page of prose and nothing more. `rich` names the field on
 			   the owning section that holds it. */
@@ -9914,6 +9978,107 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			$url .= '(' . rawurlencode( $name ) . ')';
 		}
 		return $url;
+	}
+
+	/**
+	 * The finance page's body.
+	 *
+	 * The only page renderer that is not also a homepage section, because
+	 * finance has no homepage section: it is reached from the menu.
+	 *
+	 * The calculator is the SAME SUM as the one on a car page, and reads the
+	 * same rate, deposit and term from the vehicle settings. Two calculators
+	 * quoting different monthly figures for the same car would be worse than
+	 * having only one, so there is one set of numbers and this page borrows it.
+	 * What differs is only where the price comes from -- typed here, taken from
+	 * the car there.
+	 */
+	private static function finance_page() {
+		$f   = Vesla_Settings::get( 'finance' );
+		$veh = Vesla_Settings::get( 'vehicle' );
+		$cur = (string) Vesla_Settings::get( 'stock', 'currency', '' );
+		?>
+		<section class="sec" id="finance">
+			<div class="shell">
+
+				<?php if ( ! empty( $f['steps'] ) ) : ?>
+					<?php if ( $f['steps_title'] ) : ?>
+						<h2 class="reveal"><?php echo esc_html( $f['steps_title'] ); ?></h2>
+					<?php endif; ?>
+					<ol class="stages">
+						<?php foreach ( (array) $f['steps'] as $i => $st ) : ?>
+							<li class="reveal">
+								<span class="num"><?php echo esc_html( str_pad( $i + 1, 2, '0', STR_PAD_LEFT ) ); ?></span>
+								<h3><?php echo esc_html( $st['title'] ); ?></h3>
+								<p><?php Vesla_Render::t( 'finance.steps.text', $st['text'] ); ?></p>
+							</li>
+						<?php endforeach; ?>
+					</ol>
+				<?php endif; ?>
+
+				<div class="fin-grid">
+					<?php if ( ! empty( $f['docs'] ) ) : ?>
+						<div class="reveal">
+							<?php if ( $f['docs_title'] ) : ?>
+								<h2><?php echo esc_html( $f['docs_title'] ); ?></h2>
+							<?php endif; ?>
+							<ul class="fin-docs">
+								<?php foreach ( (array) $f['docs'] as $d ) : ?>
+									<li>
+										<b><?php echo esc_html( $d['item'] ); ?></b>
+										<?php if ( ! empty( $d['note'] ) ) : ?>
+											<span><?php echo esc_html( $d['note'] ); ?></span>
+										<?php endif; ?>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( $f['calc_enabled'] ) : ?>
+						<?php /* The figures travel on the element, the way a car page
+						         carries them on .vp-fin, so the script never has to know
+						         which page it is on. */ ?>
+						<form class="est fin-calc reveal" id="fin-calc" novalidate
+						      data-rate="<?php echo esc_attr( $veh['finance_rate'] ); ?>"
+						      data-down="<?php echo esc_attr( $veh['finance_down_pct'] ); ?>"
+						      data-years="<?php echo esc_attr( $veh['finance_years'] ); ?>">
+							<h3><?php echo esc_html( $f['calc_title'] ); ?></h3>
+							<label class="fin-price">
+								<?php echo esc_html( $f['calc_price_label'] ); ?>
+								<input type="number" id="fc-price" inputmode="numeric" min="0" step="1000"
+								       placeholder="<?php echo esc_attr( $cur . ' 100,000' ); ?>">
+							</label>
+							<div class="fin-row">
+								<label><?php esc_html_e( 'Deposit', 'vesla-landing' ); ?>
+									<output id="fc-down-v"></output>
+									<input type="range" id="fc-down" min="0" max="60" step="5" value="<?php echo esc_attr( (int) $veh['finance_down_pct'] ); ?>">
+								</label>
+								<label><?php esc_html_e( 'Loan length in years', 'vesla-landing' ); ?>
+									<output id="fc-years-v"></output>
+									<input type="range" id="fc-years" min="1" max="8" step="1" value="<?php echo esc_attr( (int) $veh['finance_years'] ); ?>">
+								</label>
+							</div>
+							<div class="est-out">
+								<span><?php esc_html_e( 'Estimated monthly payment', 'vesla-landing' ); ?></span>
+								<strong id="fc-month">—</strong>
+							</div>
+							<?php if ( $f['calc_note'] ) : ?>
+								<p class="note"><?php Vesla_Render::t( 'finance.calc_note', $f['calc_note'] ); ?></p>
+							<?php endif; ?>
+							<?php if ( $f['ask_label'] ) : ?>
+								<p class="fin-ask-wrap">
+									<a class="btn btn-gold" id="fc-ask" href="<?php echo esc_url( self::site_link( '#contact' ) ); ?>">
+										<?php echo esc_html( $f['ask_label'] ); ?>
+									</a>
+								</p>
+							<?php endif; ?>
+						</form>
+					<?php endif; ?>
+				</div>
+			</div>
+		</section>
+		<?php
 	}
 
 	public static function map_section() {

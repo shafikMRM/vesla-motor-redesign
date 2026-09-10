@@ -1337,6 +1337,80 @@
     }
   }
 
+  /* ---------------- the finance page's calculator ----------------
+     The same sum as the one on a car page, deliberately: flat-rate interest,
+     which is how car finance is quoted in the UAE. The whole interest is
+     worked out on the amount borrowed for the whole term, then the total is
+     divided by the months. A reducing-balance sum gives a smaller number than
+     the showroom would quote, which is the wrong way to be wrong.
+
+     If this and vehicle.js ever disagree, one of them is lying to somebody
+     about what a car costs them each month. The rate, the deposit and the
+     term come from the same settings for both. */
+  var fcal = $('#fin-calc');
+  if (fcal) {
+    var fcPrice = $('#fc-price');
+    var fcDown  = $('#fc-down');
+    var fcYears = $('#fc-years');
+    var fcMonth = $('#fc-month');
+
+    var fcNum = function (v, fallback) {
+      var n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
+      return isNaN(n) ? fallback : n;
+    };
+    var fcRate = fcNum(fcal.dataset.rate, 0);
+    var fcCur  = CFG.currency || '';
+    var fcMoney = function (n) {
+      try { return fcCur + ' ' + n.toLocaleString(CFG.locale || undefined); }
+      catch (e) { return fcCur + ' ' + n; }
+    };
+
+    var fcRun = function () {
+      var price = Math.max(0, fcNum(fcPrice.value, 0));
+      var pct   = Number(fcDown.value);
+      var yrs   = Number(fcYears.value);
+      var dep   = Math.round(price * pct / 100);
+
+      $('#fc-down-v').textContent  = fcMoney(dep) + '  ·  ' + pct + '%';
+      $('#fc-years-v').textContent = yrs;
+
+      /* No price, no figure. A monthly payment of AED 0 reads as an answer
+         rather than as the absence of one. */
+      if (!price) { fcMonth.textContent = '—'; return; }
+
+      var loan   = price - dep;
+      var months = yrs * 12;
+      var total  = loan + (loan * (fcRate / 100) * yrs);
+      fcMonth.textContent = fcMoney(months ? Math.round(total / months) : 0);
+    };
+
+    [fcPrice, fcDown, fcYears].forEach(function (el) {
+      if (el) { el.addEventListener('input', fcRun); }
+    });
+    fcRun();
+
+    /* The figures go with the enquiry, the same way the car page's do, so the
+       call back starts from what they were looking at. */
+    var fcAsk = $('#fc-ask');
+    if (fcAsk) {
+      fcAsk.addEventListener('click', function () {
+        if (!fcPrice.value) { return; }
+        var L = CFG.labels || {};
+        var d = {};
+        d[L.finPrice || 'Price']       = fcMoney(Math.round(fcNum(fcPrice.value, 0)));
+        d[L.finDown || 'Deposit']      = $('#fc-down-v').textContent.trim();
+        d[L.finYears || 'Years']       = $('#fc-years-v').textContent.trim();
+        d[L.finPerMonth || 'Per month'] = fcMonth.textContent.trim();
+        d[L.finRate || 'Rate quoted']  = fcRate + '%';
+        try {
+          sessionStorage.setItem('vesla-enq', JSON.stringify({
+            car: '', type: 'finance', details: d
+          }));
+        } catch (e) {}
+      });
+    }
+  }
+
   /* ---------------- enquiry form ----------------
      Checked here as the visitor types, then posted to WordPress, which checks
      everything again before it is trusted. */
