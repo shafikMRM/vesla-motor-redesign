@@ -22,16 +22,24 @@
         "link": "#certified"
       },
       {
-        "label": "Record",
-        "link": "#record"
+        "label": "Why Vesla",
+        "link": "#why"
       },
       {
-        "label": "Ownership",
-        "link": "#chairman"
+        "label": "About",
+        "link": "#record"
       },
       {
         "label": "Sell your car",
         "link": "#sell"
+      },
+      {
+        "label": "Finance",
+        "link": "#finance"
+      },
+      {
+        "label": "Questions and answers",
+        "link": "#faq"
       },
       {
         "label": "Contact",
@@ -748,19 +756,23 @@
         "link": "#certified"
       },
       {
-        "label": "Record",
-        "link": "#record"
+        "label": "Why Vesla",
+        "link": "#why"
       },
       {
-        "label": "Ownership",
-        "link": "#chairman"
+        "label": "About",
+        "link": "#record"
       },
       {
         "label": "Sell your car",
         "link": "#sell"
       },
       {
-        "label": "Questions",
+        "label": "Finance",
+        "link": "#finance"
+      },
+      {
+        "label": "Questions and answers",
         "link": "#faq"
       },
       {
