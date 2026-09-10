@@ -1972,7 +1972,7 @@ class Vesla_Schema {
 					'page_enabled' => array(
 						'type'  => 'toggle',
 						'label' => __( 'Publish the finance page', 'vesla-landing' ),
-						'help'  => __( 'Publishes /finance/ the next time the site is republished. Nothing on the homepage changes: finance has no section there, so this page is reached from the menu.', 'vesla-landing' ),
+						'help'  => __( 'Publishes /finance/ the next time the site is republished. Nothing on the homepage changes: finance has no section there, so this page is reached from the menu — and because there is no section to fall back to, switching this off ALSO takes the Finance row out of the menu and the footer until you switch it back on. Every other page keeps its menu row when its page is off, because every other page has a section on the homepage for the link to scroll to instead.', 'vesla-landing' ),
 					),
 					'page_heading' => array(
 						'type'  => 'text',
@@ -6700,6 +6700,17 @@ class Vesla_Render {
 	 * exactly as the admin typed it.
 	 */
 	/**
+	 * Menu choices that exist only as a page.
+	 *
+	 * Every other choice names a section the homepage still has, so switching
+	 * its page off leaves the link working -- it scrolls instead of navigating.
+	 * These have nothing to scroll to, so the row is left out entirely.
+	 */
+	public static function page_only_links() {
+		return array( '#finance' => 'finance' );
+	}
+
+	/**
 	 * Where a link in the menu, the footer or the header actually goes.
 	 *
 	 * @param string $link     What the admin chose, usually a '#section'.
@@ -6747,13 +6758,19 @@ class Vesla_Render {
 			}
 		}
 
-		/* Finance is the one choice with no section on the homepage, so there is
-		   nothing for '#finance' to scroll to. With the page off the link would
-		   point at an id that does not exist -- the dangling-anchor fault this
-		   whole map exists to avoid -- so it goes to the top of the site instead,
-		   which is somewhere real. */
-		if ( $navigate && '#finance' === $link ) {
-			return self::site_link();
+		/* A link whose only destination is a page, with no section on the
+		   homepage to fall back to. With that page switched off there is nowhere
+		   for it to go, so it reports no destination and the caller leaves the
+		   row out -- rather than sending a reader to the top of the site, which
+		   is not where the link said it went.
+		
+		   A list rather than a test for '#finance', because the next page with
+		   no homepage section will have the same problem, and a menu row that
+		   points nowhere is not a thing worth fixing once. */
+		if ( $navigate && isset( self::page_only_links()[ $link ] ) ) {
+			$only = self::page_only_links();
+			$key  = $only[ $link ];
+			return self::page_live( $key ) ? self::rel( self::page_url( $key ) ) : '';
 		}
 
 		if ( '' === $link || '#' !== $link[0] || ! self::away_from_home() ) {
@@ -9205,7 +9222,11 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				<nav class="nav" id="nav" aria-label="<?php esc_attr_e( 'Main menu', 'vesla-landing' ); ?>">
 					<?php foreach ( $menu as $item ) : ?>
 						<?php if ( $item['label'] ) : ?>
-							<a href="<?php echo esc_url( self::menu_href( $item['link'], true ) ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+							<?php /* A row with no destination is left out, not drawn dead. */ ?>
+							<?php $href = self::menu_href( $item['link'], true ); ?>
+							<?php if ( '' !== $href ) : ?>
+								<a href="<?php echo esc_url( $href ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+							<?php endif; ?>
 						<?php endif; ?>
 					<?php endforeach; ?>
 				</nav>
@@ -10731,7 +10752,10 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						<p class="foot-lbl" id="fl-explore"><?php echo esc_html( $f['nav_title'] ); ?></p>
 						<ul class="foot-nav">
 							<?php foreach ( $f['nav'] as $n ) : ?>
-								<li><a href="<?php echo esc_url( self::menu_href( $n['link'], true ) ); ?>"><?php echo esc_html( $n['label'] ); ?></a></li>
+								<?php $fhref = self::menu_href( $n['link'], true ); ?>
+								<?php if ( '' !== $fhref ) : ?>
+									<li><a href="<?php echo esc_url( $fhref ); ?>"><?php echo esc_html( $n['label'] ); ?></a></li>
+								<?php endif; ?>
 							<?php endforeach; ?>
 						</ul>
 					</nav>
