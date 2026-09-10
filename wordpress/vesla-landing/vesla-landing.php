@@ -1849,11 +1849,6 @@ class Vesla_Schema {
 							'phone'   => array( 'type' => 'text', 'label' => __( 'Telephone shown for this branch', 'vesla-landing' ) ),
 							'lat'     => array( 'type' => 'text', 'label' => __( 'Latitude', 'vesla-landing' ) ),
 							'lng'     => array( 'type' => 'text', 'label' => __( 'Longitude', 'vesla-landing' ) ),
-							'link'    => array(
-								'type'  => 'url',
-								'label' => __( 'Directions link', 'vesla-landing' ),
-								'help'  => __( 'Where the “Directions” button goes. Usually the Google Maps link for this branch.', 'vesla-landing' ),
-							),
 							'link_label' => array( 'type' => 'text', 'label' => __( 'Wording on the directions button', 'vesla-landing' ) ),
 						),
 					),
@@ -9868,6 +9863,59 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 *
 	 * @return array{0:float,1:float}
 	 */
+	/**
+	 * The Google Maps address for one branch, built from that branch's own row.
+	 *
+	 * There used to be a "Directions link" field beside the latitude and the
+	 * longitude, and it won. So the pin and the button read different fields and
+	 * could point at different places -- and did: the stored link was written
+	 * once by hand and never moved again, so correcting the coordinates moved
+	 * the pin on the page and left the button pointing where it always had.
+	 *
+	 * COORDINATES DECIDE, NOT THE NAME. A name or an address has to be geocoded,
+	 * which means matched, and a match can be wrong -- there is more than one
+	 * "service centre" in Ras Al Khor. Coordinates are not matched; they are a
+	 * position. The name rides along as the pin's label so a driver sees where
+	 * they are going, but it never decides where that is.
+	 *
+	 * The one thing that would route to a door rather than to a point is a
+	 * Google Place ID, and there is no way to derive one from this record
+	 * without asking Google. It would also be a second field that can disagree
+	 * with the coordinates, which is the fault this replaced.
+	 *
+	 * Returns '' when there are no usable coordinates, and the caller prints no
+	 * button at all rather than one that goes nowhere.
+	 */
+	public static function branch_directions( $b ) {
+		$lat = trim( (string) ( isset( $b['lat'] ) ? $b['lat'] : '' ) );
+		$lng = trim( (string) ( isset( $b['lng'] ) ? $b['lng'] : '' ) );
+		if ( '' === $lat || '' === $lng || ! is_numeric( $lat ) || ! is_numeric( $lng ) ) {
+			return '';
+		}
+
+		/* The address is a textarea and arrives with its line breaks in it. */
+		$label = trim( (string) ( isset( $b['name'] ) ? $b['name'] : '' ) );
+		$addr  = (string) ( isset( $b['address'] ) ? $b['address'] : '' );
+		$addr  = trim( (string) preg_replace( '/[[:space:]]+/', ' ', $addr ) );
+		$name  = trim( $label . ( '' !== $addr ? ', ' . $addr : '' ) );
+
+		/* q=lat,lng(label) -- the long-standing Google form that carries a
+		   position and a name together. The position is what it navigates to; the
+		   label is only what it shows. Parentheses are part of the format, so a
+		   pair inside the name would end the label early and is replaced. */
+		$url = 'https://www.google.com/maps?q=' . rawurlencode( $lat ) . ',' . rawurlencode( $lng );
+		if ( '' !== $name ) {
+			/* A pair of brackets inside the name would close the label early, so
+			   they become spaces -- and the spaces that leaves are collapsed, or
+			   "Showroom 101 (Old Market), Ras Al Khor" arrives with a gap and a
+			   stranded comma. */
+			$name = str_replace( array( '(', ')' ), ' ', $name );
+			$name = trim( (string) preg_replace( '/[[:space:]]+,/', ',', (string) preg_replace( '/[[:space:]]+/', ' ', $name ) ) );
+			$url .= '(' . rawurlencode( $name ) . ')';
+		}
+		return $url;
+	}
+
 	public static function map_section() {
 		if ( ! Vesla_Settings::enabled( 'map' ) ) {
 			return;
@@ -9948,12 +9996,18 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 										</a>
 									</p>
 								<?php endif; ?>
-								<?php if ( $b['link_label'] ) : ?>
+								<?php
+								/* Both, not either: a branch with a button wording but no
+								   coordinates would otherwise draw a button with an empty
+								   address, which looks like a link and does nothing. */
+								$dirs = self::branch_directions( $b );
+								?>
+								<?php if ( $b['link_label'] && '' !== $dirs ) : ?>
 									<?php /* Google, deliberately: the map on the page is ours and shows
 									         only our pin, but directions are a thing people finish in
 									         the app already on their phone. */ ?>
 									<a class="btn btn-solid map-go"
-										href="<?php echo esc_url( $b['link'] ? $b['link'] : 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $lat . ',' . $lng ) ); ?>"
+										href="<?php echo esc_url( $dirs ); ?>"
 										target="_blank" rel="noopener">
 										<?php echo esc_html( $b['link_label'] ); ?>
 									</a>
