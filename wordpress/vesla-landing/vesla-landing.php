@@ -584,6 +584,11 @@ class Vesla_Schema {
 						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
 						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
 					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
+					),
 
 					/* ── the strip of makes above the grid ──
 					   The list of makes is not entered anywhere: it is built from the
@@ -1110,6 +1115,11 @@ class Vesla_Schema {
 						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
 						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
 					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
+					),
 					'stages'  => array(
 						'type'   => 'repeater',
 						'label'  => __( 'The stages', 'vesla-landing' ),
@@ -1174,6 +1184,11 @@ class Vesla_Schema {
 						'type'  => 'textarea',
 						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
 						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
 					),
 					'note'    => array(
 						'type'  => 'rich',
@@ -1263,6 +1278,11 @@ class Vesla_Schema {
 						'type'  => 'textarea',
 						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
 						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
 					),
 					'body'    => array( 'type' => 'rich', 'label' => __( 'Second paragraph', 'vesla-landing' ), ),
 					'note'    => array( 'type' => 'rich', 'label' => __( 'Small note underneath', 'vesla-landing' ), ),
@@ -7677,7 +7697,7 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		self::spotlight();
 		self::brand_strip();
 		self::stock();
-		self::certified();
+		self::certified( true );
 		self::why();
 		self::record();
 		self::chairman();
@@ -9357,10 +9377,19 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 
 	/* ── certified ─────────────────────────────────────────────────────── */
 
-	private static function certified() {
+	/**
+	 * @param bool $short Homepage version: the heading, the lead and a link
+	 *                    through, without the five stages. Defaults to false so
+	 *                    every existing call site renders exactly what it did.
+	 */
+	private static function certified( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'certified' ) ) {
 			return;
 		}
+		/* Only shortened once there is somewhere to send them. With the page off
+		   the homepage keeps the whole section, because half a section and no
+		   link is worse than the long version. */
+		$short = $short && self::page_live( 'certified' );
 		$c = Vesla_Settings::get( 'certified' );
 		?>
 		<section class="sec sec-dark" id="certified">
@@ -9368,6 +9397,9 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				<?php if ( $c['eyebrow'] ) : ?><p class="eyebrow reveal"><?php echo esc_html( $c['eyebrow'] ); ?></p><?php endif; ?>
 				<h2 class="reveal"><?php echo esc_html( $c['heading'] ); ?></h2>
 				<?php if ( $c['lead'] ) : ?><p class="sec-lead reveal"><?php Vesla_Render::t( 'certified.lead', $c['lead'] ); ?></p><?php endif; ?>
+				<?php if ( $short ) : ?>
+					<?php self::page_more( 'certified' ); ?>
+				<?php else : ?>
 				<ol class="stages">
 					<?php foreach ( (array) $c['stages'] as $i => $st ) : ?>
 						<li class="reveal">
@@ -9377,8 +9409,33 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						</li>
 					<?php endforeach; ?>
 				</ol>
+				<?php endif; ?>
 			</div>
 		</section>
+		<?php
+	}
+
+	/**
+	 * The link from a homepage section to the page that carries it in full.
+	 *
+	 * Prints nothing when the page is switched off, which is what keeps the
+	 * homepage exactly as it was until somebody publishes a page: no dangling
+	 * link to a file that is not there.
+	 */
+	private static function page_more( $key ) {
+		if ( ! self::page_live( $key ) ) {
+			return;
+		}
+		$label = (string) Vesla_Settings::get( self::pages()[ $key ]['owner'], 'page_more_label', '' );
+		if ( '' === $label ) {
+			$label = __( 'Read more', 'vesla-landing' );
+		}
+		?>
+		<p class="sec-more reveal">
+			<a class="btn btn-line" href="<?php echo esc_url( self::rel( self::page_url( $key ) ) ); ?>">
+				<?php echo esc_html( $label ); ?>
+			</a>
+		</p>
 		<?php
 	}
 

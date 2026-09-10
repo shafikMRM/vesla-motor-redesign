@@ -117,6 +117,7 @@
     "page_enabled": 0,
     "page_heading": "",
     "page_intro": "[Open the Stock page here — what is on the floor and how a buyer should narrow it down. One or two sentences.]",
+    "page_more_label": "See all the cars",
     "per_page": 8,
     "more_label": "Show more",
     "empty_text": "Nothing matches that combination. Try widening the filters.",
@@ -453,6 +454,7 @@
     "page_enabled": 0,
     "page_heading": "",
     "page_intro": "[Open the Certified page here — what a buyer should understand about the checking before they read the stages. Two or three sentences.]",
+    "page_more_label": "See the five stages",
     "stages": [
       {
         "title": "Thorough inspection",
@@ -507,6 +509,7 @@
     "page_enabled": 0,
     "page_heading": "",
     "page_intro": "[Open the About page here — the one thing about thirty-six years on the same street that a buyer should take away. Two or three sentences.]",
+    "page_more_label": "Read about Vesla",
     "note": "Founding year, branch count and the Dubizzle Top Dealer award are taken from veslamotors.com. Annual sales volume is described there as “thousands of cars annually” and is not stated as a figure, so it is not shown here.",
     "glance": [
       {
@@ -566,6 +569,7 @@
     "page_enabled": 0,
     "page_heading": "",
     "page_intro": "[Open the Sell your car page here — why somebody should bring a car to Vesla rather than sell it privately. Two or three sentences.]",
+    "page_more_label": "See how we buy",
     "body": "Bring the car to either branch for a physical valuation, or start with the estimator here to get a sense of the range before you drive over. Trade-ins are set against anything on the floor.",
     "note": "The estimator is a demonstration model, not a quotation. A real valuation follows a physical inspection at a branch.",
     "est_enabled": 1,
