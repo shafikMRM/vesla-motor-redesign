@@ -188,7 +188,107 @@ install at `/cms`, which is not where your visitors are.
 click, and it stops being harmless the moment anything is ever served by
 WordPress itself.
 
-= 7. Check it actually worked =
+= 7. Counting visitors (optional, but do it before you change anything else) =
+
+Nothing here counts visitors until you set this up, and until you do there is
+no way to tell which cars people look at or where they give up. It is worth
+doing FIRST rather than last, because a month of figures collected before you
+start changing the site is what tells you whether a change helped.
+
+Two services are offered. **Google Analytics** is free and the one everybody
+has heard of; it sets cookies, so if you need a cookie banner it is this that
+makes it necessary. **Plausible** is paid (a few dollars a month), sets no
+cookies and needs no banner. The steps below are for Google Analytics because
+it is the one people ask for; if you pick Plausible instead, you only need the
+domain — `veslamotors.com` — and there is nothing to create beyond the account.
+
+*Google renames these screens from time to time. If a button is worded
+slightly differently from what is written here, the step is still the same
+one.*
+
+**Creating the property**
+
+1. Go to `analytics.google.com` and sign in. Use a Google account **the
+   business owns** — not a personal one, and not an employee's. Moving an
+   Analytics property to a different account later is awkward, and losing
+   access to it means losing the history.
+
+2. Bottom left, click the gear icon: **Admin**.
+
+3. Under the **Property** column, click **Create property** (on a brand new
+   account you may land on this screen automatically).
+
+4. **Property name:** `Vesla Motors`.
+   **Reporting time zone:** United Arab Emirates (GMT+04:00).
+   **Currency:** UAE Dirham (AED).
+   Getting the time zone right matters more than it looks: it decides where
+   one day ends and the next begins in every report you ever read.
+   Click **Next**.
+
+5. **Business details** — industry category and business size. Neither
+   changes what is collected; they only set which suggested reports Google
+   shows you. Click **Next**.
+
+6. **Business objectives** — tick **Generate leads**. Click **Create**, then
+   accept the terms of service when asked.
+
+**Creating the data stream**
+
+7. You are now asked to choose a platform. Choose **Web**.
+
+8. **Website URL:** `https://veslamotors.com` — exactly the form that
+   actually serves, matching what you put in step 2.
+   **Stream name:** `Vesla Motors website`.
+   Leave **Enhanced measurement** on: it records outbound clicks and file
+   downloads without any extra work.
+   Click **Create stream**.
+
+9. The **Web stream details** panel opens. Near the top right is the
+   **MEASUREMENT ID**. It looks like `G-ABCD123456`. Copy it.
+
+   If you close this panel, it is always at:
+   **Admin → Data collection and modification → Data streams →** click the
+   stream.
+
+   Take the MEASUREMENT ID (`G-…`), **not** the Stream ID (a plain number)
+   and not the "Google tag ID" from the install instructions.
+
+**Putting it into the site**
+
+10. In WordPress: **Landing Page → Visitor statistics**.
+
+11. **Which service:** Google Analytics.
+    **Google Analytics measurement ID:** paste the `G-…` code.
+    Leave both Plausible boxes empty.
+    Press **Save changes**.
+
+    The ID is checked when it is used. If it is not in Google's `G-` format
+    nothing is written into the page at all — which is deliberate, because a
+    mistyped ID otherwise loads, reports nothing and looks like it is working.
+
+12. Press **Republish**. The published pages carry the counting code too, and
+    they are not rewritten until you do.
+
+**Checking it works**
+
+13. In Google Analytics, go to **Reports → Realtime**.
+
+14. Open `https://veslamotors.com` in a different browser, or on your phone
+    off the office wi-fi. Within about half a minute Realtime should show
+    **1 active user**, and the page you opened.
+
+15. If it shows nothing after two minutes:
+    * View the page source and search for `googletagmanager` — if it is not
+      there, either the ID was rejected (check the `G-` format) or step 12
+      has not been done.
+    * An ad blocker on the machine you are testing from will block the
+      request. That is also why the figures will always be a little lower
+      than reality.
+
+**If you skip it:** the site works exactly as it does now. You simply have no
+idea what anybody does on it, and nothing to compare against later.
+
+= 8. Check it actually worked =
 
 Open the public address in a browser that is not logged in. Then:
 
