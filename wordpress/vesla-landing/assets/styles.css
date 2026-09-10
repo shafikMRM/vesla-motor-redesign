@@ -592,16 +592,116 @@ textarea{resize:vertical}
 .vp-video.is-playing{aspect-ratio:16/9}
 .vp-video.is-playing iframe{width:100%;height:100%;border:0;display:block}
 
-/* The boxes under the estimate. Divided from the figure by a rule rather than
-   boxed again: it is the same form continuing, not a second thing to fill in. */
+/* The top of a page that is not the homepage. The header bar is fixed, so a
+   page whose first element starts at the top of the document has its heading
+   sitting behind it -- the homepage never showed this because the hero begins
+   with its own full-height spacing. */
+.page-top{padding-top:calc(var(--bar-h,72px) + 40px);padding-bottom:0}
+/* The first section after a page heading does not need the full section
+   rhythm above it: the heading is already that space. */
+.page-top + .sec,.page-top + section{padding-top:clamp(28px,3.5vw,44px)}
+.page-title{
+  font-family:var(--display);font-weight:600;letter-spacing:-.02em;
+  font-size:clamp(26px,3.4vw,38px);line-height:1.08;margin:12px 0 0;text-wrap:balance;
+}
+.page-intro{margin:14px 0 0;max-width:62ch;color:var(--steel);font-size:16.5px}
+.page .vp-crumbs{margin:0}
+
+/* A page that is one body of prose -- privacy, terms. */
+.prose{max-width:70ch}
+.prose h2{margin:32px 0 10px}
+.prose h3{margin:24px 0 8px}
+.prose p{margin:0 0 14px}
+.prose ul,.prose ol{margin:0 0 14px 20px}
+.prose li{margin:0 0 6px}
+
+/* ---------- what state a car is in ----------
+   The tags stack in the corner of the photograph beside the certified one.
+   Reserved and sold are facts about availability and read as such; just
+   arrived is a nudge and is the quietest of the three. */
+.card-media .tag + .tag{margin-top:6px}
+.tag-reserved{background:var(--ink);color:var(--paper);border:1px solid var(--paper)}
+.tag-sold{background:var(--paper);color:var(--ink);border:1px solid var(--ink)}
+.tag-arrived{background:var(--lemon,#F2ED28);color:#15150E}
+
+/* Where a reserved or sold car's buttons would have been. Not a button, and
+   not styled like one: there is nothing here to press. */
+.card-quiet{
+  display:inline-block;padding:9px 0;font-family:var(--label);
+  text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--steel);
+}
+
+/* Privacy and Terms, on the same line as the copyright. Quiet on purpose:
+   they have to be findable, not prominent. */
+.foot-legal{
+  list-style:none;display:flex;flex-wrap:wrap;gap:6px 20px;margin:0;padding:0;
+}
+.foot-legal a{font-size:13.5px;color:var(--steel);text-decoration:none}
+.foot-legal a:hover{color:var(--paper);text-decoration:underline}
+
+/* ---------- the finance page ----------
+   Documents beside the calculator rather than under it: a reader comparing
+   what to bring against what it costs is looking at both. */
+.fin-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));
+  gap:var(--gap-lg);align-items:start;margin-top:clamp(32px,4vw,56px);
+}
+.fin-docs{list-style:none;margin:18px 0 0;padding:0}
+.fin-docs li{padding:14px 0;border-bottom:1px solid var(--hair)}
+.fin-docs b{display:block;font-weight:600}
+.fin-docs span{display:block;margin-top:3px;font-size:14px;color:var(--steel)}
+
+/* The two sliders pair off; the price box takes the full width because a
+   figure typed in is what everything else is a proportion of. */
+.fin-calc .fin-price,.fin-calc h3,.fin-calc .est-out,
+.fin-calc .note,.fin-calc .fin-ask-wrap{grid-column:1 / -1}
+.fin-row{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.fin-calc input[type=number]{width:100%}
+.fin-ask-wrap{margin:0}
+/* Matched to the car page's slider rather than left at the browser default,
+   which draws it in the operating system's blue -- the one colour on the page
+   that belongs to nothing else on the site. 44px for the same reason it is
+   44px there: the whole track is the tap target and this one sets a deposit. */
+.fin-row input[type=range]{width:100%;accent-color:var(--amber);min-height:44px}
+.fin-row output{font-weight:600;font-variant-numeric:tabular-nums}
+@media (max-width:560px){ .fin-row{grid-template-columns:1fr} }
+
+/* ---------- the estimator, made shorter ----------
+   Four full-width selects stacked made a very tall column out of four very
+   short values -- a make, a year and two ranges -- beside a half-empty one.
+   They pair off instead, which halves the height and brings the figure nearer
+   the controls that produce it. */
+.est{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;align-content:start}
+.est h3,.est .est-sub,.est .est-out,.est .note,.est-send{grid-column:1 / -1}
+.est label{min-width:0}
+.est select{width:100%}
+
+/* The boxes under the figure. Name and phone sit together: they are short,
+   always both filled, and stacked they made this block as tall again as the
+   estimator above it. Email takes the full row because an address is long. */
 .est-send{
-  display:flex;flex-direction:column;gap:16px;
+  display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;
   margin-top:4px;padding-top:22px;border-top:1px solid var(--hair);
 }
+.est-send h4,.est-send .vesla-hp,.est-send .btn,.est-send .form-msg{grid-column:1 / -1}
+.est-send label:nth-of-type(3){grid-column:1 / -1}
 .est-send h4{
-  margin:0;font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.01em;
+  margin:0;font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:-.01em
 }
-.est-send .btn{align-self:flex-start}
+.est-send .btn{justify-self:start}
+
+/* The shared label rule stacks every child, which put the required asterisk on
+   a line of its own under the word -- a stray yellow dot. Scoped here rather
+   than fixed in that rule, because the filter menus and the enquiry form rely
+   on the stacking and are not what was complained about. */
+.est-send label{display:block}
+.est-send label > input{display:block;width:100%;margin-top:6px}
+.est-send .req{margin-left:3px}
+.est-send .field-msg{display:block;margin-top:4px}
+
+@media (max-width:560px){
+  .est,.est-send{grid-template-columns:1fr}
+}
 
 /* Sits with the other buttons under the monthly figure. */
 .vp-fin-ask{margin-top:16px;align-self:flex-start}

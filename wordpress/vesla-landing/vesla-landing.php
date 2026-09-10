@@ -379,17 +379,18 @@ class Vesla_Schema {
 							'link' => array(
 								'type'  => 'select',
 								'label' => __( 'Jumps to', 'vesla-landing' ),
-								'help'  => __( 'Every one of these is a place on this same page. Picking from the list is why a menu link cannot point at a section that does not exist.', 'vesla-landing' ),
+								'help'  => __( 'Picking from the list is why a menu link cannot point at a section that does not exist. Where a section has a page of its own, the menu link goes to that page instead of scrolling down this one, so the menu means the same thing wherever the reader is standing.', 'vesla-landing' ),
 								'choices' => array(
 									'' => __( '— not set —', 'vesla-landing' ),
-									'#stock' => __( 'Stock — the car grid', 'vesla-landing' ),
-									'#certified' => __( 'Certified — the five stages', 'vesla-landing' ),
-									'#why' => __( 'Why Vesla — the four points', 'vesla-landing' ),
-									'#record' => __( 'Record — the figures', 'vesla-landing' ),
-									'#chairman' => __( 'Ownership — the chairman', 'vesla-landing' ),
-									'#sell' => __( 'Sell your car — the estimator', 'vesla-landing' ),
+									'#stock' => __( 'Stock — the cars', 'vesla-landing' ),
+									'#certified' => __( 'Certified — how a car is checked', 'vesla-landing' ),
+									'#why' => __( 'Why Vesla', 'vesla-landing' ),
+									'#record' => __( 'About — the record and the ownership', 'vesla-landing' ),
+									'#chairman' => __( 'About — the ownership (the same page as above)', 'vesla-landing' ),
+									'#sell' => __( 'Sell your car', 'vesla-landing' ),
+									'#finance' => __( 'Finance', 'vesla-landing' ),
 									'#faq' => __( 'Questions and answers', 'vesla-landing' ),
-									'#contact' => __( 'Contact — the enquiry form', 'vesla-landing' ),
+									'#contact' => __( 'Contact', 'vesla-landing' ),
 									'#top' => __( 'Back to the top', 'vesla-landing' ),
 								),
 								
@@ -569,6 +570,26 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /stock/ as a page in its own right, showing the whole grid, with the filters and the search in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
+					),
 
 					/* ── the strip of makes above the grid ──
 					   The list of makes is not entered anywhere: it is built from the
@@ -622,6 +643,15 @@ class Vesla_Schema {
 					),
 					'price_note' => array( 'type' => 'text', 'label' => __( 'Small wording under each price', 'vesla-landing' ), ),
 					'badge'      => array( 'type' => 'text', 'label' => __( 'Corner badge on each photo', 'vesla-landing' ), 'help' => __( 'Leave empty to remove the badge.', 'vesla-landing' ), ),
+					'reserved_label' => array( 'type' => 'text', 'label' => __( 'Badge on a reserved car', 'vesla-landing' ), ),
+					'reserved_note'  => array(
+						'type'  => 'text',
+						'label' => __( 'Wording shown instead of the buttons, on a reserved car', 'vesla-landing' ),
+						'help'  => __( 'A reserved car keeps its card and loses its Enquire and WhatsApp buttons. This is what stands in their place, so the card explains itself rather than simply going quiet.', 'vesla-landing' ),
+					),
+					'sold_label'     => array( 'type' => 'text', 'label' => __( 'Badge on a sold car', 'vesla-landing' ), ),
+					'sold_note'      => array( 'type' => 'text', 'label' => __( 'Wording shown instead of the buttons, on a sold car', 'vesla-landing' ), ),
+					'arrived_label'  => array( 'type' => 'text', 'label' => __( 'Badge on a just-arrived car', 'vesla-landing' ), ),
 					'warranty_note' => array( 'type' => 'text', 'label' => __( 'Small wording under the price, second line', 'vesla-landing' ), 'help' => __( 'Leave empty to remove it.', 'vesla-landing' ), ),
 					'enquire_label' => array( 'type' => 'text', 'label' => __( 'Button on each car — wording', 'vesla-landing' ), ),
 					'search_label' => array(
@@ -674,6 +704,26 @@ class Vesla_Schema {
 								'type'  => 'text',
 								'label' => __( 'Describe the photograph', 'vesla-landing' ),
 								'help'  => __( 'What is in the picture, for somebody who cannot see it — “silver saloon, front three-quarter view, in the showroom”. Not the car’s name: that is the heading right beside it, and repeating it tells a blind visitor nothing they did not already have.', 'vesla-landing' ),
+							),
+							'status' => array(
+								'group' => __( 'Where this car is up to', 'vesla-landing' ),
+								'type'  => 'select',
+								'label' => __( 'Status', 'vesla-landing' ),
+								'help'  => __( 'On the floor is the normal state. Reserved keeps the car in the grid with a badge and takes the Enquire button off it, so a car somebody has already put a deposit on stops generating telephone calls. Sold takes it out of the grid altogether and puts it on the sold page, with its photographs and without its price.', 'vesla-landing' ),
+								'choices' => array(
+									''         => __( 'On the floor', 'vesla-landing' ),
+									'reserved' => __( 'Reserved — deposit taken', 'vesla-landing' ),
+									'sold'     => __( 'Sold', 'vesla-landing' ),
+								),
+							),
+							'arrived' => array(
+								'type'  => 'select',
+								'label' => __( 'Just arrived', 'vesla-landing' ),
+								'help'  => __( 'Puts a "just arrived" badge on the card. Nothing else changes. Take it off when the car stops being new to the floor — a badge that is on every car says nothing.', 'vesla-landing' ),
+								'choices' => array(
+									''    => __( 'No', 'vesla-landing' ),
+									'yes' => __( 'Yes', 'vesla-landing' ),
+								),
 							),
 							'make'  => array( 'group' => __( 'What the car is', 'vesla-landing' ), 'type' => 'brand', 'label' => __( 'Brand', 'vesla-landing' ), 'help' => __( 'Chosen from the brands under Vehicles → Car brands. Add the brand there first, with its logo, and it appears on this list. This is also what fills the “Make” filter and the strip of makes above the cars.', 'vesla-landing' ), ),
 							'model' => array( 'type' => 'text', 'label' => __( 'Model', 'vesla-landing' ), ),
@@ -1080,6 +1130,26 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Paragraph under the heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /certified/ as a page in its own right, showing the five stages in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
+					),
 					'stages'  => array(
 						'type'   => 'repeater',
 						'label'  => __( 'The stages', 'vesla-landing' ),
@@ -1105,6 +1175,26 @@ class Vesla_Schema {
 					'enabled' => array( 'type' => 'toggle', 'label' => __( 'Show this section', 'vesla-landing' ), ),
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /why/ showing this section in full. The homepage keeps its copy of the same section, and both read the fields on this screen. Until this is on, a menu link pointing here scrolls down the homepage instead.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Say where it goes rather than "read more".', 'vesla-landing' ),
+					),
 					'cards'   => array(
 						'type'   => 'repeater',
 						'label'  => __( 'Points', 'vesla-landing' ),
@@ -1130,6 +1220,26 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'Main paragraph', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /about/ as a page in its own right, showing the record, the ownership and the branches in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
+					),
 					'note'    => array(
 						'type'  => 'rich',
 						'label' => __( 'Small note in the box underneath', 'vesla-landing' ),
@@ -1204,6 +1314,26 @@ class Vesla_Schema {
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
 					'lead'    => array( 'type' => 'rich', 'label' => __( 'First paragraph', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /sell/ as a page in its own right, showing the estimator and how you buy in full. The homepage keeps its shorter version of the same section, and both read the settings on this screen — there is no second copy of the wording to keep in step. The page appears the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page, and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before the page goes live. It opens the page under the heading, and is what a search engine shows as the description. Write it to open properly: the line on the homepage is a tease and this is the same subject arriving in full, so repeating that line here reads as padding to anyone who has just come from it.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Appears on the homepage under the short version of this section, once the page above is switched on. Say where it goes rather than "read more": somebody deciding whether to press it is helped by "See the five stages" and not at all by "more".', 'vesla-landing' ),
+					),
 					'body'    => array( 'type' => 'rich', 'label' => __( 'Second paragraph', 'vesla-landing' ), ),
 					'note'    => array( 'type' => 'rich', 'label' => __( 'Small note underneath', 'vesla-landing' ), ),
 					'est_enabled' => array(
@@ -1255,6 +1385,26 @@ class Vesla_Schema {
 					'enabled' => array( 'type' => 'toggle', 'label' => __( 'Show this section', 'vesla-landing' ), ),
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /faq/ showing this section in full. The homepage keeps its copy of the same section, and both read the fields on this screen. Until this is on, a menu link pointing here scrolls down the homepage instead.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Say where it goes rather than "read more".', 'vesla-landing' ),
+					),
 					'items'   => array(
 						'type'   => 'repeater',
 						'label'  => __( 'Questions', 'vesla-landing' ),
@@ -1769,11 +1919,6 @@ class Vesla_Schema {
 							'phone'   => array( 'type' => 'text', 'label' => __( 'Telephone shown for this branch', 'vesla-landing' ) ),
 							'lat'     => array( 'type' => 'text', 'label' => __( 'Latitude', 'vesla-landing' ) ),
 							'lng'     => array( 'type' => 'text', 'label' => __( 'Longitude', 'vesla-landing' ) ),
-							'link'    => array(
-								'type'  => 'url',
-								'label' => __( 'Directions link', 'vesla-landing' ),
-								'help'  => __( 'Where the “Directions” button goes. Usually the Google Maps link for this branch.', 'vesla-landing' ),
-							),
 							'link_label' => array( 'type' => 'text', 'label' => __( 'Wording on the directions button', 'vesla-landing' ) ),
 						),
 					),
@@ -1818,6 +1963,135 @@ class Vesla_Schema {
 					),
 					'parent_name'   => array( 'type' => 'text', 'label' => __( 'Parent company name', 'vesla-landing' ), 'help' => __( 'Leave empty if there is none.', 'vesla-landing' ), ),
 					'parent_url'    => array( 'type' => 'url',  'label' => __( 'Parent company website', 'vesla-landing' ), ),
+				),
+			),
+			'finance' => array(
+				'title'  => __( 'Finance', 'vesla-landing' ),
+				'blurb'  => __( 'The finance page. The calculator on it uses the same rate, deposit and term as the one on every car page — those are set under Vehicle pages, and changing them there changes both. Everything on this screen is the wording around it.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the finance page', 'vesla-landing' ),
+						'help'  => __( 'Publishes /finance/ the next time the site is republished. Nothing on the homepage changes: finance has no section there, so this page is reached from the menu — and because there is no section to fall back to, switching this off ALSO takes the Finance row out of the menu and the footer until you switch it back on. Every other page keeps its menu row when its page is off, because every other page has a section on the homepage for the link to scroll to instead.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'steps_title' => array( 'type' => 'text', 'label' => __( 'Heading over the steps', 'vesla-landing' ) ),
+					'steps' => array(
+						'type'   => 'repeater',
+						'label'  => __( 'How it works — the steps', 'vesla-landing' ),
+						'row_label' => __( 'Step', 'vesla-landing' ),
+						'row_title' => array( 'title' ),
+						'help'   => __( 'PLACEHOLDER — the starter rows are questions, not answers. Nobody here knows how your finance is arranged, and a plugin guessing at it would put a false promise on a page a buyer makes a decision from.', 'vesla-landing' ),
+						'fields' => array(
+							'title' => array( 'type' => 'text', 'label' => __( 'Step', 'vesla-landing' ) ),
+							'text'  => array( 'type' => 'textarea', 'label' => __( 'What happens', 'vesla-landing' ) ),
+						),
+					),
+					'docs_title' => array( 'type' => 'text', 'label' => __( 'Heading over the documents list', 'vesla-landing' ) ),
+					'docs' => array(
+						'type'   => 'repeater',
+						'label'  => __( 'What to bring', 'vesla-landing' ),
+						'row_label' => __( 'Document', 'vesla-landing' ),
+						'row_title' => array( 'item' ),
+						'help'   => __( 'PLACEHOLDER — what a bank asks for is a question for your bank, not for this plugin.', 'vesla-landing' ),
+						'fields' => array(
+							'item' => array( 'type' => 'text', 'label' => __( 'Document', 'vesla-landing' ) ),
+							'note' => array( 'type' => 'text', 'label' => __( 'Small note beside it', 'vesla-landing' ) ),
+						),
+					),
+					'calc_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Show the calculator on this page', 'vesla-landing' ),
+						'help'  => __( 'The same sum as the one on a car page, with the price typed in rather than taken from a car. The rate, the deposit and the term come from Vehicle pages, so the two can never quote differently.', 'vesla-landing' ),
+					),
+					'calc_title' => array( 'type' => 'text', 'label' => __( 'Heading over the calculator', 'vesla-landing' ) ),
+					'calc_price_label' => array( 'type' => 'text', 'label' => __( 'Wording on the price box', 'vesla-landing' ) ),
+					'calc_note' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Small print under the monthly figure', 'vesla-landing' ),
+						'help'  => __( 'This is an estimate a buyer may act on. Say plainly that it is one, and that the real figure depends on the finance they are approved for.', 'vesla-landing' ),
+					),
+					'ask_label' => array( 'type' => 'text', 'label' => __( 'Wording on the button under the figure', 'vesla-landing' ) ),
+				),
+			),
+			'sold' => array(
+				'title'  => __( 'Sold cars', 'vesla-landing' ),
+				'blurb'  => __( 'A page of what has already gone, with the photographs and without the prices. A car appears here when its status is set to Sold on the car itself; nothing has to be listed twice.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the sold page', 'vesla-landing' ),
+						'help'  => __( 'Worth having: a page of cars that have gone is evidence that they go. It carries no prices.', 'vesla-landing' ),
+					),
+					'page_heading' => array( 'type' => 'text', 'label' => __( 'Page heading', 'vesla-landing' ), ),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'empty_text' => array(
+						'type'  => 'text',
+						'label' => __( 'Wording when nothing has been sold yet', 'vesla-landing' ),
+						'help'  => __( 'Shown instead of the grid while no car is marked Sold, so the page is never simply blank.', 'vesla-landing' ),
+					),
+				),
+			),
+			'privacy' => array(
+				'title'  => __( 'Privacy policy', 'vesla-landing' ),
+				'blurb'  => __( 'The privacy page, off until you switch it on. What is in it now is WordPress own starter text, written for a blog with comments and profile pictures — none of which this site has. Replace it before switching the page on.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the privacy page', 'vesla-landing' ),
+						'help'  => __( 'Publishes /privacy/ the next time the site is republished. Read what is below first: the starter text names things this site does not do.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'Optional. Leave it empty and the page starts with the policy itself.', 'vesla-landing' ),
+					),
+					'body' => array(
+						'type'  => 'rich',
+						'label' => __( 'The policy', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — this is WordPress starter text and most of it is about a blog. What this site actually does with personal information: the enquiry form stores a name, a telephone number, an optional email address and a message; the rate limit keeps a one-way hash of the sender IP address and never the address itself; and visitor statistics are collected only if you have switched them on under Visitor statistics. Nothing else is gathered. Have somebody who knows UAE requirements write the real thing.', 'vesla-landing' ),
+					),
+				),
+			),
+			'terms' => array(
+				'title'  => __( 'Terms', 'vesla-landing' ),
+				'blurb'  => __( 'The terms page, off until you switch it on. There is no starter text for this one: what your terms are is a question for whoever writes them, not for a plugin.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the terms page', 'vesla-landing' ),
+						'help'  => __( 'Publishes /terms/ the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'Optional. Leave it empty and the page starts with the terms themselves.', 'vesla-landing' ),
+					),
+					'body' => array(
+						'type'  => 'rich',
+						'label' => __( 'The terms', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before switching the page on. Nothing is written for you here, because a plugin inventing your terms of business would be worse than an empty page.', 'vesla-landing' ),
+					),
 				),
 			),
 			'analytics' => array(
@@ -6393,10 +6667,22 @@ class Vesla_Render {
 		return $url;
 	}
 	/** Is this render a car's own page rather than the front page? */
-	private static function on_car_page() {
-		/* $forced is set while the publisher writes a car's file; the query
-			   var is what WordPress goes by when it is answering a request. */
-		return ( null !== self::$forced ) || ( ! self::$static_build && self::is_vehicle() );
+	private static function away_from_home() {
+		/* Anywhere a '#section' link cannot resolve, because the sections are on
+		   the homepage and the reader is not.
+		
+		   $forced is set while the publisher writes a car's file; the query var
+		   is what WordPress goes by when it is answering a request; $page_key is
+		   set while it writes one of the other pages.
+		
+		   The pages were the gap. A car page has always turned '#contact' into an
+		   absolute link back to the homepage, and the new pages did not -- so the
+		   footer's Contact link, the back-to-top and the skip link all pointed at
+		   ids that only exist on a page the reader had left. Three dead links on
+		   every page, in the chrome, where they are on every page at once. */
+		return ( null !== self::$forced )
+			|| ( '' !== self::$page_key )
+			|| ( ! self::$static_build && self::is_vehicle() );
 	}
 
 	/**
@@ -6413,9 +6699,81 @@ class Vesla_Render {
 	 * fragment with it. Anything already absolute, or a tel:/mailto:, is left
 	 * exactly as the admin typed it.
 	 */
-	public static function menu_href( $link ) {
+	/**
+	 * Menu choices that exist only as a page.
+	 *
+	 * Every other choice names a section the homepage still has, so switching
+	 * its page off leaves the link working -- it scrolls instead of navigating.
+	 * These have nothing to scroll to, so the row is left out entirely.
+	 */
+	public static function page_only_links() {
+		return array( '#finance' => 'finance' );
+	}
+
+	/**
+	 * Where a link in the menu, the footer or the header actually goes.
+	 *
+	 * @param string $link     What the admin chose, usually a '#section'.
+	 * @param bool   $navigate Menu links only. Once a section has a page of its
+	 *                         own, a MENU item pointing at it goes to the page
+	 *                         rather than scrolling down the homepage -- the
+	 *                         menu then means the same thing on every page of
+	 *                         the site, which it cannot do if it scrolls here
+	 *                         and navigates there.
+	 *
+	 *                         Off by default, and that default matters: the skip
+	 *                         link is "Skip to the cars" and has to stay an
+	 *                         in-page jump. A skip link that loads another page
+	 *                         is not a skip link.
+	 */
+	public static function menu_href( $link, $navigate = false ) {
 		$link = (string) $link;
-		if ( '' === $link || '#' !== $link[0] || ! self::on_car_page() ) {
+
+		if ( $navigate && '' !== $link && '#' === $link[0] ) {
+			/* Sections that have moved to a page of their own. Ownership was
+			   folded into About with the record, so both anchors land there --
+			   which is also what keeps a saved menu row reading '#chairman'
+			   from pointing at a section the homepage no longer has. */
+			$moved = array(
+				'#certified' => 'certified',
+				'#record'    => 'about',
+				'#chairman'  => 'about',
+				'#sell'      => 'sell',
+				'#stock'     => 'stock',
+				'#why'       => 'why',
+				'#faq'       => 'faq',
+				'#finance'   => 'finance',
+			);
+			if ( isset( $moved[ $link ] ) && self::page_live( $moved[ $link ] ) ) {
+				return self::rel( self::page_url( $moved[ $link ] ) );
+			}
+
+			/* Contact is the exception: it had a page of its own long before any of
+			   these, written by its own publisher step rather than listed in
+			   pages(), so page_live() does not know about it. The menu pointed at
+			   the homepage's contact section while /contact/ sat there published --
+			   the one menu item with a page that was not being used. */
+			if ( '#contact' === $link && Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
+				return self::rel( trailingslashit( Vesla_Publisher::site_url() ) . 'contact/' );
+			}
+		}
+
+		/* A link whose only destination is a page, with no section on the
+		   homepage to fall back to. With that page switched off there is nowhere
+		   for it to go, so it reports no destination and the caller leaves the
+		   row out -- rather than sending a reader to the top of the site, which
+		   is not where the link said it went.
+		
+		   A list rather than a test for '#finance', because the next page with
+		   no homepage section will have the same problem, and a menu row that
+		   points nowhere is not a thing worth fixing once. */
+		if ( $navigate && isset( self::page_only_links()[ $link ] ) ) {
+			$only = self::page_only_links();
+			$key  = $only[ $link ];
+			return self::page_live( $key ) ? self::rel( self::page_url( $key ) ) : '';
+		}
+
+		if ( '' === $link || '#' !== $link[0] || ! self::away_from_home() ) {
 			return $link;
 		}
 		/* '#top' is the top of the page, and the top of the front page is the
@@ -6610,7 +6968,11 @@ class Vesla_Render {
 	 * which doubles it.
 	 */
 	public static function card_fields() {
-		return array( 'make', 'model', 'year', 'price', 'km', 'body', 'trans', 'fuel', 'seats' );
+		/* What a card draws, and therefore what js_data() ships. status and
+		   arrived are here because cardFor() draws the badges from them: left
+		   out, the server-rendered card had its badges and the first re-render
+		   in the browser silently dropped them. */
+		return array( 'make', 'model', 'year', 'price', 'km', 'body', 'trans', 'fuel', 'seats', 'status', 'arrived' );
 	}
 
 	/** Every car field and its type, for the browser to coerce values by. */
@@ -6857,6 +7219,12 @@ class Vesla_Render {
 		$fields = Vesla_Store::car_fields();
 
 		foreach ( (array) $stock['cars'] as $car ) {
+			/* A sold car is off the floor, so it is not in the payload the grid
+			   redraws from either. Vesla_Rest::cars() filters the same way; this
+			   loop is the other place the stock is read. */
+			if ( 'sold' === Vesla_Render::car_status( $car ) ) {
+				continue;
+			}
 			$img = '';
 			if ( ! empty( $car['photo'] ) ) {
 				$img = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
@@ -6927,6 +7295,11 @@ class Vesla_Render {
 			'locale'   => str_replace( '_', '-', get_locale() ),
 			'labels'   => array(
 				'badge'     => (string) Vesla_Settings::get( 'stock', 'badge', '' ),
+				'reserved'     => (string) Vesla_Settings::get( 'stock', 'reserved_label', '' ),
+				'reservedNote' => (string) Vesla_Settings::get( 'stock', 'reserved_note', '' ),
+				'soldLabel'    => (string) Vesla_Settings::get( 'stock', 'sold_label', '' ),
+				'soldNote'     => (string) Vesla_Settings::get( 'stock', 'sold_note', '' ),
+				'arrived'      => (string) Vesla_Settings::get( 'stock', 'arrived_label', '' ),
 				'priceNote' => (string) Vesla_Settings::get( 'stock', 'price_note', '' ),
 				'warranty'  => (string) Vesla_Settings::get( 'stock', 'warranty_note', '' ),
 				'enquire'   => (string) Vesla_Settings::get( 'stock', 'enquire_label', 'Enquire' ),
@@ -7131,6 +7504,98 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 <script defer data-domain="<?php echo esc_attr( $domain ); ?>" src="<?php echo esc_url( $host . '/js/script.js' ); ?>"></script>
 			<?php
 		}
+	}
+
+	/**
+	 * The cars, as schema.org ListItems.
+	 *
+	 * Pulled out of head() so the homepage and /stock/ cannot end up describing
+	 * different stock. $limit is how many to include: the homepage shows eight
+	 * and was publishing all twenty-four, telling a search engine about cars
+	 * that were not on the page it was reading. /stock/ passes 0 and gets them
+	 * all, because /stock/ does show them all.
+	 */
+	private static function stock_items( $limit = 0 ) {
+		$stock = Vesla_Settings::get( 'stock' );
+		if ( ! Vesla_Settings::enabled( 'stock' ) || empty( $stock['cars'] ) ) {
+			return array();
+		}
+			$currency = Vesla_Settings::get( 'stock', 'currency', '' );
+			$items    = array();
+			$position = 0;
+
+			foreach ( $stock['cars'] as $car ) {
+				if ( empty( $car['make'] ) && empty( $car['model'] ) ) {
+					continue;
+				}
+				$position++;
+
+				$photo = '';
+				if ( ! empty( $car['photo'] ) ) {
+					$photo = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
+				} elseif ( ! empty( $car['photo_file'] ) ) {
+					$photo = VESLA_URL . ltrim( $car['photo_file'], '/' );
+				}
+
+				/* The same identifier the car's own page publishes, so the listing
+				   here and the page over there are one thing described twice
+				   rather than two cars that happen to match. Without it a crawler
+				   is entitled to treat them as separate stock. */
+				$entry = array(
+					'@id'           => self::car_id( $car ),
+					'@type'         => 'Car',
+					'name'          => trim( $car['make'] . ' ' . $car['model'] ),
+					'brand'         => array( '@type' => 'Brand', 'name' => $car['make'] ),
+					'model'         => $car['model'],
+					'itemCondition' => 'https://schema.org/UsedCondition',
+				);
+				if ( $car['year'] ) {
+					$entry['vehicleModelDate'] = (string) $car['year'];
+				}
+				if ( $car['body'] ) {
+					$entry['bodyType'] = $car['body'];
+				}
+				if ( $car['fuel'] ) {
+					$entry['fuelType'] = $car['fuel'];
+				}
+				if ( $car['trans'] ) {
+					$entry['vehicleTransmission'] = $car['trans'];
+				}
+				if ( $car['seats'] ) {
+					$entry['seatingCapacity'] = (int) $car['seats'];
+				}
+				if ( $car['km'] ) {
+					$entry['mileageFromOdometer'] = array(
+						'@type'    => 'QuantitativeValue',
+						'value'    => (int) $car['km'],
+						'unitCode' => 'KMT',
+					);
+				}
+				if ( $photo ) {
+					$entry['image'] = $photo;
+				}
+				if ( $car['price'] && $currency ) {
+					$entry['offers'] = array(
+						'@type'         => 'Offer',
+						'price'         => (int) $car['price'],
+						'priceCurrency' => $currency,
+						'availability'  => 'https://schema.org/InStock',
+						'seller'        => array( '@id' => $url . '#dealer' ),
+					);
+				}
+
+				$items[] = array(
+					'@type'    => 'ListItem',
+					'position' => $position,
+					'item'     => $entry,
+				);
+
+				if ( $limit && $position >= $limit ) {
+					break;
+				}
+			}
+
+		return $items;
 	}
 
 	public static function head( $force = false ) {
@@ -7379,8 +7844,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		/* The questions are emitted only when the section is actually shown.
 		   Marking up an FAQ that a visitor cannot see on the page is exactly
 		   what the structured-data guidance says not to do. */
+		/* Only while /faq/ is off. Once the questions have a page of their own
+		   that page is the one that should answer them in a search result, and
+		   the same FAQPage on two URLs is two nodes competing for one set of
+		   questions. */
 		$faq = Vesla_Settings::get( 'faq' );
-		if ( Vesla_Settings::enabled( 'faq' ) && ! empty( $faq['items'] ) ) {
+		if ( ! self::page_live( 'faq' ) && Vesla_Settings::enabled( 'faq' ) && ! empty( $faq['items'] ) ) {
 			$entities = array();
 			foreach ( $faq['items'] as $item ) {
 				if ( ! $item['q'] || ! $item['a'] ) {
@@ -7401,91 +7870,18 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			}
 		}
 
-		/* Every car on the floor, as an ItemList of Offers, so the listings are
-		   eligible for vehicle rich results. Built from the same stored rows the
-		   grid is built from, so the two can never describe different stock. */
-		$stock = Vesla_Settings::get( 'stock' );
-		if ( Vesla_Settings::enabled( 'stock' ) && ! empty( $stock['cars'] ) ) {
-			$currency = Vesla_Settings::get( 'stock', 'currency', '' );
-			$items    = array();
-			$position = 0;
-
-			foreach ( $stock['cars'] as $car ) {
-				if ( empty( $car['make'] ) && empty( $car['model'] ) ) {
-					continue;
-				}
-				$position++;
-
-				$photo = '';
-				if ( ! empty( $car['photo'] ) ) {
-					$photo = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
-				} elseif ( ! empty( $car['photo_file'] ) ) {
-					$photo = VESLA_URL . ltrim( $car['photo_file'], '/' );
-				}
-
-				/* The same identifier the car's own page publishes, so the listing
-				   here and the page over there are one thing described twice
-				   rather than two cars that happen to match. Without it a crawler
-				   is entitled to treat them as separate stock. */
-				$entry = array(
-					'@id'           => self::car_id( $car ),
-					'@type'         => 'Car',
-					'name'          => trim( $car['make'] . ' ' . $car['model'] ),
-					'brand'         => array( '@type' => 'Brand', 'name' => $car['make'] ),
-					'model'         => $car['model'],
-					'itemCondition' => 'https://schema.org/UsedCondition',
-				);
-				if ( $car['year'] ) {
-					$entry['vehicleModelDate'] = (string) $car['year'];
-				}
-				if ( $car['body'] ) {
-					$entry['bodyType'] = $car['body'];
-				}
-				if ( $car['fuel'] ) {
-					$entry['fuelType'] = $car['fuel'];
-				}
-				if ( $car['trans'] ) {
-					$entry['vehicleTransmission'] = $car['trans'];
-				}
-				if ( $car['seats'] ) {
-					$entry['seatingCapacity'] = (int) $car['seats'];
-				}
-				if ( $car['km'] ) {
-					$entry['mileageFromOdometer'] = array(
-						'@type'    => 'QuantitativeValue',
-						'value'    => (int) $car['km'],
-						'unitCode' => 'KMT',
-					);
-				}
-				if ( $photo ) {
-					$entry['image'] = $photo;
-				}
-				if ( $car['price'] && $currency ) {
-					$entry['offers'] = array(
-						'@type'         => 'Offer',
-						'price'         => (int) $car['price'],
-						'priceCurrency' => $currency,
-						'availability'  => 'https://schema.org/InStock',
-						'seller'        => array( '@id' => $url . '#dealer' ),
-					);
-				}
-
-				$items[] = array(
-					'@type'    => 'ListItem',
-					'position' => $position,
-					'item'     => $entry,
-				);
-			}
-
-			if ( $items ) {
-				$graph[] = array(
-					'@type'           => 'ItemList',
-					'@id'             => $url . '#stock',
-					'name'            => Vesla_Settings::get( 'stock', 'heading', '' ),
-					'numberOfItems'   => count( $items ),
-					'itemListElement' => $items,
-				);
-			}
+		/* The cars actually shown on this page. Built by stock_items(), which
+		   /stock/ also uses -- one builder, so the two pages cannot disagree
+		   about what is on the floor. */
+		$items = self::stock_items( (int) Vesla_Settings::get( 'stock', 'per_page', 8 ) );
+		if ( $items ) {
+			$graph[] = array(
+				'@type'           => 'ItemList',
+				'@id'             => $url . '#stock',
+				'name'            => Vesla_Settings::get( 'stock', 'heading', '' ),
+				'numberOfItems'   => count( $items ),
+				'itemListElement' => $items,
+			);
 		}
 
 		echo '<script type="application/ld+json">'
@@ -7616,12 +8012,20 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		   filter and belongs above both. */
 		self::spotlight();
 		self::brand_strip();
-		self::stock();
-		self::certified();
+		self::stock( true );
+		self::certified( true );
 		self::why();
-		self::record();
-		self::chairman();
-		self::sell();
+		self::record( true );
+		/* Absorbed into /about/, where it sits under the record it belongs to.
+		   It used to stand between the cars and the enquiry form, which is the
+		   worst place on the page for it: a reader who has just chosen a car is
+		   on their way to the form, and the owner's statement is not what they
+		   stopped for. Kept on the homepage while /about/ is switched off, so
+		   turning the page off never loses the section outright. */
+		if ( ! self::page_live( 'about' ) ) {
+			self::chairman();
+		}
+		self::sell( true );
 		self::faq();
 		self::contact();
 		/* Above the footer, not below it. The footer is the end of the page, and
@@ -7705,6 +8109,378 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 * canonical is the published address rather than whatever WordPress is
 	 * installed at, for the same reason every other canonical here is.
 	 */
+	/* ═══════════════════════════════════════════════════════════════════════
+	   THE OTHER PAGES
+
+	   The landing page, the cars and Contact were the whole site. These are the
+	   rest -- Certified, Sell, About, Stock -- and every one of them shows
+	   sections the landing page ALREADY shows, reading the same settings. There
+	   is no second copy of the wording anywhere: editing Certified changes the
+	   strip on the homepage and the page, because they are one set of fields.
+
+	   Each is published as a file, exactly as Contact is. There is deliberately
+	   no WordPress route: a car page has one because WordPress owns the car
+	   post type, and Contact never did. Consequence worth knowing -- these
+	   pages do not exist until Republish runs, and cannot be previewed at the
+	   WordPress address before then.
+	   ═══════════════════════════════════════════════════════════════════════ */
+
+	/** Set while the publisher writes one of these, the way $forced is for cars. */
+	public static $page_key = '';
+
+	/**
+	 * The pages, and where each one reads from.
+	 *
+	 * `owner` is the settings section that switches the page on and supplies its
+	 * heading -- the arrangement Contact already has in `contact`, rather than a
+	 * new screen listing pages somewhere else.
+	 *
+	 * `sections` are rendered in order, full length. The homepage keeps its own
+	 * shorter versions of the same sections; both read one set of fields.
+	 */
+	public static function pages() {
+		return array(
+			'certified' => array(
+				'slug'     => 'certified',
+				'owner'    => 'certified',
+				'sections' => array( 'certified' ),
+			),
+			'sell' => array(
+				'slug'     => 'sell',
+				'owner'    => 'sell',
+				'sections' => array( 'sell' ),
+			),
+			'about' => array(
+				'slug'     => 'about',
+				/* Owned by `record` because the 1988 story leads the page. Ownership
+				   and the branches follow it, which is why Record and Ownership stop
+				   being menu items -- they are two parts of one answer. */
+				'owner'    => 'record',
+				'sections' => array( 'record', 'chairman', 'map_section' ),
+			),
+			'stock' => array(
+				'slug'     => 'stock',
+				'owner'    => 'stock',
+				'sections' => array( 'brand_strip', 'stock' ),
+			),
+			'sold' => array(
+				'slug'     => 'sold',
+				'owner'    => 'sold',
+				'sections' => array( 'sold_page' ),
+			),
+			'why' => array(
+				'slug'     => 'why',
+				'owner'    => 'why',
+				'sections' => array( 'why' ),
+			),
+			'faq' => array(
+				'slug'     => 'faq',
+				'owner'    => 'faq',
+				'sections' => array( 'faq' ),
+			),
+			/* Finance has no section on the homepage at all -- it is reached from
+			   the menu, not scrolled to. Its renderer exists only for this page. */
+			'finance' => array(
+				'slug'     => 'finance',
+				'owner'    => 'finance',
+				'sections' => array( 'finance_page' ),
+			),
+			/* These two are not a section of the homepage rendered somewhere else:
+			   they are a page of prose and nothing more. `rich` names the field on
+			   the owning section that holds it. */
+			'privacy' => array(
+				'slug'     => 'privacy',
+				'owner'    => 'privacy',
+				'sections' => array(),
+				'rich'     => 'body',
+			),
+			'terms' => array(
+				'slug'     => 'terms',
+				'owner'    => 'terms',
+				'sections' => array(),
+				'rich'     => 'body',
+			),
+		);
+	}
+
+	/** Is this page switched on? Off unless somebody has said otherwise. */
+	public static function page_live( $key ) {
+		$pages = self::pages();
+		if ( ! isset( $pages[ $key ] ) ) {
+			return false;
+		}
+		return (bool) Vesla_Settings::get( $pages[ $key ]['owner'], 'page_enabled', 0 );
+	}
+
+	/** The published address of one of these pages. */
+	public static function page_url( $key ) {
+		$pages = self::pages();
+		if ( ! isset( $pages[ $key ] ) ) {
+			return '';
+		}
+		return trailingslashit( Vesla_Publisher::site_url() ) . $pages[ $key ]['slug'] . '/';
+	}
+
+	/** The page's own heading, which is also its title and its h1. */
+	public static function page_title( $key ) {
+		$pages = self::pages();
+		if ( ! isset( $pages[ $key ] ) ) {
+			return '';
+		}
+		$owner = $pages[ $key ]['owner'];
+		$head  = (string) Vesla_Settings::get( $owner, 'page_heading', '' );
+		if ( '' === $head ) {
+			/* Falls back to the section's own heading rather than inventing one,
+			   so a page switched on before anybody writes a title still says
+			   something true. */
+			$head = (string) Vesla_Settings::get( $owner, 'heading', '' );
+		}
+		return $head;
+	}
+
+	/**
+	 * Everything this page puts in its head.
+	 *
+	 * Canonical, description and og from the page's own settings; a
+	 * BreadcrumbList so a search result shows where it sits. No @id on the
+	 * crumbs, matching the car pages -- the only @ids on this site are the
+	 * dealer, the FAQ, the stock list and each car, and a second definition of
+	 * any of those would be worse than none.
+	 */
+	/**
+	 * The site's sharing picture, as og:image with its dimensions.
+	 *
+	 * Shared by every page's head. Every page but the homepage was sharing as
+	 * a bare link because only the homepage printed one, and a link with no
+	 * card is a link nobody presses. There is no per-page picture and none is
+	 * proposed: one nobody ever changes is worse than one that is shared.
+	 *
+	 * The dimensions matter as much as the picture. WhatsApp and Facebook
+	 * fetch it separately and often have not finished before the preview is
+	 * drawn; told the size up front they reserve the space and draw a large
+	 * card on the FIRST share, which is the share that matters.
+	 */
+	public static function share_image_ld() {
+		$share = absint( Vesla_Settings::get( 'seo', 'share_image', 0 ) );
+		if ( ! $share ) {
+			return;
+		}
+		$src = wp_get_attachment_image_src( $share, 'full' );
+		if ( ! $src ) {
+			return;
+		}
+		printf( '<meta property="og:image" content="%s">' . "\n", esc_url( $src[0] ) );
+		printf( '<meta property="og:image:width" content="%d">' . "\n", (int) $src[1] );
+		printf( '<meta property="og:image:height" content="%d">' . "\n", (int) $src[2] );
+		$alt = trim( (string) get_post_meta( $share, '_wp_attachment_image_alt', true ) );
+		if ( '' !== $alt ) {
+			printf( '<meta property="og:image:alt" content="%s">' . "\n", esc_attr( $alt ) );
+		}
+	}
+
+	/**
+	 * A BreadcrumbList for a page one step below the homepage.
+	 *
+	 * Shared because the contact page needs the same thing and building it
+	 * there separately is how two breadcrumbs end up disagreeing about the name
+	 * of the site. No @id: the only @ids here belong to the dealer, the FAQ,
+	 * the two stock lists and each car, and a crumb trail is not a thing worth
+	 * naming twice.
+	 */
+	public static function breadcrumb_ld( $name ) {
+		if ( ! Vesla_Settings::get( 'seo', 'enabled', 0 ) || '' === trim( (string) $name ) ) {
+			return;
+		}
+		$site = trailingslashit( Vesla_Publisher::site_url() );
+		echo '<script type="application/ld+json">'
+			. wp_json_encode(
+				array(
+					'@context'        => 'https://schema.org',
+					'@type'           => 'BreadcrumbList',
+					'itemListElement' => array(
+						array( '@type' => 'ListItem', 'position' => 1, 'name' => get_bloginfo( 'name' ), 'item' => $site ),
+						array( '@type' => 'ListItem', 'position' => 2, 'name' => $name ),
+					),
+				),
+				JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+			)
+			. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+	}
+
+	public static function page_head() {
+		$key   = self::$page_key;
+		$pages = self::pages();
+		if ( '' === $key || ! isset( $pages[ $key ] ) ) {
+			return;
+		}
+		$owner = $pages[ $key ]['owner'];
+		$name  = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
+		$url   = self::page_url( $key );
+		$head  = self::page_title( $key );
+		$desc  = self::plain( (string) Vesla_Settings::get( $owner, 'page_intro', '' ) );
+		if ( '' === $desc ) {
+			$desc = self::plain( (string) Vesla_Settings::get( $owner, 'lead', '' ) );
+		}
+		if ( '' === $desc && ! empty( $pages[ $key ]['rich'] ) ) {
+			/* Privacy and Terms have no lead and no intro -- they are a page of
+			   prose and nothing else. The opening of that prose is a truer
+			   description than no description at all, which is what a search engine
+			   was being given. */
+			$desc = self::plain( (string) Vesla_Settings::get( $owner, $pages[ $key ]['rich'], '' ) );
+		}
+		$desc  = $desc ? wp_html_excerpt( $desc, 155, '…' ) : '';
+		$title = trim( $head . ' — ' . $name );
+
+		printf( '<link rel="canonical" href="%s">' . "\n", esc_url( $url ) );
+		if ( $desc ) {
+			printf( '<meta name="description" content="%s">' . "\n", esc_attr( $desc ) );
+		}
+		printf( '<meta property="og:type" content="website">' . "\n" );
+		printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $title ) );
+		if ( $desc ) {
+			printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $desc ) );
+		}
+		printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $url ) );
+
+		self::share_image_ld();
+
+		if ( ! Vesla_Settings::get( 'seo', 'enabled', 0 ) ) {
+			return;
+		}
+		self::breadcrumb_ld( $head );
+
+		/* The two pages that carry a kind of their own, and only those two. The
+		   questions belong to /faq/ now, and the definitive list of cars belongs
+		   to /stock/ -- which is where all of them actually are. Nothing else
+		   gets a type: repeating the dealer or the organisation on every page is
+		   the duplication this is trying to avoid. */
+		if ( 'faq' === $key ) {
+			$faq = Vesla_Settings::get( 'faq' );
+			$qs  = array();
+			foreach ( (array) $faq['items'] as $item ) {
+				if ( empty( $item['q'] ) || empty( $item['a'] ) ) {
+					continue;
+				}
+				$qs[] = array(
+					'@type'          => 'Question',
+					'name'           => $item['q'],
+					'acceptedAnswer' => array( '@type' => 'Answer', 'text' => self::plain( $item['a'] ) ),
+				);
+			}
+			if ( $qs ) {
+				echo '<script type="application/ld+json">'
+					. wp_json_encode(
+						array(
+							'@context'   => 'https://schema.org',
+							'@type'      => 'FAQPage',
+							'@id'        => $url . '#faq',
+							'mainEntity' => $qs,
+						),
+						JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+					)
+					. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+			}
+		}
+
+		if ( 'stock' === $key ) {
+			/* All of them, and a different @id from the homepage's eight. Two lists
+			   describing different sets of cars are two lists; the same @id would
+			   have made them one node contradicting itself. */
+			$items = self::stock_items( 0 );
+			if ( $items ) {
+				echo '<script type="application/ld+json">'
+					. wp_json_encode(
+						array(
+							'@context'        => 'https://schema.org',
+							'@type'           => 'ItemList',
+							'@id'             => $url . '#stock-all',
+							'name'            => $head,
+							'numberOfItems'   => count( $items ),
+							'itemListElement' => $items,
+						),
+						JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+					)
+					. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+			}
+		}
+	}
+
+	/**
+	 * The page itself: the site's header, one h1, the sections, the footer.
+	 *
+	 * The h1 is the page's own heading and is the ONLY one on the page -- the
+	 * sections below it open at h2, which is what they already do on the
+	 * homepage, where the hero holds the h1.
+	 */
+	public static function page_body() {
+		$key   = self::$page_key;
+		$pages = self::pages();
+		if ( '' === $key || ! isset( $pages[ $key ] ) ) {
+			return;
+		}
+		$page  = $pages[ $key ];
+		$owner = $page['owner'];
+		$head  = self::page_title( $key );
+		$intro = (string) Vesla_Settings::get( $owner, 'page_intro', '' );
+		?>
+		<div class="page page-<?php echo esc_attr( $key ); ?>">
+			<?php self::header_bar(); ?>
+
+			<main id="main">
+				<div class="shell page-top">
+					<nav class="vp-crumbs" aria-label="<?php esc_attr_e( 'Breadcrumb', 'vesla-landing' ); ?>">
+						<a href="<?php echo esc_url( self::site_link() ); ?>"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></a>
+						<span aria-hidden="true">/</span>
+						<span aria-current="page"><?php echo esc_html( $head ); ?></span>
+					</nav>
+					<h1 class="page-title"><?php echo esc_html( $head ); ?></h1>
+					<?php if ( '' !== $intro ) : ?>
+						<p class="page-intro"><?php Vesla_Render::t( $owner . '.page_intro', $intro ); ?></p>
+					<?php endif; ?>
+				</div>
+
+				<?php
+				/* Full length, the same methods the homepage calls. One set of
+				   markup, one set of fields, two places it appears. */
+				foreach ( $page['sections'] as $section ) {
+					if ( is_callable( array( __CLASS__, $section ) ) ) {
+						call_user_func( array( __CLASS__, $section ) );
+					}
+				}
+				?>
+
+				<?php
+				/* A page that is prose rather than sections. Run through the same
+				   filter the rich fields elsewhere go through, so what an editor can
+				   put on a legal page is what they can put anywhere else and no
+				   more. */
+				if ( ! empty( $page['rich'] ) ) :
+					$prose = (string) Vesla_Settings::get( $owner, $page['rich'], '' );
+					if ( '' !== trim( $prose ) ) :
+						?>
+						<section class="sec">
+							<div class="shell prose reveal">
+								<?php echo wp_kses_post( wpautop( $prose ) ); ?>
+							</div>
+						</section>
+						<?php
+					endif;
+				endif;
+				?>
+			</main>
+
+			<?php self::footer(); ?>
+			<?php
+			/* The same floating chrome the homepage has -- back to top, and the
+			   call and WhatsApp bar. A reader who has just read the certification
+			   stages is exactly the reader that bar is for, and a page without it
+			   is a page they have to scroll back up to act from. */
+			self::floating();
+			?>
+		</div>
+		<?php
+	}
+
 	public static function contact_head() {
 		$c    = self::contact_page_copy();
 		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
@@ -7727,6 +8503,8 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $desc ) );
 		}
 		printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $url ) );
+		self::share_image_ld();
+		self::breadcrumb_ld( $c['heading'] );
 	}
 
 	/**
@@ -7830,6 +8608,28 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 *                            than lazily. True for what is on screen at
 	 *                            once and false for everything else.
 	 */
+	/** 'reserved', 'sold', or '' for a car that is simply on the floor. */
+	public static function car_status( $car ) {
+		$s = isset( $car['status'] ) ? (string) $car['status'] : '';
+		return in_array( $s, array( 'reserved', 'sold' ), true ) ? $s : '';
+	}
+
+	/**
+	 * Is this car new to the floor?
+	 *
+	 * Reads both shapes it arrives in. The stored field is the string 'yes'
+	 * from the editor; the payload app.js re-renders from carries the answer as
+	 * a boolean, and card_html() is handed that payload -- so a check for 'yes'
+	 * alone was false for every card the grid drew, which is all of them.
+	 */
+	public static function car_arrived( $car ) {
+		if ( ! isset( $car['arrived'] ) ) {
+			return false;
+		}
+		$v = $car['arrived'];
+		return true === $v || 'yes' === $v || 1 === $v || '1' === $v;
+	}
+
 	public static function card_html( $car, $ctx = null, $args = array() ) {
 		if ( null === $ctx ) {
 			$ctx = self::card_context();
@@ -7847,7 +8647,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		$wa_text  = $ctx['wa_text'];
 
 		$name  = trim( $car['make'] . ' ' . $car['model'] );
-		$price = $car['price'] ? trim( $ctx['currency'] . ' ' . number_format_i18n( (int) $car['price'] ) ) : '';
+		/* A sold car shows no price. What it went for is between the showroom
+		   and the buyer, and a price beside SOLD reads as an offer rather than
+		   a record. */
+		$price = ( $car['price'] && 'sold' !== Vesla_Render::car_status( $car ) )
+			? trim( $ctx['currency'] . ' ' . number_format_i18n( (int) $car['price'] ) )
+			: '';
 		$img   = $car['image'];
 
 		$specs = array();
@@ -7864,7 +8669,22 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			<article class="card<?php echo $later ? ' card-later' : ''; ?>"
 			         style="animation-delay:<?php echo (int) ( min( $i, 9 ) * 45 ); ?>ms">
 				<div class="card-media<?php echo $img && $img['url'] ? ' has-photo' : ''; ?>">
-					<?php if ( $badge ) : ?><span class="tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
+					<?php
+					/* The certified tag, and then whichever of the three states this car
+					   is in. Reserved and sold are facts about availability and come
+					   first; "just arrived" is a nudge and sits after. */
+					$status  = Vesla_Render::car_status( $car );
+					$labels  = Vesla_Settings::get( 'stock' );
+					?>
+					<?php if ( $badge && 'sold' !== $status ) : ?><span class="tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
+					<?php if ( 'reserved' === $status ) : ?>
+						<span class="tag tag-reserved"><?php echo esc_html( $labels['reserved_label'] ); ?></span>
+					<?php elseif ( 'sold' === $status ) : ?>
+						<span class="tag tag-sold"><?php echo esc_html( $labels['sold_label'] ); ?></span>
+					<?php endif; ?>
+					<?php if ( Vesla_Render::car_arrived( $car ) && 'sold' !== $status ) : ?>
+						<span class="tag tag-arrived"><?php echo esc_html( $labels['arrived_label'] ); ?></span>
+					<?php endif; ?>
 					<?php if ( $img && $img['url'] ) : ?>
 						<?php /* width and height are always written: without them the
 						         grid reflows as each photograph lands, which is the
@@ -7915,8 +8735,20 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						</ul>
 					<?php endif; ?>
 					<div class="card-act">
-						<a class="btn btn-line js-enq" href="#contact"><?php echo esc_html( $enquire ); ?></a>
-						<?php if ( $wa ) : ?>
+						<?php
+						/* The point of the reserved state. A car somebody has already put a
+						   deposit on goes on being looked at, and every Enquire press on it
+						   is a telephone call the showroom answers with "that one has gone".
+						   The card stays -- it is still worth seeing what has been moving --
+						   and the two buttons that ask about it do not. */
+						$quiet = '' !== Vesla_Render::car_status( $car );
+						?>
+						<?php if ( $quiet ) : ?>
+							<span class="card-quiet"><?php echo esc_html( 'sold' === Vesla_Render::car_status( $car ) ? $labels['sold_note'] : $labels['reserved_note'] ); ?></span>
+						<?php else : ?>
+							<a class="btn btn-line js-enq" href="<?php echo esc_url( self::menu_href( '#contact' ) ); ?>"><?php echo esc_html( $enquire ); ?></a>
+						<?php endif; ?>
+						<?php if ( $wa && ! $quiet ) : ?>
 							<a class="btn btn-wa"
 							   href="<?php echo esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( sprintf( $wa_text, $name, $price ) ) ); ?>"
 							   target="_blank" rel="noopener"
@@ -8390,7 +9222,11 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				<nav class="nav" id="nav" aria-label="<?php esc_attr_e( 'Main menu', 'vesla-landing' ); ?>">
 					<?php foreach ( $menu as $item ) : ?>
 						<?php if ( $item['label'] ) : ?>
-							<a href="<?php echo esc_url( self::menu_href( $item['link'] ) ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+							<?php /* A row with no destination is left out, not drawn dead. */ ?>
+							<?php $href = self::menu_href( $item['link'], true ); ?>
+							<?php if ( '' !== $href ) : ?>
+								<a href="<?php echo esc_url( $href ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+							<?php endif; ?>
 						<?php endif; ?>
 					<?php endforeach; ?>
 				</nav>
@@ -9025,10 +9861,17 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		<?php
 	}
 
-	private static function stock() {
+	/**
+	 * @param bool $short Homepage version. The grid, the filters and the search
+	 *                    are identical either way -- this is what the homepage
+	 *                    is for, and shortening it would be shortening the site.
+	 *                    All $short adds is a link to /stock/ under the cars.
+	 */
+	private static function stock( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'stock' ) ) {
 			return;
 		}
+		$short = $short && self::page_live( 'stock' );
 		$s = Vesla_Settings::get( 'stock' );
 		?>
 		<section class="sec" id="stock">
@@ -9091,6 +9934,16 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						<?php echo esc_html( $s['more_label'] ); ?> <span id="more-n" class="more-n"></span>
 					</button>
 				</div>
+				<?php
+				/* Outside more-wrap on purpose. That div starts hidden and app.js
+				   unhides it only when there are cards left to reveal, so a link
+				   inside it would vanish with scripting off and on any filter that
+				   leaves nothing more to show -- which is exactly when somebody
+				   wants the full list. */
+				if ( $short ) {
+					self::page_more( 'stock' );
+				}
+				?>
 			</div>
 		</section>
 		<?php
@@ -9098,10 +9951,19 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 
 	/* ── certified ─────────────────────────────────────────────────────── */
 
-	private static function certified() {
+	/**
+	 * @param bool $short Homepage version: the heading, the lead and a link
+	 *                    through, without the five stages. Defaults to false so
+	 *                    every existing call site renders exactly what it did.
+	 */
+	private static function certified( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'certified' ) ) {
 			return;
 		}
+		/* Only shortened once there is somewhere to send them. With the page off
+		   the homepage keeps the whole section, because half a section and no
+		   link is worse than the long version. */
+		$short = $short && self::page_live( 'certified' );
 		$c = Vesla_Settings::get( 'certified' );
 		?>
 		<section class="sec sec-dark" id="certified">
@@ -9109,6 +9971,9 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				<?php if ( $c['eyebrow'] ) : ?><p class="eyebrow reveal"><?php echo esc_html( $c['eyebrow'] ); ?></p><?php endif; ?>
 				<h2 class="reveal"><?php echo esc_html( $c['heading'] ); ?></h2>
 				<?php if ( $c['lead'] ) : ?><p class="sec-lead reveal"><?php Vesla_Render::t( 'certified.lead', $c['lead'] ); ?></p><?php endif; ?>
+				<?php if ( $short ) : ?>
+					<?php self::page_more( 'certified' ); ?>
+				<?php else : ?>
 				<ol class="stages">
 					<?php foreach ( (array) $c['stages'] as $i => $st ) : ?>
 						<li class="reveal">
@@ -9118,8 +9983,33 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						</li>
 					<?php endforeach; ?>
 				</ol>
+				<?php endif; ?>
 			</div>
 		</section>
+		<?php
+	}
+
+	/**
+	 * The link from a homepage section to the page that carries it in full.
+	 *
+	 * Prints nothing when the page is switched off, which is what keeps the
+	 * homepage exactly as it was until somebody publishes a page: no dangling
+	 * link to a file that is not there.
+	 */
+	private static function page_more( $key ) {
+		if ( ! self::page_live( $key ) ) {
+			return;
+		}
+		$label = (string) Vesla_Settings::get( self::pages()[ $key ]['owner'], 'page_more_label', '' );
+		if ( '' === $label ) {
+			$label = __( 'Read more', 'vesla-landing' );
+		}
+		?>
+		<p class="sec-more reveal">
+			<a class="btn btn-line" href="<?php echo esc_url( self::rel( self::page_url( $key ) ) ); ?>">
+				<?php echo esc_html( $label ); ?>
+			</a>
+		</p>
 		<?php
 	}
 
@@ -9150,10 +10040,16 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 
 	/* ── record ────────────────────────────────────────────────────────── */
 
-	private static function record() {
+	/**
+	 * @param bool $short Homepage version: the headline and the lead, without
+	 *                    the at-a-glance table, which belongs on /about/ where
+	 *                    there is room to read it.
+	 */
+	private static function record( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'record' ) ) {
 			return;
 		}
+		$short = $short && self::page_live( 'about' );
 		$r = Vesla_Settings::get( 'record' );
 		?>
 		<section class="sec sec-mist" id="record">
@@ -9164,7 +10060,9 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					<?php if ( $r['lead'] ) : ?><p class="sec-lead"><?php Vesla_Render::t( 'record.lead', $r['lead'] ); ?></p><?php endif; ?>
 					<?php if ( $r['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'record.note', $r['note'] ); ?></p><?php endif; ?>
 				</div>
-				<?php if ( ! empty( $r['glance'] ) ) : ?>
+				<?php if ( $short ) : ?>
+					<?php self::page_more( 'about' ); ?>
+				<?php elseif ( ! empty( $r['glance'] ) ) : ?>
 					<dl class="glance reveal">
 						<?php foreach ( $r['glance'] as $g ) : ?>
 							<div><dt><?php echo esc_html( $g['label'] ); ?></dt><dd><?php echo esc_html( $g['value'] ); ?></dd></div>
@@ -9235,10 +10133,20 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 
 	/* ── sell ──────────────────────────────────────────────────────────── */
 
-	private static function sell() {
+	/**
+	 * @param bool $short Homepage version: the heading, the lead and a link,
+	 *                    without the longer explanation underneath.
+	 *
+	 *                    The estimator stays on BOTH. It is the most engaging
+	 *                    thing on the homepage and it captures a lead on its
+	 *                    own, so moving it to /sell/ would cost enquiries from
+	 *                    everyone who never got that far.
+	 */
+	private static function sell( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'sell' ) ) {
 			return;
 		}
+		$short = $short && self::page_live( 'sell' );
 		$s = Vesla_Settings::get( 'sell' );
 		?>
 		<section class="sec" id="sell">
@@ -9247,8 +10155,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					<?php if ( $s['eyebrow'] ) : ?><p class="eyebrow"><?php echo esc_html( $s['eyebrow'] ); ?></p><?php endif; ?>
 					<h2><?php echo esc_html( $s['heading'] ); ?></h2>
 					<?php if ( $s['lead'] ) : ?><p class="sec-lead"><?php Vesla_Render::t( 'sell.lead', $s['lead'] ); ?></p><?php endif; ?>
-					<?php if ( $s['body'] ) : ?><p><?php Vesla_Render::t( 'sell.body', $s['body'] ); ?></p><?php endif; ?>
-					<?php if ( $s['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'sell.note', $s['note'] ); ?></p><?php endif; ?>
+					<?php if ( ! $short ) : ?>
+						<?php if ( $s['body'] ) : ?><p><?php Vesla_Render::t( 'sell.body', $s['body'] ); ?></p><?php endif; ?>
+						<?php if ( $s['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'sell.note', $s['note'] ); ?></p><?php endif; ?>
+					<?php else : ?>
+						<?php self::page_more( 'sell' ); ?>
+					<?php endif; ?>
 				</div>
 
 				<?php
@@ -9380,6 +10292,191 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 *
 	 * @return array{0:float,1:float}
 	 */
+	/**
+	 * The Google Maps address for one branch, built from that branch's own row.
+	 *
+	 * There used to be a "Directions link" field beside the latitude and the
+	 * longitude, and it won. So the pin and the button read different fields and
+	 * could point at different places -- and did: the stored link was written
+	 * once by hand and never moved again, so correcting the coordinates moved
+	 * the pin on the page and left the button pointing where it always had.
+	 *
+	 * COORDINATES DECIDE, NOT THE NAME. A name or an address has to be geocoded,
+	 * which means matched, and a match can be wrong -- there is more than one
+	 * "service centre" in Ras Al Khor. Coordinates are not matched; they are a
+	 * position. The name rides along as the pin's label so a driver sees where
+	 * they are going, but it never decides where that is.
+	 *
+	 * The one thing that would route to a door rather than to a point is a
+	 * Google Place ID, and there is no way to derive one from this record
+	 * without asking Google. It would also be a second field that can disagree
+	 * with the coordinates, which is the fault this replaced.
+	 *
+	 * Returns '' when there are no usable coordinates, and the caller prints no
+	 * button at all rather than one that goes nowhere.
+	 */
+	public static function branch_directions( $b ) {
+		$lat = trim( (string) ( isset( $b['lat'] ) ? $b['lat'] : '' ) );
+		$lng = trim( (string) ( isset( $b['lng'] ) ? $b['lng'] : '' ) );
+		if ( '' === $lat || '' === $lng || ! is_numeric( $lat ) || ! is_numeric( $lng ) ) {
+			return '';
+		}
+
+		/* The address is a textarea and arrives with its line breaks in it. */
+		$label = trim( (string) ( isset( $b['name'] ) ? $b['name'] : '' ) );
+		$addr  = (string) ( isset( $b['address'] ) ? $b['address'] : '' );
+		$addr  = trim( (string) preg_replace( '/[[:space:]]+/', ' ', $addr ) );
+		$name  = trim( $label . ( '' !== $addr ? ', ' . $addr : '' ) );
+
+		/* q=lat,lng(label) -- the long-standing Google form that carries a
+		   position and a name together. The position is what it navigates to; the
+		   label is only what it shows. Parentheses are part of the format, so a
+		   pair inside the name would end the label early and is replaced. */
+		$url = 'https://www.google.com/maps?q=' . rawurlencode( $lat ) . ',' . rawurlencode( $lng );
+		if ( '' !== $name ) {
+			/* A pair of brackets inside the name would close the label early, so
+			   they become spaces -- and the spaces that leaves are collapsed, or
+			   "Showroom 101 (Old Market), Ras Al Khor" arrives with a gap and a
+			   stranded comma. */
+			$name = str_replace( array( '(', ')' ), ' ', $name );
+			$name = trim( (string) preg_replace( '/[[:space:]]+,/', ',', (string) preg_replace( '/[[:space:]]+/', ' ', $name ) ) );
+			$url .= '(' . rawurlencode( $name ) . ')';
+		}
+		return $url;
+	}
+
+	/**
+	 * The finance page's body.
+	 *
+	 * The only page renderer that is not also a homepage section, because
+	 * finance has no homepage section: it is reached from the menu.
+	 *
+	 * The calculator is the SAME SUM as the one on a car page, and reads the
+	 * same rate, deposit and term from the vehicle settings. Two calculators
+	 * quoting different monthly figures for the same car would be worse than
+	 * having only one, so there is one set of numbers and this page borrows it.
+	 * What differs is only where the price comes from -- typed here, taken from
+	 * the car there.
+	 */
+	/**
+	 * The sold page: what has already gone.
+	 *
+	 * The same card as the grid, through the same card_html(). There is no
+	 * second template -- a sold card differs by what card_html() already knows
+	 * about a sold car: the SOLD badge instead of the certified one, no price,
+	 * and no buttons asking about a car nobody can buy.
+	 */
+	private static function sold_page() {
+		$s    = Vesla_Settings::get( 'sold' );
+		$cars = Vesla_Rest::cars( true );
+		?>
+		<section class="sec" id="sold">
+			<div class="shell">
+				<?php if ( ! $cars ) : ?>
+					<p class="sec-lead reveal"><?php echo esc_html( $s['empty_text'] ); ?></p>
+				<?php else : ?>
+					<div class="grid">
+						<?php
+						$ctx = null;
+						foreach ( $cars as $i => $car ) {
+							echo self::card_html( $car, $ctx, array( 'i' => $i, 'later' => false, 'eager' => $i < 4 ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped within.
+						}
+						?>
+					</div>
+				<?php endif; ?>
+			</div>
+		</section>
+		<?php
+	}
+
+	private static function finance_page() {
+		$f   = Vesla_Settings::get( 'finance' );
+		$veh = Vesla_Settings::get( 'vehicle' );
+		$cur = (string) Vesla_Settings::get( 'stock', 'currency', '' );
+		?>
+		<section class="sec" id="finance">
+			<div class="shell">
+
+				<?php if ( ! empty( $f['steps'] ) ) : ?>
+					<?php if ( $f['steps_title'] ) : ?>
+						<h2 class="reveal"><?php echo esc_html( $f['steps_title'] ); ?></h2>
+					<?php endif; ?>
+					<ol class="stages">
+						<?php foreach ( (array) $f['steps'] as $i => $st ) : ?>
+							<li class="reveal">
+								<span class="num"><?php echo esc_html( str_pad( $i + 1, 2, '0', STR_PAD_LEFT ) ); ?></span>
+								<h3><?php echo esc_html( $st['title'] ); ?></h3>
+								<p><?php Vesla_Render::t( 'finance.steps.text', $st['text'] ); ?></p>
+							</li>
+						<?php endforeach; ?>
+					</ol>
+				<?php endif; ?>
+
+				<div class="fin-grid">
+					<?php if ( ! empty( $f['docs'] ) ) : ?>
+						<div class="reveal">
+							<?php if ( $f['docs_title'] ) : ?>
+								<h2><?php echo esc_html( $f['docs_title'] ); ?></h2>
+							<?php endif; ?>
+							<ul class="fin-docs">
+								<?php foreach ( (array) $f['docs'] as $d ) : ?>
+									<li>
+										<b><?php echo esc_html( $d['item'] ); ?></b>
+										<?php if ( ! empty( $d['note'] ) ) : ?>
+											<span><?php echo esc_html( $d['note'] ); ?></span>
+										<?php endif; ?>
+									</li>
+								<?php endforeach; ?>
+							</ul>
+						</div>
+					<?php endif; ?>
+
+					<?php if ( $f['calc_enabled'] ) : ?>
+						<?php /* The figures travel on the element, the way a car page
+						         carries them on .vp-fin, so the script never has to know
+						         which page it is on. */ ?>
+						<form class="est fin-calc reveal" id="fin-calc" novalidate
+						      data-rate="<?php echo esc_attr( $veh['finance_rate'] ); ?>"
+						      data-down="<?php echo esc_attr( $veh['finance_down_pct'] ); ?>"
+						      data-years="<?php echo esc_attr( $veh['finance_years'] ); ?>">
+							<h3><?php echo esc_html( $f['calc_title'] ); ?></h3>
+							<label class="fin-price">
+								<?php echo esc_html( $f['calc_price_label'] ); ?>
+								<input type="number" id="fc-price" inputmode="numeric" min="0" step="1000"
+								       placeholder="<?php echo esc_attr( $cur . ' 100,000' ); ?>">
+							</label>
+							<div class="fin-row">
+								<label><?php esc_html_e( 'Deposit', 'vesla-landing' ); ?>
+									<output id="fc-down-v"></output>
+									<input type="range" id="fc-down" min="0" max="60" step="5" value="<?php echo esc_attr( (int) $veh['finance_down_pct'] ); ?>">
+								</label>
+								<label><?php esc_html_e( 'Loan length in years', 'vesla-landing' ); ?>
+									<output id="fc-years-v"></output>
+									<input type="range" id="fc-years" min="1" max="8" step="1" value="<?php echo esc_attr( (int) $veh['finance_years'] ); ?>">
+								</label>
+							</div>
+							<div class="est-out">
+								<span><?php esc_html_e( 'Estimated monthly payment', 'vesla-landing' ); ?></span>
+								<strong id="fc-month">—</strong>
+							</div>
+							<?php if ( $f['calc_note'] ) : ?>
+								<p class="note"><?php Vesla_Render::t( 'finance.calc_note', $f['calc_note'] ); ?></p>
+							<?php endif; ?>
+							<?php if ( $f['ask_label'] ) : ?>
+								<p class="fin-ask-wrap">
+									<a class="btn btn-gold" id="fc-ask" href="<?php echo esc_url( self::site_link( '#contact' ) ); ?>">
+										<?php echo esc_html( $f['ask_label'] ); ?>
+									</a>
+								</p>
+							<?php endif; ?>
+						</form>
+					<?php endif; ?>
+				</div>
+			</div>
+		</section>
+		<?php
+	}
+
 	public static function map_section() {
 		if ( ! Vesla_Settings::enabled( 'map' ) ) {
 			return;
@@ -9460,12 +10557,18 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 										</a>
 									</p>
 								<?php endif; ?>
-								<?php if ( $b['link_label'] ) : ?>
+								<?php
+								/* Both, not either: a branch with a button wording but no
+								   coordinates would otherwise draw a button with an empty
+								   address, which looks like a link and does nothing. */
+								$dirs = self::branch_directions( $b );
+								?>
+								<?php if ( $b['link_label'] && '' !== $dirs ) : ?>
 									<?php /* Google, deliberately: the map on the page is ours and shows
 									         only our pin, but directions are a thing people finish in
 									         the app already on their phone. */ ?>
 									<a class="btn btn-solid map-go"
-										href="<?php echo esc_url( $b['link'] ? $b['link'] : 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $lat . ',' . $lng ) ); ?>"
+										href="<?php echo esc_url( $dirs ); ?>"
 										target="_blank" rel="noopener">
 										<?php echo esc_html( $b['link_label'] ); ?>
 									</a>
@@ -9649,7 +10752,10 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						<p class="foot-lbl" id="fl-explore"><?php echo esc_html( $f['nav_title'] ); ?></p>
 						<ul class="foot-nav">
 							<?php foreach ( $f['nav'] as $n ) : ?>
-								<li><a href="<?php echo esc_url( self::menu_href( $n['link'] ) ); ?>"><?php echo esc_html( $n['label'] ); ?></a></li>
+								<?php $fhref = self::menu_href( $n['link'], true ); ?>
+								<?php if ( '' !== $fhref ) : ?>
+									<li><a href="<?php echo esc_url( $fhref ); ?>"><?php echo esc_html( $n['label'] ); ?></a></li>
+								<?php endif; ?>
 							<?php endforeach; ?>
 						</ul>
 					</nav>
@@ -9697,6 +10803,36 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					<p class="copy"><?php echo esc_html( str_replace( '{year}', gmdate( 'Y' ), $f['copyright'] ) ); ?></p>
 				<?php endif; ?>
 				<?php if ( $f['meta'] ) : ?><p class="foot-meta"><?php echo esc_html( $f['meta'] ); ?></p><?php endif; ?>
+
+				<?php
+				/* Privacy and Terms, listed here and nowhere else.
+				
+				   They were published and unreachable: nothing on the site linked to
+				   either, which makes them orphans -- pages a crawler only finds
+				   because the sitemap mentions them, and a reader never finds at all.
+				   The footer is where a reader looks for them, so that is where they
+				   go.
+				
+				   Built from page_live() rather than from a repeater somebody fills
+				   in: a link to a legal page that has been switched off is worse than
+				   no link, and this way the two cannot disagree. */
+				$legal = array();
+				foreach ( array( 'privacy', 'terms' ) as $lk ) {
+					if ( self::page_live( $lk ) ) {
+						$legal[] = array(
+							'url'   => self::rel( self::page_url( $lk ) ),
+							'label' => self::page_title( $lk ),
+						);
+					}
+				}
+				?>
+				<?php if ( $legal ) : ?>
+					<ul class="foot-legal">
+						<?php foreach ( $legal as $l ) : ?>
+							<li><a href="<?php echo esc_url( $l['url'] ); ?>"><?php echo esc_html( $l['label'] ); ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
 			</div>
 		</footer>
 		<?php
@@ -12151,7 +13287,12 @@ class Vesla_Rest {
 	 * started and abandoned in the editor and is dropped rather than published
 	 * as a nameless listing.
 	 */
-	public static function cars() {
+	/**
+	 * @param bool $sold_only Sold cars instead of the ones on the floor. The
+	 *                        sold page passes true; everything else takes the
+	 *                        default and never sees a sold car.
+	 */
+	public static function cars( $sold_only = false ) {
 		$stock = Vesla_Settings::get( 'stock' );
 		$out   = array();
 
@@ -12159,6 +13300,16 @@ class Vesla_Rest {
 			$make  = trim( (string) $car['make'] );
 			$model = trim( (string) $car['model'] );
 			if ( '' === $make && '' === $model ) {
+				continue;
+			}
+
+			/* Sold cars leave the floor. Filtered here rather than in the grid,
+			   because the grid is not the only thing reading this -- the payload
+			   app.js re-renders from, the ItemList in the structured data and the
+			   price range all come through here, and a sold car showing in any one
+			   of them is the same wrong answer in a different place. */
+			$is_sold = 'sold' === Vesla_Render::car_status( $car );
+			if ( $is_sold !== (bool) $sold_only ) {
 				continue;
 			}
 
@@ -12199,6 +13350,10 @@ class Vesla_Rest {
 				'fuel'  => (string) $car['fuel'],
 				'seats' => (int) $car['seats'],
 				'image' => $image,
+				/* app.js rebuilds these cards, and cardFor() draws the same badges
+				   card_html() does -- so it needs the same two facts. */
+				'status'  => Vesla_Render::car_status( $car ),
+				'arrived' => Vesla_Render::car_arrived( $car ),
 			);
 		}
 
@@ -12754,7 +13909,14 @@ class Vesla_Publisher {
 			return $cpage;
 		}
 
-		$index = self::write_index_files( $dir, $cars['slugs'] );
+		/* Before the sitemap, for the same reason the Contact page is written
+		   before it: the sitemap lists what was actually put on disk. */
+		$pages = self::publish_pages( $dir );
+		if ( is_wp_error( $pages ) ) {
+			return $pages;
+		}
+
+		$index = self::write_index_files( $dir, $cars['slugs'], $pages );
 		if ( is_wp_error( $index ) ) {
 			return $index;
 		}
@@ -12930,6 +14092,119 @@ class Vesla_Publisher {
 	 * temporary file and moved into place, so a visitor arriving mid-write
 	 * never gets half a page.
 	 */
+	/**
+	 * Writes every page that is switched on, and returns the slugs written.
+	 *
+	 * Written the way the Contact page and the cars are: to a temporary file and
+	 * renamed into place, because a direct write is not atomic and a visitor
+	 * arriving mid-write gets half a page.
+	 *
+	 * A page that is switched off is not written and, more to the point, is not
+	 * returned -- the sitemap is built from what comes back, so it cannot list a
+	 * page that is not there.
+	 */
+	/**
+	 * Delete the folder of a page that has been switched off.
+	 *
+	 * Deliberately timid, because this is a recursive-delete shaped problem
+	 * and the blast radius of getting it wrong is somebody's website. Three
+	 * things have to be true before anything is removed:
+	 *
+	 *   1. the slug came from Vesla_Render::pages(), so it is one of ours and
+	 *      never a value from a request or a settings field;
+	 *   2. the folder holds exactly one entry, and it is index.html -- if
+	 *      anything else is in there it was not put there by this plugin, and
+	 *      deleting somebody else's work is worse than a page that lingers;
+	 *   3. the file goes first and the folder only if that succeeded, so a
+	 *      failure leaves the folder standing rather than half-emptied.
+	 *
+	 * Returns true only when the page is actually gone.
+	 */
+	private static function remove_page( $dir, $slug ) {
+		$folder = $dir . DIRECTORY_SEPARATOR . $slug;
+		if ( ! is_dir( $folder ) ) {
+			return false;
+		}
+
+		$found = scandir( $folder );
+		if ( ! is_array( $found ) ) {
+			return false;
+		}
+		$found = array_values( array_diff( $found, array( '.', '..' ) ) );
+		if ( array( 'index.html' ) !== $found ) {
+			return false;
+		}
+
+		if ( ! @unlink( $folder . DIRECTORY_SEPARATOR . 'index.html' ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors
+			return false;
+		}
+		return (bool) @rmdir( $folder ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+	}
+
+	private static function publish_pages( $dir ) {
+		$written = array();
+
+		foreach ( Vesla_Render::pages() as $key => $page ) {
+			if ( ! Vesla_Render::page_live( $key ) ) {
+				/* Off means off. Leaving the file behind meant a page switched
+				   off because something on it was wrong stayed readable by
+				   anybody holding the address -- out of the sitemap, out of the
+				   menu, and still served. The car pages have never had this
+				   problem because that whole folder is rebuilt on every publish;
+				   these are written in place, so removal has to be deliberate. */
+				self::remove_page( $dir, $page['slug'] );
+				continue;
+			}
+
+			$folder = $dir . DIRECTORY_SEPARATOR . $page['slug'];
+			if ( ! is_dir( $folder ) && ! wp_mkdir_p( $folder ) ) {
+				return new WP_Error(
+					'vesla_page_dir',
+					sprintf(
+						/* translators: 1: a page name. 2: a folder path. */
+						__( 'The %1$s page was not written: its folder could not be created at %2$s.', 'vesla-landing' ),
+						$key,
+						$folder
+					)
+				);
+			}
+
+			$html = self::build_page( $key );
+			if ( ! $html ) {
+				return new WP_Error(
+					'vesla_page_empty',
+					sprintf(
+						/* translators: %s: a page name. */
+						__( 'The %s page came out empty and was not written.', 'vesla-landing' ),
+						$key
+					)
+				);
+			}
+
+			$file = $folder . DIRECTORY_SEPARATOR . 'index.html';
+			$tmp  = $file . '.tmp-' . wp_generate_password( 6, false );
+			if ( false === file_put_contents( $tmp, $html ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions
+				return new WP_Error(
+					'vesla_page_write',
+					/* translators: %s: a page name. */
+					sprintf( __( 'Could not write the %s page.', 'vesla-landing' ), $key )
+				);
+			}
+			if ( ! @rename( $tmp, $file ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors
+				@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+				return new WP_Error(
+					'vesla_page_move',
+					/* translators: %s: a page name. */
+					sprintf( __( 'Could not put the new %s page in place.', 'vesla-landing' ), $key )
+				);
+			}
+
+			$written[] = $page['slug'];
+		}
+
+		return $written;
+	}
+
 	private static function publish_contact( $dir ) {
 		if ( ! Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
 			return true;
@@ -12961,15 +14236,44 @@ class Vesla_Publisher {
 		return true;
 	}
 
+	/**
+	 * One of the pages listed in Vesla_Render::pages(), as a complete document.
+	 *
+	 * $page_key does for these what $forced does for a car: document() takes
+	 * callbacks that accept nothing, so the page being written has to be said
+	 * somewhere both of them can read it. Cleared afterwards either way.
+	 */
+	private static function build_page( $key ) {
+		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
+		$head = Vesla_Render::page_title( $key );
+
+		Vesla_Render::$page_key = $key;
+		$html = self::document(
+			trim( $head . ' — ' . $name ),
+			array( 'Vesla_Render', 'page_head' ),
+			array( 'Vesla_Render', 'page_body' ),
+			'page'
+		);
+		Vesla_Render::$page_key = '';
+		return $html;
+	}
+
 	private static function build_contact() {
 		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
 		$head = Vesla_Settings::get( 'contact', 'page_heading', __( 'Come and see the car.', 'vesla-landing' ) );
-		return self::document(
+		/* Contact is away from the homepage too, and its skip link said so:
+		   "Skip to the cars" pointed at #stock, which is not on it. Borrowing
+		   $page_key is what tells menu_href that -- contact is not in pages(), so
+		   nothing else reads the value, only away_from_home() does. */
+		Vesla_Render::$page_key = 'contact';
+		$html = self::document(
 			trim( $head . ' — ' . $name ),
 			array( 'Vesla_Render', 'contact_head' ),
 			array( 'Vesla_Render', 'contact_page' ),
 			'contact'
 		);
+		Vesla_Render::$page_key = '';
+		return $html;
 	}
 
 	private static function build_car( $car ) {
@@ -13033,7 +14337,7 @@ class Vesla_Publisher {
 	 * date the content was last saved: a lastmod that moves every time the file
 	 * is rewritten teaches a crawler that the date means nothing.
 	 */
-	private static function write_index_files( $dir, array $slugs ) {
+	private static function write_index_files( $dir, array $slugs, array $pages = array() ) {
 		$site = trailingslashit( self::site_url() );
 		$when = gmdate( 'Y-m-d', (int) get_option( 'vesla_content_saved_at', time() ) );
 
@@ -13044,6 +14348,13 @@ class Vesla_Publisher {
 		   which is worse than not listing it -- and the same setting governs
 		   both, so the two cannot disagree. Monthly and 0.5: the address and
 		   the opening hours change, but not weekly the way the stock does. */
+		/* The pages that were actually written, in the order pages() lists them.
+		   Below the homepage and above the cars: they are what a reader browses
+		   towards a car through, so that is where they sit. */
+		foreach ( $pages as $slug ) {
+			$urls[] = array( 'loc' => $site . $slug . '/', 'pri' => '0.7', 'freq' => 'weekly' );
+		}
+
 		if ( Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
 			$urls[] = array( 'loc' => $site . 'contact/', 'pri' => '0.5', 'freq' => 'monthly' );
 		}

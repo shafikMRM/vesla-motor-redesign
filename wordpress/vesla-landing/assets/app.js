@@ -325,11 +325,23 @@
     if (car.seats) last.push(esc(car.seats) + ' ' + esc(LABELS.seats || ''));
     if (last.length) specs.push(last.join(' &middot; '));
 
-    var price = aed(car.price);
+    /* Same rule as card_html(): a sold car shows no price. */
+    var price = car.status === 'sold' ? '' : aed(car.price);
 
     el.innerHTML =
       '<div class="card-media">' +
-        (LABELS.badge ? '<span class="tag">' + esc(LABELS.badge) + '</span>' : '') +
+        /* The same three badges card_html() prints, in the same order and
+           with the same classes. If one changes, change the other: what PHP
+           writes is what a crawler reads and this is what a visitor sees,
+           and they are meant to be one card. */
+        ((LABELS.badge && car.status !== 'sold')
+          ? '<span class="tag">' + esc(LABELS.badge) + '</span>' : '') +
+        (car.status === 'reserved'
+          ? '<span class="tag tag-reserved">' + esc(LABELS.reserved || '') + '</span>' : '') +
+        (car.status === 'sold'
+          ? '<span class="tag tag-sold">' + esc(LABELS.soldLabel || '') + '</span>' : '') +
+        ((car.arrived && car.status !== 'sold')
+          ? '<span class="tag tag-arrived">' + esc(LABELS.arrived || '') + '</span>' : '') +
         media + '</div>' +
       '<div class="card-body">' +
         '<div class="card-top">' +
@@ -358,11 +370,15 @@
              the same URL: extra tab stops, extra work for a crawler deciding
              what the card is for, and one more thing between the reader and
              the two actions that actually differ, enquiring and WhatsApp. */
-          '<a class="btn btn-line js-enq" href="#contact">' + esc(LABELS.enquire || '') + '</a>' +
+          (car.status
+            ? '<span class="card-quiet">' +
+                esc(car.status === 'sold' ? (LABELS.soldNote || '') : (LABELS.reservedNote || '')) +
+              '</span>'
+            : '<a class="btn btn-line js-enq" href="#contact">' + esc(LABELS.enquire || '') + '</a>') +
           /* the WhatsApp button exists only when a number has been entered in
              the settings — an empty href would look like a working button and
              go nowhere */
-          (WA_NUMBER
+          ((WA_NUMBER && !car.status)
             ? '<a class="btn btn-wa" href="' + esc(waHref(car)) + '" target="_blank" rel="noopener" ' +
                  'aria-label="' + esc(fmt(LABELS.waAria, car.year + ' ' + car.make + ' ' + car.model)) + '">' +
                 '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.6 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.5-.3.3c-.1.1-.2.3 0 .5.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.5-.1l.8-.9c.2-.2.3-.2.5-.1l2 1c.2.1.4.2.4.3.1.2.1.7-.1 1.3z"/></svg>' +
@@ -377,12 +393,31 @@
        link -- middle-click opens a tab, hover shows the address, a crawler
        follows it -- and the buttons on top of it still work. */
 
-    // Prefill the enquiry form with whichever car the visitor clicked.
-    $('.js-enq', el).addEventListener('click', function () {
+    /* Prefill the enquiry form with whichever car the visitor clicked.
+
+       Guarded: a reserved or sold card has no Enquire button -- that is the
+       point of those states -- and an unguarded null here threw inside
+       addBatch(), which killed the whole batch. One reserved car in the
+       results and the grid drew nothing at all. */
+    var enqLink = $('.js-enq', el);
+    if (enqLink) enqLink.addEventListener('click', function () {
+      var named = car.make + ' ' + car.model + ' (' + car.year + ')';
       var f = $('#q-car');
-      if (f) f.value = car.make + ' ' + car.model + ' (' + car.year + ')';
-      var t = $('#q-type');
-      if (t) t.value = 'car';
+      if (f) {
+        /* The form is on this page -- the homepage. Fill it in directly. */
+        f.value = named;
+        var t = $('#q-type');
+        if (t) t.value = 'car';
+        return;
+      }
+      /* No form here, so this link is leaving for the contact page. Hand the
+         car over the way the car pages do, or a buyer who pressed Enquire on
+         one particular car arrives at an empty box. */
+      try {
+        sessionStorage.setItem('vesla-enq', JSON.stringify({
+          car: named, type: 'car', details: null
+        }));
+      } catch (e) {}
     });
 
     // If a photo 404s, drop back to the placeholder rather than a broken icon.
@@ -1337,6 +1372,80 @@
     }
   }
 
+  /* ---------------- the finance page's calculator ----------------
+     The same sum as the one on a car page, deliberately: flat-rate interest,
+     which is how car finance is quoted in the UAE. The whole interest is
+     worked out on the amount borrowed for the whole term, then the total is
+     divided by the months. A reducing-balance sum gives a smaller number than
+     the showroom would quote, which is the wrong way to be wrong.
+
+     If this and vehicle.js ever disagree, one of them is lying to somebody
+     about what a car costs them each month. The rate, the deposit and the
+     term come from the same settings for both. */
+  var fcal = $('#fin-calc');
+  if (fcal) {
+    var fcPrice = $('#fc-price');
+    var fcDown  = $('#fc-down');
+    var fcYears = $('#fc-years');
+    var fcMonth = $('#fc-month');
+
+    var fcNum = function (v, fallback) {
+      var n = parseFloat(String(v == null ? '' : v).replace(',', '.'));
+      return isNaN(n) ? fallback : n;
+    };
+    var fcRate = fcNum(fcal.dataset.rate, 0);
+    var fcCur  = CFG.currency || '';
+    var fcMoney = function (n) {
+      try { return fcCur + ' ' + n.toLocaleString(CFG.locale || undefined); }
+      catch (e) { return fcCur + ' ' + n; }
+    };
+
+    var fcRun = function () {
+      var price = Math.max(0, fcNum(fcPrice.value, 0));
+      var pct   = Number(fcDown.value);
+      var yrs   = Number(fcYears.value);
+      var dep   = Math.round(price * pct / 100);
+
+      $('#fc-down-v').textContent  = fcMoney(dep) + '  ·  ' + pct + '%';
+      $('#fc-years-v').textContent = yrs;
+
+      /* No price, no figure. A monthly payment of AED 0 reads as an answer
+         rather than as the absence of one. */
+      if (!price) { fcMonth.textContent = '—'; return; }
+
+      var loan   = price - dep;
+      var months = yrs * 12;
+      var total  = loan + (loan * (fcRate / 100) * yrs);
+      fcMonth.textContent = fcMoney(months ? Math.round(total / months) : 0);
+    };
+
+    [fcPrice, fcDown, fcYears].forEach(function (el) {
+      if (el) { el.addEventListener('input', fcRun); }
+    });
+    fcRun();
+
+    /* The figures go with the enquiry, the same way the car page's do, so the
+       call back starts from what they were looking at. */
+    var fcAsk = $('#fc-ask');
+    if (fcAsk) {
+      fcAsk.addEventListener('click', function () {
+        if (!fcPrice.value) { return; }
+        var L = CFG.labels || {};
+        var d = {};
+        d[L.finPrice || 'Price']       = fcMoney(Math.round(fcNum(fcPrice.value, 0)));
+        d[L.finDown || 'Deposit']      = $('#fc-down-v').textContent.trim();
+        d[L.finYears || 'Years']       = $('#fc-years-v').textContent.trim();
+        d[L.finPerMonth || 'Per month'] = fcMonth.textContent.trim();
+        d[L.finRate || 'Rate quoted']  = fcRate + '%';
+        try {
+          sessionStorage.setItem('vesla-enq', JSON.stringify({
+            car: '', type: 'finance', details: d
+          }));
+        } catch (e) {}
+      });
+    }
+  }
+
   /* ---------------- enquiry form ----------------
      Checked here as the visitor types, then posted to WordPress, which checks
      everything again before it is trusted. */
@@ -1561,7 +1670,20 @@
     el.addEventListener('blur', function () { validateField(el); });
   });
 
-  enq.addEventListener('submit', function (ev) {
+  /* Guarded, and the guard is load-bearing.
+
+     Certified, Sell, About, Stock, Privacy and Terms all load this file and
+     none of them carries the enquiry form -- it lives in the contact section,
+     which those pages do not render. An unguarded null here threw, and
+     because the whole file is one IIFE the throw took everything below it:
+     the scroll-reveal observer among them, so every .reveal on those pages
+     stayed at opacity 0 and the pages rendered blank for anybody with
+     scripting on. With scripting OFF they were fine, which is exactly why a
+     no-JavaScript check did not catch it.
+
+     Written as a single-statement if so the handler below keeps its
+     indentation: the whole addEventListener call is one statement. */
+  if (enq) enq.addEventListener('submit', function (ev) {
     ev.preventDefault();
 
     var firstBad = null;
@@ -1745,7 +1867,10 @@
   else if (wide.addListener) wide.addListener(syncNav);
   syncNav(wide);
 
-  totop.addEventListener('click', function () {
+  /* Same guard, same reason as the enquiry form above: this is the floating
+     chrome, and a page that does not render it left totop null -- which threw,
+     and took the scroll handlers, the reveal observer and the router with it. */
+  if (totop) totop.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   });
 
@@ -1927,7 +2052,15 @@
 
   /* ---------------- active nav link ---------------- */
   var links = $$('#nav a');
-  var secs  = links.map(function (a) { return $(a.getAttribute('href')); })
+
+  /* Only the links that are still fragments. A menu item pointing at a page
+     -- '/stock/' -- is not a selector, and handing it to querySelector throws
+     a SyntaxError rather than returning null, which took every line of this
+     file below here down with it on every page including the homepage. */
+  var secs  = links.map(function (a) {
+                     var href = a.getAttribute('href') || '';
+                     return ('#' === href.charAt(0) && href.length > 1) ? $(href) : null;
+                   })
                    .filter(Boolean);
 
   if ('IntersectionObserver' in window && secs.length) {

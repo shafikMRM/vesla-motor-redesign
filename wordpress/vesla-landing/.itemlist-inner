@@ -1,0 +1,80 @@
+			$currency = Vesla_Settings::get( 'stock', 'currency', '' );
+			$items    = array();
+			$position = 0;
+
+			foreach ( $stock['cars'] as $car ) {
+				if ( empty( $car['make'] ) && empty( $car['model'] ) ) {
+					continue;
+				}
+				$position++;
+
+				$photo = '';
+				if ( ! empty( $car['photo'] ) ) {
+					$photo = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
+				} elseif ( ! empty( $car['photo_file'] ) ) {
+					$photo = VESLA_URL . ltrim( $car['photo_file'], '/' );
+				}
+
+				/* The same identifier the car's own page publishes, so the listing
+				   here and the page over there are one thing described twice
+				   rather than two cars that happen to match. Without it a crawler
+				   is entitled to treat them as separate stock. */
+				$entry = array(
+					'@id'           => self::car_id( $car ),
+					'@type'         => 'Car',
+					'name'          => trim( $car['make'] . ' ' . $car['model'] ),
+					'brand'         => array( '@type' => 'Brand', 'name' => $car['make'] ),
+					'model'         => $car['model'],
+					'itemCondition' => 'https://schema.org/UsedCondition',
+				);
+				if ( $car['year'] ) {
+					$entry['vehicleModelDate'] = (string) $car['year'];
+				}
+				if ( $car['body'] ) {
+					$entry['bodyType'] = $car['body'];
+				}
+				if ( $car['fuel'] ) {
+					$entry['fuelType'] = $car['fuel'];
+				}
+				if ( $car['trans'] ) {
+					$entry['vehicleTransmission'] = $car['trans'];
+				}
+				if ( $car['seats'] ) {
+					$entry['seatingCapacity'] = (int) $car['seats'];
+				}
+				if ( $car['km'] ) {
+					$entry['mileageFromOdometer'] = array(
+						'@type'    => 'QuantitativeValue',
+						'value'    => (int) $car['km'],
+						'unitCode' => 'KMT',
+					);
+				}
+				if ( $photo ) {
+					$entry['image'] = $photo;
+				}
+				if ( $car['price'] && $currency ) {
+					$entry['offers'] = array(
+						'@type'         => 'Offer',
+						'price'         => (int) $car['price'],
+						'priceCurrency' => $currency,
+						'availability'  => 'https://schema.org/InStock',
+						'seller'        => array( '@id' => $url . '#dealer' ),
+					);
+				}
+
+				$items[] = array(
+					'@type'    => 'ListItem',
+					'position' => $position,
+					'item'     => $entry,
+				);
+			}
+
+			if ( $items ) {
+				$graph[] = array(
+					'@type'           => 'ItemList',
+					'@id'             => $url . '#stock',
+					'name'            => Vesla_Settings::get( 'stock', 'heading', '' ),
+					'numberOfItems'   => count( $items ),
+					'itemListElement' => $items,
+				);
+			}
