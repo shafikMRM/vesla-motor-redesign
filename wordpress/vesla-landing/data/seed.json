@@ -877,5 +877,17 @@
     "ga_id": "",
     "plausible_domain": "",
     "plausible_host": ""
+  },
+  "privacy": {
+    "page_enabled": 0,
+    "page_heading": "Privacy policy",
+    "page_intro": "",
+    "body": "[The privacy policy goes here. What this site collects: the enquiry form stores a name, a telephone number, an optional email address and a message. The rate limit keeps a one-way hash of the IP address and never the address itself. Visitor statistics are collected only if switched on under Visitor statistics. Nothing else.]"
+  },
+  "terms": {
+    "page_enabled": 0,
+    "page_heading": "Terms",
+    "page_intro": "",
+    "body": "[The terms of business go here.]"
   }
 }

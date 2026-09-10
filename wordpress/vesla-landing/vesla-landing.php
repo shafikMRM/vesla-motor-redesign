@@ -379,7 +379,7 @@ class Vesla_Schema {
 							'link' => array(
 								'type'  => 'select',
 								'label' => __( 'Jumps to', 'vesla-landing' ),
-								'help'  => __( 'Every one of these is a place on this same page. Picking from the list is why a menu link cannot point at a section that does not exist.', 'vesla-landing' ),
+								'help'  => __( 'Picking from the list is why a menu link cannot point at a section that does not exist. Where a section has a page of its own, the menu link goes to that page instead of scrolling down this one, so the menu means the same thing wherever the reader is standing.', 'vesla-landing' ),
 								'choices' => array(
 									'' => __( '— not set —', 'vesla-landing' ),
 									'#stock' => __( 'Stock — the car grid', 'vesla-landing' ),
@@ -1898,6 +1898,56 @@ class Vesla_Schema {
 					),
 					'parent_name'   => array( 'type' => 'text', 'label' => __( 'Parent company name', 'vesla-landing' ), 'help' => __( 'Leave empty if there is none.', 'vesla-landing' ), ),
 					'parent_url'    => array( 'type' => 'url',  'label' => __( 'Parent company website', 'vesla-landing' ), ),
+				),
+			),
+			'privacy' => array(
+				'title'  => __( 'Privacy policy', 'vesla-landing' ),
+				'blurb'  => __( 'The privacy page, off until you switch it on. What is in it now is WordPress own starter text, written for a blog with comments and profile pictures — none of which this site has. Replace it before switching the page on.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the privacy page', 'vesla-landing' ),
+						'help'  => __( 'Publishes /privacy/ the next time the site is republished. Read what is below first: the starter text names things this site does not do.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'Optional. Leave it empty and the page starts with the policy itself.', 'vesla-landing' ),
+					),
+					'body' => array(
+						'type'  => 'rich',
+						'label' => __( 'The policy', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — this is WordPress starter text and most of it is about a blog. What this site actually does with personal information: the enquiry form stores a name, a telephone number, an optional email address and a message; the rate limit keeps a one-way hash of the sender IP address and never the address itself; and visitor statistics are collected only if you have switched them on under Visitor statistics. Nothing else is gathered. Have somebody who knows UAE requirements write the real thing.', 'vesla-landing' ),
+					),
+				),
+			),
+			'terms' => array(
+				'title'  => __( 'Terms', 'vesla-landing' ),
+				'blurb'  => __( 'The terms page, off until you switch it on. There is no starter text for this one: what your terms are is a question for whoever writes them, not for a plugin.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the terms page', 'vesla-landing' ),
+						'help'  => __( 'Publishes /terms/ the next time the site is republished.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'Optional. Leave it empty and the page starts with the terms themselves.', 'vesla-landing' ),
+					),
+					'body' => array(
+						'type'  => 'rich',
+						'label' => __( 'The terms', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace this before switching the page on. Nothing is written for you here, because a plugin inventing your terms of business would be worse than an empty page.', 'vesla-landing' ),
+					),
 				),
 			),
 			'analytics' => array(
@@ -7881,6 +7931,21 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				'owner'    => 'stock',
 				'sections' => array( 'brand_strip', 'stock' ),
 			),
+			/* These two are not a section of the homepage rendered somewhere else:
+			   they are a page of prose and nothing more. `rich` names the field on
+			   the owning section that holds it. */
+			'privacy' => array(
+				'slug'     => 'privacy',
+				'owner'    => 'privacy',
+				'sections' => array(),
+				'rich'     => 'body',
+			),
+			'terms' => array(
+				'slug'     => 'terms',
+				'owner'    => 'terms',
+				'sections' => array(),
+				'rich'     => 'body',
+			),
 		);
 	}
 
@@ -8018,6 +8083,25 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						call_user_func( array( __CLASS__, $section ) );
 					}
 				}
+				?>
+
+				<?php
+				/* A page that is prose rather than sections. Run through the same
+				   filter the rich fields elsewhere go through, so what an editor can
+				   put on a legal page is what they can put anywhere else and no
+				   more. */
+				if ( ! empty( $page['rich'] ) ) :
+					$prose = (string) Vesla_Settings::get( $owner, $page['rich'], '' );
+					if ( '' !== trim( $prose ) ) :
+						?>
+						<section class="sec">
+							<div class="shell prose reveal">
+								<?php echo wp_kses_post( wpautop( $prose ) ); ?>
+							</div>
+						</section>
+						<?php
+					endif;
+				endif;
 				?>
 			</main>
 
