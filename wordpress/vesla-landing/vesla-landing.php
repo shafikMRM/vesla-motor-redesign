@@ -6396,7 +6396,7 @@ class Vesla_Render {
 			wp_enqueue_script( 'vesla-map', VESLA_URL . 'assets/map.js', array(), vesla_asset_ver( 'assets/map.js' ), true );
 		}
 		if ( self::is_vehicle() ) {
-			wp_add_inline_script( 'vesla-vehicle', 'window.VESLA_DATA = ' . wp_json_encode( self::js_data() ) . ';', 'before' );
+			wp_add_inline_script( 'vesla-vehicle', 'window.VESLA_DATA = ' . wp_json_encode( self::js_data_vehicle() ) . ';', 'before' );
 		}
 
 		if ( $motion ) {
@@ -6683,6 +6683,32 @@ class Vesla_Render {
 		}
 		return $out;
 	}
+	/**
+	 * The slice of js_data() a car's own page actually uses.
+	 *
+	 * vehicle.js reads four keys and no others -- finance, labels, currency,
+	 * locale. The full payload also carries the whole stock array, carSpec, and
+	 * the estimator, loader and motion settings, none of which a car page has a
+	 * use for: roughly 12KB of JSON, 23% of the page, fetched and parsed on
+	 * every visit to draw one car.
+	 *
+	 * js_data() itself is left alone -- the landing page and the REST endpoint
+	 * both take it whole, and the payload shape is a contract with a separately
+	 * deployed front end.
+	 */
+	public static function js_data_vehicle() {
+		$all  = self::js_data();
+		$keep = array( 'finance', 'labels', 'currency', 'locale' );
+
+		$out = array();
+		foreach ( $keep as $key ) {
+			if ( isset( $all[ $key ] ) ) {
+				$out[ $key ] = $all[ $key ];
+			}
+		}
+		return $out;
+	}
+
 	public static function js_data() {
 		$stock = Vesla_Settings::get( 'stock' );
 		$cars  = array();
@@ -12609,7 +12635,7 @@ call_user_func( $head );
 /* The endpoint, and the content that was true when this file was written.
    app.js uses the second to render immediately and the first to refresh. */
 window.VESLA_REST = <?php echo wp_json_encode( $rest ); ?>;
-window.VESLA_DATA = <?php echo wp_json_encode( Vesla_Render::js_data() ); ?>;
+window.VESLA_DATA = <?php echo wp_json_encode( 'vehicle' === $kind ? Vesla_Render::js_data_vehicle() : Vesla_Render::js_data() ); ?>;
 window.VESLA_PRERENDERED = true;
 </script>
 </head>
