@@ -615,6 +615,22 @@ textarea{resize:vertical}
 .prose ul,.prose ol{margin:0 0 14px 20px}
 .prose li{margin:0 0 6px}
 
+/* ---------- what state a car is in ----------
+   The tags stack in the corner of the photograph beside the certified one.
+   Reserved and sold are facts about availability and read as such; just
+   arrived is a nudge and is the quietest of the three. */
+.card-media .tag + .tag{margin-top:6px}
+.tag-reserved{background:var(--ink);color:var(--paper);border:1px solid var(--paper)}
+.tag-sold{background:var(--paper);color:var(--ink);border:1px solid var(--ink)}
+.tag-arrived{background:var(--lemon,#F2ED28);color:#15150E}
+
+/* Where a reserved or sold car's buttons would have been. Not a button, and
+   not styled like one: there is nothing here to press. */
+.card-quiet{
+  display:inline-block;padding:9px 0;font-family:var(--label);
+  text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--steel);
+}
+
 /* Privacy and Terms, on the same line as the copyright. Quiet on purpose:
    they have to be findable, not prominent. */
 .foot-legal{

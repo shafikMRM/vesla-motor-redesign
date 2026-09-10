@@ -643,6 +643,15 @@ class Vesla_Schema {
 					),
 					'price_note' => array( 'type' => 'text', 'label' => __( 'Small wording under each price', 'vesla-landing' ), ),
 					'badge'      => array( 'type' => 'text', 'label' => __( 'Corner badge on each photo', 'vesla-landing' ), 'help' => __( 'Leave empty to remove the badge.', 'vesla-landing' ), ),
+					'reserved_label' => array( 'type' => 'text', 'label' => __( 'Badge on a reserved car', 'vesla-landing' ), ),
+					'reserved_note'  => array(
+						'type'  => 'text',
+						'label' => __( 'Wording shown instead of the buttons, on a reserved car', 'vesla-landing' ),
+						'help'  => __( 'A reserved car keeps its card and loses its Enquire and WhatsApp buttons. This is what stands in their place, so the card explains itself rather than simply going quiet.', 'vesla-landing' ),
+					),
+					'sold_label'     => array( 'type' => 'text', 'label' => __( 'Badge on a sold car', 'vesla-landing' ), ),
+					'sold_note'      => array( 'type' => 'text', 'label' => __( 'Wording shown instead of the buttons, on a sold car', 'vesla-landing' ), ),
+					'arrived_label'  => array( 'type' => 'text', 'label' => __( 'Badge on a just-arrived car', 'vesla-landing' ), ),
 					'warranty_note' => array( 'type' => 'text', 'label' => __( 'Small wording under the price, second line', 'vesla-landing' ), 'help' => __( 'Leave empty to remove it.', 'vesla-landing' ), ),
 					'enquire_label' => array( 'type' => 'text', 'label' => __( 'Button on each car — wording', 'vesla-landing' ), ),
 					'search_label' => array(
@@ -695,6 +704,26 @@ class Vesla_Schema {
 								'type'  => 'text',
 								'label' => __( 'Describe the photograph', 'vesla-landing' ),
 								'help'  => __( 'What is in the picture, for somebody who cannot see it — “silver saloon, front three-quarter view, in the showroom”. Not the car’s name: that is the heading right beside it, and repeating it tells a blind visitor nothing they did not already have.', 'vesla-landing' ),
+							),
+							'status' => array(
+								'group' => __( 'Where this car is up to', 'vesla-landing' ),
+								'type'  => 'select',
+								'label' => __( 'Status', 'vesla-landing' ),
+								'help'  => __( 'On the floor is the normal state. Reserved keeps the car in the grid with a badge and takes the Enquire button off it, so a car somebody has already put a deposit on stops generating telephone calls. Sold takes it out of the grid altogether and puts it on the sold page, with its photographs and without its price.', 'vesla-landing' ),
+								'choices' => array(
+									''         => __( 'On the floor', 'vesla-landing' ),
+									'reserved' => __( 'Reserved — deposit taken', 'vesla-landing' ),
+									'sold'     => __( 'Sold', 'vesla-landing' ),
+								),
+							),
+							'arrived' => array(
+								'type'  => 'select',
+								'label' => __( 'Just arrived', 'vesla-landing' ),
+								'help'  => __( 'Puts a "just arrived" badge on the card. Nothing else changes. Take it off when the car stops being new to the floor — a badge that is on every car says nothing.', 'vesla-landing' ),
+								'choices' => array(
+									''    => __( 'No', 'vesla-landing' ),
+									'yes' => __( 'Yes', 'vesla-landing' ),
+								),
 							),
 							'make'  => array( 'group' => __( 'What the car is', 'vesla-landing' ), 'type' => 'brand', 'label' => __( 'Brand', 'vesla-landing' ), 'help' => __( 'Chosen from the brands under Vehicles → Car brands. Add the brand there first, with its logo, and it appears on this list. This is also what fills the “Make” filter and the strip of makes above the cars.', 'vesla-landing' ), ),
 							'model' => array( 'type' => 'text', 'label' => __( 'Model', 'vesla-landing' ), ),
@@ -1991,6 +2020,28 @@ class Vesla_Schema {
 						'help'  => __( 'This is an estimate a buyer may act on. Say plainly that it is one, and that the real figure depends on the finance they are approved for.', 'vesla-landing' ),
 					),
 					'ask_label' => array( 'type' => 'text', 'label' => __( 'Wording on the button under the figure', 'vesla-landing' ) ),
+				),
+			),
+			'sold' => array(
+				'title'  => __( 'Sold cars', 'vesla-landing' ),
+				'blurb'  => __( 'A page of what has already gone, with the photographs and without the prices. A car appears here when its status is set to Sold on the car itself; nothing has to be listed twice.', 'vesla-landing' ),
+				'fields' => array(
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Publish the sold page', 'vesla-landing' ),
+						'help'  => __( 'Worth having: a page of cars that have gone is evidence that they go. It carries no prices.', 'vesla-landing' ),
+					),
+					'page_heading' => array( 'type' => 'text', 'label' => __( 'Page heading', 'vesla-landing' ), ),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'empty_text' => array(
+						'type'  => 'text',
+						'label' => __( 'Wording when nothing has been sold yet', 'vesla-landing' ),
+						'help'  => __( 'Shown instead of the grid while no car is marked Sold, so the page is never simply blank.', 'vesla-landing' ),
+					),
 				),
 			),
 			'privacy' => array(
@@ -6900,7 +6951,11 @@ class Vesla_Render {
 	 * which doubles it.
 	 */
 	public static function card_fields() {
-		return array( 'make', 'model', 'year', 'price', 'km', 'body', 'trans', 'fuel', 'seats' );
+		/* What a card draws, and therefore what js_data() ships. status and
+		   arrived are here because cardFor() draws the badges from them: left
+		   out, the server-rendered card had its badges and the first re-render
+		   in the browser silently dropped them. */
+		return array( 'make', 'model', 'year', 'price', 'km', 'body', 'trans', 'fuel', 'seats', 'status', 'arrived' );
 	}
 
 	/** Every car field and its type, for the browser to coerce values by. */
@@ -7147,6 +7202,12 @@ class Vesla_Render {
 		$fields = Vesla_Store::car_fields();
 
 		foreach ( (array) $stock['cars'] as $car ) {
+			/* A sold car is off the floor, so it is not in the payload the grid
+			   redraws from either. Vesla_Rest::cars() filters the same way; this
+			   loop is the other place the stock is read. */
+			if ( 'sold' === Vesla_Render::car_status( $car ) ) {
+				continue;
+			}
 			$img = '';
 			if ( ! empty( $car['photo'] ) ) {
 				$img = wp_get_attachment_image_url( absint( $car['photo'] ), 'large' );
@@ -7217,6 +7278,11 @@ class Vesla_Render {
 			'locale'   => str_replace( '_', '-', get_locale() ),
 			'labels'   => array(
 				'badge'     => (string) Vesla_Settings::get( 'stock', 'badge', '' ),
+				'reserved'     => (string) Vesla_Settings::get( 'stock', 'reserved_label', '' ),
+				'reservedNote' => (string) Vesla_Settings::get( 'stock', 'reserved_note', '' ),
+				'soldLabel'    => (string) Vesla_Settings::get( 'stock', 'sold_label', '' ),
+				'soldNote'     => (string) Vesla_Settings::get( 'stock', 'sold_note', '' ),
+				'arrived'      => (string) Vesla_Settings::get( 'stock', 'arrived_label', '' ),
 				'priceNote' => (string) Vesla_Settings::get( 'stock', 'price_note', '' ),
 				'warranty'  => (string) Vesla_Settings::get( 'stock', 'warranty_note', '' ),
 				'enquire'   => (string) Vesla_Settings::get( 'stock', 'enquire_label', 'Enquire' ),
@@ -8080,6 +8146,11 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				'owner'    => 'stock',
 				'sections' => array( 'brand_strip', 'stock' ),
 			),
+			'sold' => array(
+				'slug'     => 'sold',
+				'owner'    => 'sold',
+				'sections' => array( 'sold_page' ),
+			),
 			'why' => array(
 				'slug'     => 'why',
 				'owner'    => 'why',
@@ -8181,16 +8252,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		if ( ! $src ) {
 			return;
 		}
-		printf( '<meta property="og:image" content="%s">' . "
-", esc_url( $src[0] ) );
-		printf( '<meta property="og:image:width" content="%d">' . "
-", (int) $src[1] );
-		printf( '<meta property="og:image:height" content="%d">' . "
-", (int) $src[2] );
+		printf( '<meta property="og:image" content="%s">' . "\n", esc_url( $src[0] ) );
+		printf( '<meta property="og:image:width" content="%d">' . "\n", (int) $src[1] );
+		printf( '<meta property="og:image:height" content="%d">' . "\n", (int) $src[2] );
 		$alt = trim( (string) get_post_meta( $share, '_wp_attachment_image_alt', true ) );
 		if ( '' !== $alt ) {
-			printf( '<meta property="og:image:alt" content="%s">' . "
-", esc_attr( $alt ) );
+			printf( '<meta property="og:image:alt" content="%s">' . "\n", esc_attr( $alt ) );
 		}
 	}
 
@@ -8524,6 +8591,28 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 *                            than lazily. True for what is on screen at
 	 *                            once and false for everything else.
 	 */
+	/** 'reserved', 'sold', or '' for a car that is simply on the floor. */
+	public static function car_status( $car ) {
+		$s = isset( $car['status'] ) ? (string) $car['status'] : '';
+		return in_array( $s, array( 'reserved', 'sold' ), true ) ? $s : '';
+	}
+
+	/**
+	 * Is this car new to the floor?
+	 *
+	 * Reads both shapes it arrives in. The stored field is the string 'yes'
+	 * from the editor; the payload app.js re-renders from carries the answer as
+	 * a boolean, and card_html() is handed that payload -- so a check for 'yes'
+	 * alone was false for every card the grid drew, which is all of them.
+	 */
+	public static function car_arrived( $car ) {
+		if ( ! isset( $car['arrived'] ) ) {
+			return false;
+		}
+		$v = $car['arrived'];
+		return true === $v || 'yes' === $v || 1 === $v || '1' === $v;
+	}
+
 	public static function card_html( $car, $ctx = null, $args = array() ) {
 		if ( null === $ctx ) {
 			$ctx = self::card_context();
@@ -8541,7 +8630,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		$wa_text  = $ctx['wa_text'];
 
 		$name  = trim( $car['make'] . ' ' . $car['model'] );
-		$price = $car['price'] ? trim( $ctx['currency'] . ' ' . number_format_i18n( (int) $car['price'] ) ) : '';
+		/* A sold car shows no price. What it went for is between the showroom
+		   and the buyer, and a price beside SOLD reads as an offer rather than
+		   a record. */
+		$price = ( $car['price'] && 'sold' !== Vesla_Render::car_status( $car ) )
+			? trim( $ctx['currency'] . ' ' . number_format_i18n( (int) $car['price'] ) )
+			: '';
 		$img   = $car['image'];
 
 		$specs = array();
@@ -8558,7 +8652,22 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			<article class="card<?php echo $later ? ' card-later' : ''; ?>"
 			         style="animation-delay:<?php echo (int) ( min( $i, 9 ) * 45 ); ?>ms">
 				<div class="card-media<?php echo $img && $img['url'] ? ' has-photo' : ''; ?>">
-					<?php if ( $badge ) : ?><span class="tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
+					<?php
+					/* The certified tag, and then whichever of the three states this car
+					   is in. Reserved and sold are facts about availability and come
+					   first; "just arrived" is a nudge and sits after. */
+					$status  = Vesla_Render::car_status( $car );
+					$labels  = Vesla_Settings::get( 'stock' );
+					?>
+					<?php if ( $badge && 'sold' !== $status ) : ?><span class="tag"><?php echo esc_html( $badge ); ?></span><?php endif; ?>
+					<?php if ( 'reserved' === $status ) : ?>
+						<span class="tag tag-reserved"><?php echo esc_html( $labels['reserved_label'] ); ?></span>
+					<?php elseif ( 'sold' === $status ) : ?>
+						<span class="tag tag-sold"><?php echo esc_html( $labels['sold_label'] ); ?></span>
+					<?php endif; ?>
+					<?php if ( Vesla_Render::car_arrived( $car ) && 'sold' !== $status ) : ?>
+						<span class="tag tag-arrived"><?php echo esc_html( $labels['arrived_label'] ); ?></span>
+					<?php endif; ?>
 					<?php if ( $img && $img['url'] ) : ?>
 						<?php /* width and height are always written: without them the
 						         grid reflows as each photograph lands, which is the
@@ -8609,8 +8718,20 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						</ul>
 					<?php endif; ?>
 					<div class="card-act">
-						<a class="btn btn-line js-enq" href="<?php echo esc_url( self::menu_href( '#contact' ) ); ?>"><?php echo esc_html( $enquire ); ?></a>
-						<?php if ( $wa ) : ?>
+						<?php
+						/* The point of the reserved state. A car somebody has already put a
+						   deposit on goes on being looked at, and every Enquire press on it
+						   is a telephone call the showroom answers with "that one has gone".
+						   The card stays -- it is still worth seeing what has been moving --
+						   and the two buttons that ask about it do not. */
+						$quiet = '' !== Vesla_Render::car_status( $car );
+						?>
+						<?php if ( $quiet ) : ?>
+							<span class="card-quiet"><?php echo esc_html( 'sold' === Vesla_Render::car_status( $car ) ? $labels['sold_note'] : $labels['reserved_note'] ); ?></span>
+						<?php else : ?>
+							<a class="btn btn-line js-enq" href="<?php echo esc_url( self::menu_href( '#contact' ) ); ?>"><?php echo esc_html( $enquire ); ?></a>
+						<?php endif; ?>
+						<?php if ( $wa && ! $quiet ) : ?>
 							<a class="btn btn-wa"
 							   href="<?php echo esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( sprintf( $wa_text, $name, $price ) ) ); ?>"
 							   target="_blank" rel="noopener"
@@ -10216,6 +10337,37 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 * What differs is only where the price comes from -- typed here, taken from
 	 * the car there.
 	 */
+	/**
+	 * The sold page: what has already gone.
+	 *
+	 * The same card as the grid, through the same card_html(). There is no
+	 * second template -- a sold card differs by what card_html() already knows
+	 * about a sold car: the SOLD badge instead of the certified one, no price,
+	 * and no buttons asking about a car nobody can buy.
+	 */
+	private static function sold_page() {
+		$s    = Vesla_Settings::get( 'sold' );
+		$cars = Vesla_Rest::cars( true );
+		?>
+		<section class="sec" id="sold">
+			<div class="shell">
+				<?php if ( ! $cars ) : ?>
+					<p class="sec-lead reveal"><?php echo esc_html( $s['empty_text'] ); ?></p>
+				<?php else : ?>
+					<div class="grid">
+						<?php
+						$ctx = null;
+						foreach ( $cars as $i => $car ) {
+							echo self::card_html( $car, $ctx, array( 'i' => $i, 'later' => false, 'eager' => $i < 4 ) ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped within.
+						}
+						?>
+					</div>
+				<?php endif; ?>
+			</div>
+		</section>
+		<?php
+	}
+
 	private static function finance_page() {
 		$f   = Vesla_Settings::get( 'finance' );
 		$veh = Vesla_Settings::get( 'vehicle' );
@@ -13111,7 +13263,12 @@ class Vesla_Rest {
 	 * started and abandoned in the editor and is dropped rather than published
 	 * as a nameless listing.
 	 */
-	public static function cars() {
+	/**
+	 * @param bool $sold_only Sold cars instead of the ones on the floor. The
+	 *                        sold page passes true; everything else takes the
+	 *                        default and never sees a sold car.
+	 */
+	public static function cars( $sold_only = false ) {
 		$stock = Vesla_Settings::get( 'stock' );
 		$out   = array();
 
@@ -13119,6 +13276,16 @@ class Vesla_Rest {
 			$make  = trim( (string) $car['make'] );
 			$model = trim( (string) $car['model'] );
 			if ( '' === $make && '' === $model ) {
+				continue;
+			}
+
+			/* Sold cars leave the floor. Filtered here rather than in the grid,
+			   because the grid is not the only thing reading this -- the payload
+			   app.js re-renders from, the ItemList in the structured data and the
+			   price range all come through here, and a sold car showing in any one
+			   of them is the same wrong answer in a different place. */
+			$is_sold = 'sold' === Vesla_Render::car_status( $car );
+			if ( $is_sold !== (bool) $sold_only ) {
 				continue;
 			}
 
@@ -13159,6 +13326,10 @@ class Vesla_Rest {
 				'fuel'  => (string) $car['fuel'],
 				'seats' => (int) $car['seats'],
 				'image' => $image,
+				/* app.js rebuilds these cards, and cardFor() draws the same badges
+				   card_html() does -- so it needs the same two facts. */
+				'status'  => Vesla_Render::car_status( $car ),
+				'arrived' => Vesla_Render::car_arrived( $car ),
 			);
 		}
 

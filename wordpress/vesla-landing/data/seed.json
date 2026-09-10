@@ -132,6 +132,11 @@
     "currency": "AED",
     "price_note": "Cash price",
     "badge": "Certified",
+    "reserved_label": "Reserved",
+    "reserved_note": "Reserved — deposit taken",
+    "sold_label": "Sold",
+    "sold_note": "Sold",
+    "arrived_label": "Just arrived",
     "warranty_note": "Warranty eligible",
     "enquire_label": "Enquire",
     "search_label": "Search",
@@ -945,5 +950,11 @@
     "calc_price_label": "Price of the car",
     "calc_note": "An estimate only. The monthly figure depends on the finance you are approved for, and on the rate offered on the day.",
     "ask_label": "Ask us about these figures"
+  },
+  "sold": {
+    "page_enabled": 0,
+    "page_heading": "Cars we have sold",
+    "page_intro": "[Open the sold page here — one or two sentences on why what has already gone is worth looking at.]",
+    "empty_text": "Nothing has been marked sold yet."
   }
 }

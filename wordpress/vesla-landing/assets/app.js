@@ -325,11 +325,23 @@
     if (car.seats) last.push(esc(car.seats) + ' ' + esc(LABELS.seats || ''));
     if (last.length) specs.push(last.join(' &middot; '));
 
-    var price = aed(car.price);
+    /* Same rule as card_html(): a sold car shows no price. */
+    var price = car.status === 'sold' ? '' : aed(car.price);
 
     el.innerHTML =
       '<div class="card-media">' +
-        (LABELS.badge ? '<span class="tag">' + esc(LABELS.badge) + '</span>' : '') +
+        /* The same three badges card_html() prints, in the same order and
+           with the same classes. If one changes, change the other: what PHP
+           writes is what a crawler reads and this is what a visitor sees,
+           and they are meant to be one card. */
+        ((LABELS.badge && car.status !== 'sold')
+          ? '<span class="tag">' + esc(LABELS.badge) + '</span>' : '') +
+        (car.status === 'reserved'
+          ? '<span class="tag tag-reserved">' + esc(LABELS.reserved || '') + '</span>' : '') +
+        (car.status === 'sold'
+          ? '<span class="tag tag-sold">' + esc(LABELS.soldLabel || '') + '</span>' : '') +
+        ((car.arrived && car.status !== 'sold')
+          ? '<span class="tag tag-arrived">' + esc(LABELS.arrived || '') + '</span>' : '') +
         media + '</div>' +
       '<div class="card-body">' +
         '<div class="card-top">' +
@@ -358,11 +370,15 @@
              the same URL: extra tab stops, extra work for a crawler deciding
              what the card is for, and one more thing between the reader and
              the two actions that actually differ, enquiring and WhatsApp. */
-          '<a class="btn btn-line js-enq" href="#contact">' + esc(LABELS.enquire || '') + '</a>' +
+          (car.status
+            ? '<span class="card-quiet">' +
+                esc(car.status === 'sold' ? (LABELS.soldNote || '') : (LABELS.reservedNote || '')) +
+              '</span>'
+            : '<a class="btn btn-line js-enq" href="#contact">' + esc(LABELS.enquire || '') + '</a>') +
           /* the WhatsApp button exists only when a number has been entered in
              the settings — an empty href would look like a working button and
              go nowhere */
-          (WA_NUMBER
+          ((WA_NUMBER && !car.status)
             ? '<a class="btn btn-wa" href="' + esc(waHref(car)) + '" target="_blank" rel="noopener" ' +
                  'aria-label="' + esc(fmt(LABELS.waAria, car.year + ' ' + car.make + ' ' + car.model)) + '">' +
                 '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm5.6 14.2c-.2.7-1.4 1.3-2 1.4-.5.1-1.1.1-1.8-.1-.4-.1-1-.3-1.7-.6-3-1.3-4.9-4.3-5.1-4.5-.1-.2-1.2-1.5-1.2-2.9s.7-2 1-2.3c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.5-.3.3c-.1.1-.2.3 0 .5.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.4 2.4 1.5.2.1.4.1.5-.1l.8-.9c.2-.2.3-.2.5-.1l2 1c.2.1.4.2.4.3.1.2.1.7-.1 1.3z"/></svg>' +
@@ -377,8 +393,14 @@
        link -- middle-click opens a tab, hover shows the address, a crawler
        follows it -- and the buttons on top of it still work. */
 
-    // Prefill the enquiry form with whichever car the visitor clicked.
-    $('.js-enq', el).addEventListener('click', function () {
+    /* Prefill the enquiry form with whichever car the visitor clicked.
+
+       Guarded: a reserved or sold card has no Enquire button -- that is the
+       point of those states -- and an unguarded null here threw inside
+       addBatch(), which killed the whole batch. One reserved car in the
+       results and the grid drew nothing at all. */
+    var enqLink = $('.js-enq', el);
+    if (enqLink) enqLink.addEventListener('click', function () {
       var named = car.make + ' ' + car.model + ' (' + car.year + ')';
       var f = $('#q-car');
       if (f) {
