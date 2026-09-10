@@ -6493,8 +6493,42 @@ class Vesla_Render {
 	 * fragment with it. Anything already absolute, or a tel:/mailto:, is left
 	 * exactly as the admin typed it.
 	 */
-	public static function menu_href( $link ) {
+	/**
+	 * Where a link in the menu, the footer or the header actually goes.
+	 *
+	 * @param string $link     What the admin chose, usually a '#section'.
+	 * @param bool   $navigate Menu links only. Once a section has a page of its
+	 *                         own, a MENU item pointing at it goes to the page
+	 *                         rather than scrolling down the homepage -- the
+	 *                         menu then means the same thing on every page of
+	 *                         the site, which it cannot do if it scrolls here
+	 *                         and navigates there.
+	 *
+	 *                         Off by default, and that default matters: the skip
+	 *                         link is "Skip to the cars" and has to stay an
+	 *                         in-page jump. A skip link that loads another page
+	 *                         is not a skip link.
+	 */
+	public static function menu_href( $link, $navigate = false ) {
 		$link = (string) $link;
+
+		if ( $navigate && '' !== $link && '#' === $link[0] ) {
+			/* Sections that have moved to a page of their own. Ownership was
+			   folded into About with the record, so both anchors land there --
+			   which is also what keeps a saved menu row reading '#chairman'
+			   from pointing at a section the homepage no longer has. */
+			$moved = array(
+				'#certified' => 'certified',
+				'#record'    => 'about',
+				'#chairman'  => 'about',
+				'#sell'      => 'sell',
+				'#stock'     => 'stock',
+			);
+			if ( isset( $moved[ $link ] ) && self::page_live( $moved[ $link ] ) ) {
+				return self::rel( self::page_url( $moved[ $link ] ) );
+			}
+		}
+
 		if ( '' === $link || '#' !== $link[0] || ! self::on_car_page() ) {
 			return $link;
 		}
@@ -7696,12 +7730,20 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		   filter and belongs above both. */
 		self::spotlight();
 		self::brand_strip();
-		self::stock();
+		self::stock( true );
 		self::certified( true );
 		self::why();
-		self::record();
-		self::chairman();
-		self::sell();
+		self::record( true );
+		/* Absorbed into /about/, where it sits under the record it belongs to.
+		   It used to stand between the cars and the enquiry form, which is the
+		   worst place on the page for it: a reader who has just chosen a car is
+		   on their way to the form, and the owner's statement is not what they
+		   stopped for. Kept on the homepage while /about/ is switched off, so
+		   turning the page off never loses the section outright. */
+		if ( ! self::page_live( 'about' ) ) {
+			self::chairman();
+		}
+		self::sell( true );
 		self::faq();
 		self::contact();
 		/* Above the footer, not below it. The footer is the end of the page, and
@@ -8669,7 +8711,7 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				<nav class="nav" id="nav" aria-label="<?php esc_attr_e( 'Main menu', 'vesla-landing' ); ?>">
 					<?php foreach ( $menu as $item ) : ?>
 						<?php if ( $item['label'] ) : ?>
-							<a href="<?php echo esc_url( self::menu_href( $item['link'] ) ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
+							<a href="<?php echo esc_url( self::menu_href( $item['link'], true ) ); ?>"><?php echo esc_html( $item['label'] ); ?></a>
 						<?php endif; ?>
 					<?php endforeach; ?>
 				</nav>
@@ -9304,10 +9346,17 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 		<?php
 	}
 
-	private static function stock() {
+	/**
+	 * @param bool $short Homepage version. The grid, the filters and the search
+	 *                    are identical either way -- this is what the homepage
+	 *                    is for, and shortening it would be shortening the site.
+	 *                    All $short adds is a link to /stock/ under the cars.
+	 */
+	private static function stock( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'stock' ) ) {
 			return;
 		}
+		$short = $short && self::page_live( 'stock' );
 		$s = Vesla_Settings::get( 'stock' );
 		?>
 		<section class="sec" id="stock">
@@ -9370,6 +9419,16 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						<?php echo esc_html( $s['more_label'] ); ?> <span id="more-n" class="more-n"></span>
 					</button>
 				</div>
+				<?php
+				/* Outside more-wrap on purpose. That div starts hidden and app.js
+				   unhides it only when there are cards left to reveal, so a link
+				   inside it would vanish with scripting off and on any filter that
+				   leaves nothing more to show -- which is exactly when somebody
+				   wants the full list. */
+				if ( $short ) {
+					self::page_more( 'stock' );
+				}
+				?>
 			</div>
 		</section>
 		<?php
@@ -9466,10 +9525,16 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 
 	/* ── record ────────────────────────────────────────────────────────── */
 
-	private static function record() {
+	/**
+	 * @param bool $short Homepage version: the headline and the lead, without
+	 *                    the at-a-glance table, which belongs on /about/ where
+	 *                    there is room to read it.
+	 */
+	private static function record( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'record' ) ) {
 			return;
 		}
+		$short = $short && self::page_live( 'about' );
 		$r = Vesla_Settings::get( 'record' );
 		?>
 		<section class="sec sec-mist" id="record">
@@ -9480,7 +9545,9 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					<?php if ( $r['lead'] ) : ?><p class="sec-lead"><?php Vesla_Render::t( 'record.lead', $r['lead'] ); ?></p><?php endif; ?>
 					<?php if ( $r['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'record.note', $r['note'] ); ?></p><?php endif; ?>
 				</div>
-				<?php if ( ! empty( $r['glance'] ) ) : ?>
+				<?php if ( $short ) : ?>
+					<?php self::page_more( 'about' ); ?>
+				<?php elseif ( ! empty( $r['glance'] ) ) : ?>
 					<dl class="glance reveal">
 						<?php foreach ( $r['glance'] as $g ) : ?>
 							<div><dt><?php echo esc_html( $g['label'] ); ?></dt><dd><?php echo esc_html( $g['value'] ); ?></dd></div>
@@ -9551,10 +9618,20 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 
 	/* ── sell ──────────────────────────────────────────────────────────── */
 
-	private static function sell() {
+	/**
+	 * @param bool $short Homepage version: the heading, the lead and a link,
+	 *                    without the longer explanation underneath.
+	 *
+	 *                    The estimator stays on BOTH. It is the most engaging
+	 *                    thing on the homepage and it captures a lead on its
+	 *                    own, so moving it to /sell/ would cost enquiries from
+	 *                    everyone who never got that far.
+	 */
+	private static function sell( $short = false ) {
 		if ( ! Vesla_Settings::enabled( 'sell' ) ) {
 			return;
 		}
+		$short = $short && self::page_live( 'sell' );
 		$s = Vesla_Settings::get( 'sell' );
 		?>
 		<section class="sec" id="sell">
@@ -9563,8 +9640,12 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					<?php if ( $s['eyebrow'] ) : ?><p class="eyebrow"><?php echo esc_html( $s['eyebrow'] ); ?></p><?php endif; ?>
 					<h2><?php echo esc_html( $s['heading'] ); ?></h2>
 					<?php if ( $s['lead'] ) : ?><p class="sec-lead"><?php Vesla_Render::t( 'sell.lead', $s['lead'] ); ?></p><?php endif; ?>
-					<?php if ( $s['body'] ) : ?><p><?php Vesla_Render::t( 'sell.body', $s['body'] ); ?></p><?php endif; ?>
-					<?php if ( $s['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'sell.note', $s['note'] ); ?></p><?php endif; ?>
+					<?php if ( ! $short ) : ?>
+						<?php if ( $s['body'] ) : ?><p><?php Vesla_Render::t( 'sell.body', $s['body'] ); ?></p><?php endif; ?>
+						<?php if ( $s['note'] ) : ?><p class="note"><?php Vesla_Render::t( 'sell.note', $s['note'] ); ?></p><?php endif; ?>
+					<?php else : ?>
+						<?php self::page_more( 'sell' ); ?>
+					<?php endif; ?>
 				</div>
 
 				<?php
@@ -9965,7 +10046,7 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						<p class="foot-lbl" id="fl-explore"><?php echo esc_html( $f['nav_title'] ); ?></p>
 						<ul class="foot-nav">
 							<?php foreach ( $f['nav'] as $n ) : ?>
-								<li><a href="<?php echo esc_url( self::menu_href( $n['link'] ) ); ?>"><?php echo esc_html( $n['label'] ); ?></a></li>
+								<li><a href="<?php echo esc_url( self::menu_href( $n['link'], true ) ); ?>"><?php echo esc_html( $n['label'] ); ?></a></li>
 							<?php endforeach; ?>
 						</ul>
 					</nav>
