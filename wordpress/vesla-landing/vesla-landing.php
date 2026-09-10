@@ -624,6 +624,16 @@ class Vesla_Schema {
 					'badge'      => array( 'type' => 'text', 'label' => __( 'Corner badge on each photo', 'vesla-landing' ), 'help' => __( 'Leave empty to remove the badge.', 'vesla-landing' ), ),
 					'warranty_note' => array( 'type' => 'text', 'label' => __( 'Small wording under the price, second line', 'vesla-landing' ), 'help' => __( 'Leave empty to remove it.', 'vesla-landing' ), ),
 					'enquire_label' => array( 'type' => 'text', 'label' => __( 'Button on each car — wording', 'vesla-landing' ), ),
+					'search_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Search box — label above it', 'vesla-landing' ),
+						'help'  => __( 'The word over the search box in the row of filters.', 'vesla-landing' ),
+					),
+					'search_hint' => array(
+						'type'  => 'text',
+						'label' => __( 'Search box — grey hint inside it', 'vesla-landing' ),
+						'help'  => __( 'Shown in grey inside the empty box, as an example of what can be typed. It disappears as soon as somebody types, so it is a hint and never an instruction.', 'vesla-landing' ),
+					),
 					'sound_on_label' => array(
 						'type'  => 'text',
 						'label' => __( 'Sound button — wording when sound is on', 'vesla-landing' ),
@@ -940,6 +950,26 @@ class Vesla_Schema {
 						'help'  => __( 'The middle of the address: with “cars”, a car is at /cars/toyota-hilux-2021-14/. Changing it changes every car’s address at once, and anything already linking to the old ones stops working — so change it before you start sharing links, not after.', 'vesla-landing' ),
 					),
 					'video_label' => array( 'type' => 'text', 'label' => __( 'Wording on the video button', 'vesla-landing' ), ),
+					'finance_ask_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Finance calculator — wording on the button under the monthly figure', 'vesla-landing' ),
+						'help'  => __( 'Pressing it opens the enquiry form with the deposit, the term and the monthly figure already attached, so the call back starts from the numbers they were looking at.', 'vesla-landing' ),
+					),
+					'share_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Share button — wording', 'vesla-landing' ),
+						'help'  => __( 'On a phone this opens WhatsApp, Messages and the rest. On a computer there is usually nothing to open, so it copies the address instead — the next two settings are what it says when it has.', 'vesla-landing' ),
+					),
+					'share_copied_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Share button — after the address has been copied', 'vesla-landing' ),
+						'help'  => __( 'Replaces the button wording for two seconds, then changes back.', 'vesla-landing' ),
+					),
+					'share_failed_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Share button — if the browser refuses to copy', 'vesla-landing' ),
+						'help'  => __( 'Rare, and nothing the visitor did: some browsers refuse the clipboard outright. Say what happened rather than apologising.', 'vesla-landing' ),
+					),
 					'no_photo_text' => array(
 						'type'  => 'text',
 						'label' => __( 'Shown where a car has no photographs yet', 'vesla-landing' ),
@@ -6905,6 +6935,12 @@ class Vesla_Render {
 				'next'       => __( 'Next photograph', 'vesla-landing' ),
 				'loading'    => __( 'Loading the details…', 'vesla-landing' ),
 				'loadFail'   => __( 'The rest of this car could not be loaded. Please try again, or call us.', 'vesla-landing' ),
+				/* The car page's own buttons. Read here so they reach vehicle.js,
+				   which is the only script a car page loads. */
+				'finAsk'      => (string) Vesla_Settings::get( 'vehicle', 'finance_ask_label', __( 'Ask us about these figures', 'vesla-landing' ) ),
+				'share'       => (string) Vesla_Settings::get( 'vehicle', 'share_label', __( 'Share', 'vesla-landing' ) ),
+				'shareCopied' => (string) Vesla_Settings::get( 'vehicle', 'share_copied_label', __( 'Link copied', 'vesla-landing' ) ),
+				'shareFailed' => (string) Vesla_Settings::get( 'vehicle', 'share_failed_label', __( 'Could not copy', 'vesla-landing' ) ),
 				'finDown'    => __( 'Deposit', 'vesla-landing' ),
 				'finYears'   => __( 'Loan length in years', 'vesla-landing' ),
 				'finPerMonth' => __( 'per month', 'vesla-landing' ),
@@ -9007,9 +9043,9 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 					         something the menus do not offer -- a trim, a year, a colour.
 					         type=search so a phone offers the right keyboard and browsers
 					         draw their own clear button. */ ?>
-					<label class="f-find"><?php esc_html_e( 'Search', 'vesla-landing' ); ?>
+					<label class="f-find"><?php echo esc_html( Vesla_Settings::get( 'stock', 'search_label', __( 'Search', 'vesla-landing' ) ) ); ?>
 						<input type="search" id="f-search" autocomplete="off" spellcheck="false"
-						       maxlength="40" placeholder="<?php esc_attr_e( 'Make, model, year…', 'vesla-landing' ); ?>">
+						       maxlength="40" placeholder="<?php echo esc_attr( Vesla_Settings::get( 'stock', 'search_hint', __( 'Make, model, year…', 'vesla-landing' ) ) ); ?>">
 					</label>
 					<label><?php esc_html_e( 'Make', 'vesla-landing' ); ?>
 						<select id="f-make"><option value=""><?php esc_html_e( 'All makes', 'vesla-landing' ); ?></option></select>

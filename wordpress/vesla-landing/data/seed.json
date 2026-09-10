@@ -122,6 +122,8 @@
     "badge": "Certified",
     "warranty_note": "Warranty eligible",
     "enquire_label": "Enquire",
+    "search_label": "Search",
+    "search_hint": "Make, model, year…",
     "sound_on_label": "Sound on",
     "sound_off_label": "Sound off",
     "sound_enabled": 1,
@@ -848,7 +850,11 @@
     "base": "cars",
     "no_photo_text": "Photographs of this car are being taken — ask us for them and we will send them today.",
     "transition_ms": 500,
-    "video_label": "Watch the video"
+    "video_label": "Watch the video",
+    "finance_ask_label": "Ask us about these figures",
+    "share_label": "Share",
+    "share_copied_label": "Link copied",
+    "share_failed_label": "Could not copy"
   },
   "analytics": {
     "provider": "",
