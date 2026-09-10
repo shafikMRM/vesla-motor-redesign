@@ -138,8 +138,18 @@ What follows from it, and is worth knowing before it puzzles somebody:
   not in the sitemap either, which is deliberate: a sitemap entry for a page
   that is not there sends a search engine to a 404 on your own instructions.
 * **Turning a page off and republishing does not delete the old file.** The
-  page stops being linked to and stops being listed, but the file stays where
-  it was written. Delete it by hand if it must actually go.
+  page stops being linked to and stops being listed in the sitemap, but the
+  file stays where it was written — and a file that is still there is still
+  served. Anybody who has the address, or found it in a search result before
+  you switched it off, still reads it.
+
+  Say that again, because it is the opposite of what the tick box looks like
+  it promises: **switching a page off does not take it off the internet.** If
+  you are switching it off because something on it is wrong, delete the folder
+  by hand as well — `certified/`, `sell/`, `about/` or `stock/` in the folder
+  from step 2. The car pages do not behave this way: that whole folder is
+  rebuilt from scratch on every publish, so a car that has gone really is
+  gone.
 
 = 4. Add the cron job, and switch WordPress's own timer off =
 
