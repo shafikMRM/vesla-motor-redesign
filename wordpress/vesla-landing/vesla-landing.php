@@ -7705,6 +7705,205 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 	 * canonical is the published address rather than whatever WordPress is
 	 * installed at, for the same reason every other canonical here is.
 	 */
+	/* ═══════════════════════════════════════════════════════════════════════
+	   THE OTHER PAGES
+
+	   The landing page, the cars and Contact were the whole site. These are the
+	   rest -- Certified, Sell, About, Stock -- and every one of them shows
+	   sections the landing page ALREADY shows, reading the same settings. There
+	   is no second copy of the wording anywhere: editing Certified changes the
+	   strip on the homepage and the page, because they are one set of fields.
+
+	   Each is published as a file, exactly as Contact is. There is deliberately
+	   no WordPress route: a car page has one because WordPress owns the car
+	   post type, and Contact never did. Consequence worth knowing -- these
+	   pages do not exist until Republish runs, and cannot be previewed at the
+	   WordPress address before then.
+	   ═══════════════════════════════════════════════════════════════════════ */
+
+	/** Set while the publisher writes one of these, the way $forced is for cars. */
+	public static $page_key = '';
+
+	/**
+	 * The pages, and where each one reads from.
+	 *
+	 * `owner` is the settings section that switches the page on and supplies its
+	 * heading -- the arrangement Contact already has in `contact`, rather than a
+	 * new screen listing pages somewhere else.
+	 *
+	 * `sections` are rendered in order, full length. The homepage keeps its own
+	 * shorter versions of the same sections; both read one set of fields.
+	 */
+	public static function pages() {
+		return array(
+			'certified' => array(
+				'slug'     => 'certified',
+				'owner'    => 'certified',
+				'sections' => array( 'certified' ),
+			),
+			'sell' => array(
+				'slug'     => 'sell',
+				'owner'    => 'sell',
+				'sections' => array( 'sell' ),
+			),
+			'about' => array(
+				'slug'     => 'about',
+				/* Owned by `record` because the 1988 story leads the page. Ownership
+				   and the branches follow it, which is why Record and Ownership stop
+				   being menu items -- they are two parts of one answer. */
+				'owner'    => 'record',
+				'sections' => array( 'record', 'chairman', 'map_section' ),
+			),
+			'stock' => array(
+				'slug'     => 'stock',
+				'owner'    => 'stock',
+				'sections' => array( 'brand_strip', 'stock' ),
+			),
+		);
+	}
+
+	/** Is this page switched on? Off unless somebody has said otherwise. */
+	public static function page_live( $key ) {
+		$pages = self::pages();
+		if ( ! isset( $pages[ $key ] ) ) {
+			return false;
+		}
+		return (bool) Vesla_Settings::get( $pages[ $key ]['owner'], 'page_enabled', 0 );
+	}
+
+	/** The published address of one of these pages. */
+	public static function page_url( $key ) {
+		$pages = self::pages();
+		if ( ! isset( $pages[ $key ] ) ) {
+			return '';
+		}
+		return trailingslashit( Vesla_Publisher::site_url() ) . $pages[ $key ]['slug'] . '/';
+	}
+
+	/** The page's own heading, which is also its title and its h1. */
+	public static function page_title( $key ) {
+		$pages = self::pages();
+		if ( ! isset( $pages[ $key ] ) ) {
+			return '';
+		}
+		$owner = $pages[ $key ]['owner'];
+		$head  = (string) Vesla_Settings::get( $owner, 'page_heading', '' );
+		if ( '' === $head ) {
+			/* Falls back to the section's own heading rather than inventing one,
+			   so a page switched on before anybody writes a title still says
+			   something true. */
+			$head = (string) Vesla_Settings::get( $owner, 'heading', '' );
+		}
+		return $head;
+	}
+
+	/**
+	 * Everything this page puts in its head.
+	 *
+	 * Canonical, description and og from the page's own settings; a
+	 * BreadcrumbList so a search result shows where it sits. No @id on the
+	 * crumbs, matching the car pages -- the only @ids on this site are the
+	 * dealer, the FAQ, the stock list and each car, and a second definition of
+	 * any of those would be worse than none.
+	 */
+	public static function page_head() {
+		$key   = self::$page_key;
+		$pages = self::pages();
+		if ( '' === $key || ! isset( $pages[ $key ] ) ) {
+			return;
+		}
+		$owner = $pages[ $key ]['owner'];
+		$name  = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
+		$url   = self::page_url( $key );
+		$head  = self::page_title( $key );
+		$desc  = self::plain( (string) Vesla_Settings::get( $owner, 'page_intro', '' ) );
+		if ( '' === $desc ) {
+			$desc = self::plain( (string) Vesla_Settings::get( $owner, 'lead', '' ) );
+		}
+		$desc  = $desc ? wp_html_excerpt( $desc, 155, '…' ) : '';
+		$title = trim( $head . ' — ' . $name );
+
+		printf( '<link rel="canonical" href="%s">' . "\n", esc_url( $url ) );
+		if ( $desc ) {
+			printf( '<meta name="description" content="%s">' . "\n", esc_attr( $desc ) );
+		}
+		printf( '<meta property="og:type" content="website">' . "\n" );
+		printf( '<meta property="og:title" content="%s">' . "\n", esc_attr( $title ) );
+		if ( $desc ) {
+			printf( '<meta property="og:description" content="%s">' . "\n", esc_attr( $desc ) );
+		}
+		printf( '<meta property="og:url" content="%s">' . "\n", esc_url( $url ) );
+
+		if ( ! Vesla_Settings::get( 'seo', 'enabled', 0 ) ) {
+			return;
+		}
+		$site   = trailingslashit( Vesla_Publisher::site_url() );
+		$crumbs = array(
+			array( '@type' => 'ListItem', 'position' => 1, 'name' => get_bloginfo( 'name' ), 'item' => $site ),
+			array( '@type' => 'ListItem', 'position' => 2, 'name' => $head ),
+		);
+		echo '<script type="application/ld+json">'
+			. wp_json_encode(
+				array(
+					'@context'        => 'https://schema.org',
+					'@type'           => 'BreadcrumbList',
+					'itemListElement' => $crumbs,
+				),
+				JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+			)
+			. '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput -- wp_json_encode escapes.
+	}
+
+	/**
+	 * The page itself: the site's header, one h1, the sections, the footer.
+	 *
+	 * The h1 is the page's own heading and is the ONLY one on the page -- the
+	 * sections below it open at h2, which is what they already do on the
+	 * homepage, where the hero holds the h1.
+	 */
+	public static function page_body() {
+		$key   = self::$page_key;
+		$pages = self::pages();
+		if ( '' === $key || ! isset( $pages[ $key ] ) ) {
+			return;
+		}
+		$page  = $pages[ $key ];
+		$owner = $page['owner'];
+		$head  = self::page_title( $key );
+		$intro = (string) Vesla_Settings::get( $owner, 'page_intro', '' );
+		?>
+		<div class="page page-<?php echo esc_attr( $key ); ?>">
+			<?php self::header_bar(); ?>
+
+			<main id="main">
+				<div class="shell page-top">
+					<nav class="vp-crumbs" aria-label="<?php esc_attr_e( 'Breadcrumb', 'vesla-landing' ); ?>">
+						<a href="<?php echo esc_url( self::site_link() ); ?>"><?php echo esc_html( get_bloginfo( 'name' ) ); ?></a>
+						<span aria-hidden="true">/</span>
+						<span aria-current="page"><?php echo esc_html( $head ); ?></span>
+					</nav>
+					<h1 class="page-title"><?php echo esc_html( $head ); ?></h1>
+					<?php if ( '' !== $intro ) : ?>
+						<p class="page-intro"><?php Vesla_Render::t( $owner . '.page_intro', $intro ); ?></p>
+					<?php endif; ?>
+				</div>
+
+				<?php
+				/* Full length, the same methods the homepage calls. One set of
+				   markup, one set of fields, two places it appears. */
+				foreach ( $page['sections'] as $section ) {
+					if ( is_callable( array( __CLASS__, $section ) ) ) {
+						call_user_func( array( __CLASS__, $section ) );
+					}
+				}
+				?>
+			</main>
+
+			<?php self::footer(); ?>
+		</div>
+		<?php
+	}
+
 	public static function contact_head() {
 		$c    = self::contact_page_copy();
 		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
@@ -12754,7 +12953,14 @@ class Vesla_Publisher {
 			return $cpage;
 		}
 
-		$index = self::write_index_files( $dir, $cars['slugs'] );
+		/* Before the sitemap, for the same reason the Contact page is written
+		   before it: the sitemap lists what was actually put on disk. */
+		$pages = self::publish_pages( $dir );
+		if ( is_wp_error( $pages ) ) {
+			return $pages;
+		}
+
+		$index = self::write_index_files( $dir, $cars['slugs'], $pages );
 		if ( is_wp_error( $index ) ) {
 			return $index;
 		}
@@ -12930,6 +13136,74 @@ class Vesla_Publisher {
 	 * temporary file and moved into place, so a visitor arriving mid-write
 	 * never gets half a page.
 	 */
+	/**
+	 * Writes every page that is switched on, and returns the slugs written.
+	 *
+	 * Written the way the Contact page and the cars are: to a temporary file and
+	 * renamed into place, because a direct write is not atomic and a visitor
+	 * arriving mid-write gets half a page.
+	 *
+	 * A page that is switched off is not written and, more to the point, is not
+	 * returned -- the sitemap is built from what comes back, so it cannot list a
+	 * page that is not there.
+	 */
+	private static function publish_pages( $dir ) {
+		$written = array();
+
+		foreach ( Vesla_Render::pages() as $key => $page ) {
+			if ( ! Vesla_Render::page_live( $key ) ) {
+				continue;
+			}
+
+			$folder = $dir . DIRECTORY_SEPARATOR . $page['slug'];
+			if ( ! is_dir( $folder ) && ! wp_mkdir_p( $folder ) ) {
+				return new WP_Error(
+					'vesla_page_dir',
+					sprintf(
+						/* translators: 1: a page name. 2: a folder path. */
+						__( 'The %1$s page was not written: its folder could not be created at %2$s.', 'vesla-landing' ),
+						$key,
+						$folder
+					)
+				);
+			}
+
+			$html = self::build_page( $key );
+			if ( ! $html ) {
+				return new WP_Error(
+					'vesla_page_empty',
+					sprintf(
+						/* translators: %s: a page name. */
+						__( 'The %s page came out empty and was not written.', 'vesla-landing' ),
+						$key
+					)
+				);
+			}
+
+			$file = $folder . DIRECTORY_SEPARATOR . 'index.html';
+			$tmp  = $file . '.tmp-' . wp_generate_password( 6, false );
+			if ( false === file_put_contents( $tmp, $html ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions
+				return new WP_Error(
+					'vesla_page_write',
+					/* translators: %s: a page name. */
+					sprintf( __( 'Could not write the %s page.', 'vesla-landing' ), $key )
+				);
+			}
+			if ( ! @rename( $tmp, $file ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors
+				@unlink( $tmp ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+				return new WP_Error(
+					'vesla_page_move',
+					/* translators: %s: a page name. */
+					sprintf( __( 'Could not put the new %s page in place.', 'vesla-landing' ), $key )
+				);
+			}
+
+			$written[] = $page['slug'];
+		}
+
+		return $written;
+	}
+
 	private static function publish_contact( $dir ) {
 		if ( ! Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
 			return true;
@@ -12959,6 +13233,28 @@ class Vesla_Publisher {
 			return new WP_Error( 'vesla_contact_move', __( 'Could not put the new Contact page in place.', 'vesla-landing' ) );
 		}
 		return true;
+	}
+
+	/**
+	 * One of the pages listed in Vesla_Render::pages(), as a complete document.
+	 *
+	 * $page_key does for these what $forced does for a car: document() takes
+	 * callbacks that accept nothing, so the page being written has to be said
+	 * somewhere both of them can read it. Cleared afterwards either way.
+	 */
+	private static function build_page( $key ) {
+		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
+		$head = Vesla_Render::page_title( $key );
+
+		Vesla_Render::$page_key = $key;
+		$html = self::document(
+			trim( $head . ' — ' . $name ),
+			array( 'Vesla_Render', 'page_head' ),
+			array( 'Vesla_Render', 'page_body' ),
+			'page'
+		);
+		Vesla_Render::$page_key = '';
+		return $html;
 	}
 
 	private static function build_contact() {
@@ -13033,7 +13329,7 @@ class Vesla_Publisher {
 	 * date the content was last saved: a lastmod that moves every time the file
 	 * is rewritten teaches a crawler that the date means nothing.
 	 */
-	private static function write_index_files( $dir, array $slugs ) {
+	private static function write_index_files( $dir, array $slugs, array $pages = array() ) {
 		$site = trailingslashit( self::site_url() );
 		$when = gmdate( 'Y-m-d', (int) get_option( 'vesla_content_saved_at', time() ) );
 
@@ -13044,6 +13340,13 @@ class Vesla_Publisher {
 		   which is worse than not listing it -- and the same setting governs
 		   both, so the two cannot disagree. Monthly and 0.5: the address and
 		   the opening hours change, but not weekly the way the stock does. */
+		/* The pages that were actually written, in the order pages() lists them.
+		   Below the homepage and above the cars: they are what a reader browses
+		   towards a car through, so that is where they sit. */
+		foreach ( $pages as $slug ) {
+			$urls[] = array( 'loc' => $site . $slug . '/', 'pri' => '0.7', 'freq' => 'weekly' );
+		}
+
 		if ( Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
 			$urls[] = array( 'loc' => $site . 'contact/', 'pri' => '0.5', 'freq' => 'monthly' );
 		}
