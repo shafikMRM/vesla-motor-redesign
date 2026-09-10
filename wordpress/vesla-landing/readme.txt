@@ -137,19 +137,19 @@ What follows from it, and is worth knowing before it puzzles somebody:
 * **A page you have switched on but not republished does not exist.** It is
   not in the sitemap either, which is deliberate: a sitemap entry for a page
   that is not there sends a search engine to a 404 on your own instructions.
-* **Turning a page off and republishing does not delete the old file.** The
-  page stops being linked to and stops being listed in the sitemap, but the
-  file stays where it was written — and a file that is still there is still
-  served. Anybody who has the address, or found it in a search result before
-  you switched it off, still reads it.
+* **Turning a page off removes it.** Switching the page off and republishing
+  deletes its folder, takes it out of the sitemap and stops the homepage
+  linking to it. Off means off: somebody who kept the address gets your host's
+  "not found", not the old page. Switch it back on, republish, and it returns
+  exactly as it was — the page is written from the settings every time, so
+  nothing is lost by turning it off for a while.
 
-  Say that again, because it is the opposite of what the tick box looks like
-  it promises: **switching a page off does not take it off the internet.** If
-  you are switching it off because something on it is wrong, delete the folder
-  by hand as well — `certified/`, `sell/`, `about/` or `stock/` in the folder
-  from step 2. The car pages do not behave this way: that whole folder is
-  rebuilt from scratch on every publish, so a car that has gone really is
-  gone.
+  One exception, and it is deliberate. If anything other than the page's own
+  `index.html` is sitting in that folder — a file you put there, something
+  another tool wrote — **nothing is deleted at all**, and the page stays up.
+  A publish that quietly removed somebody else's work would be a far worse
+  fault than a page that lingers. If a page will not go away, look in its
+  folder for a file that does not belong to it.
 
 = 4. Add the cron job, and switch WordPress's own timer off =
 

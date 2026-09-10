@@ -13264,11 +13264,56 @@ class Vesla_Publisher {
 	 * returned -- the sitemap is built from what comes back, so it cannot list a
 	 * page that is not there.
 	 */
+	/**
+	 * Delete the folder of a page that has been switched off.
+	 *
+	 * Deliberately timid, because this is a recursive-delete shaped problem
+	 * and the blast radius of getting it wrong is somebody's website. Three
+	 * things have to be true before anything is removed:
+	 *
+	 *   1. the slug came from Vesla_Render::pages(), so it is one of ours and
+	 *      never a value from a request or a settings field;
+	 *   2. the folder holds exactly one entry, and it is index.html -- if
+	 *      anything else is in there it was not put there by this plugin, and
+	 *      deleting somebody else's work is worse than a page that lingers;
+	 *   3. the file goes first and the folder only if that succeeded, so a
+	 *      failure leaves the folder standing rather than half-emptied.
+	 *
+	 * Returns true only when the page is actually gone.
+	 */
+	private static function remove_page( $dir, $slug ) {
+		$folder = $dir . DIRECTORY_SEPARATOR . $slug;
+		if ( ! is_dir( $folder ) ) {
+			return false;
+		}
+
+		$found = scandir( $folder );
+		if ( ! is_array( $found ) ) {
+			return false;
+		}
+		$found = array_values( array_diff( $found, array( '.', '..' ) ) );
+		if ( array( 'index.html' ) !== $found ) {
+			return false;
+		}
+
+		if ( ! @unlink( $folder . DIRECTORY_SEPARATOR . 'index.html' ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors
+			return false;
+		}
+		return (bool) @rmdir( $folder ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
+	}
+
 	private static function publish_pages( $dir ) {
 		$written = array();
 
 		foreach ( Vesla_Render::pages() as $key => $page ) {
 			if ( ! Vesla_Render::page_live( $key ) ) {
+				/* Off means off. Leaving the file behind meant a page switched
+				   off because something on it was wrong stayed readable by
+				   anybody holding the address -- out of the sitemap, out of the
+				   menu, and still served. The car pages have never had this
+				   problem because that whole folder is rebuilt on every publish;
+				   these are written in place, so removal has to be deliberate. */
+				self::remove_page( $dir, $page['slug'] );
 				continue;
 			}
 
