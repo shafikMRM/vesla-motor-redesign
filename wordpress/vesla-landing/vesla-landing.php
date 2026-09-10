@@ -8106,6 +8106,13 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 			</main>
 
 			<?php self::footer(); ?>
+			<?php
+			/* The same floating chrome the homepage has -- back to top, and the
+			   call and WhatsApp bar. A reader who has just read the certification
+			   stages is exactly the reader that bar is for, and a page without it
+			   is a page they have to scroll back up to act from. */
+			self::floating();
+			?>
 		</div>
 		<?php
 	}

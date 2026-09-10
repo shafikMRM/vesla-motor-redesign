@@ -1561,7 +1561,20 @@
     el.addEventListener('blur', function () { validateField(el); });
   });
 
-  enq.addEventListener('submit', function (ev) {
+  /* Guarded, and the guard is load-bearing.
+
+     Certified, Sell, About, Stock, Privacy and Terms all load this file and
+     none of them carries the enquiry form -- it lives in the contact section,
+     which those pages do not render. An unguarded null here threw, and
+     because the whole file is one IIFE the throw took everything below it:
+     the scroll-reveal observer among them, so every .reveal on those pages
+     stayed at opacity 0 and the pages rendered blank for anybody with
+     scripting on. With scripting OFF they were fine, which is exactly why a
+     no-JavaScript check did not catch it.
+
+     Written as a single-statement if so the handler below keeps its
+     indentation: the whole addEventListener call is one statement. */
+  if (enq) enq.addEventListener('submit', function (ev) {
     ev.preventDefault();
 
     var firstBad = null;
@@ -1745,7 +1758,10 @@
   else if (wide.addListener) wide.addListener(syncNav);
   syncNav(wide);
 
-  totop.addEventListener('click', function () {
+  /* Same guard, same reason as the enquiry form above: this is the floating
+     chrome, and a page that does not render it left totop null -- which threw,
+     and took the scroll handlers, the reveal observer and the router with it. */
+  if (totop) totop.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   });
 
@@ -1927,7 +1943,15 @@
 
   /* ---------------- active nav link ---------------- */
   var links = $$('#nav a');
-  var secs  = links.map(function (a) { return $(a.getAttribute('href')); })
+
+  /* Only the links that are still fragments. A menu item pointing at a page
+     -- '/stock/' -- is not a selector, and handing it to querySelector throws
+     a SyntaxError rather than returning null, which took every line of this
+     file below here down with it on every page including the homepage. */
+  var secs  = links.map(function (a) {
+                     var href = a.getAttribute('href') || '';
+                     return ('#' === href.charAt(0) && href.length > 1) ? $(href) : null;
+                   })
                    .filter(Boolean);
 
   if ('IntersectionObserver' in window && secs.length) {
