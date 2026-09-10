@@ -379,10 +379,23 @@
 
     // Prefill the enquiry form with whichever car the visitor clicked.
     $('.js-enq', el).addEventListener('click', function () {
+      var named = car.make + ' ' + car.model + ' (' + car.year + ')';
       var f = $('#q-car');
-      if (f) f.value = car.make + ' ' + car.model + ' (' + car.year + ')';
-      var t = $('#q-type');
-      if (t) t.value = 'car';
+      if (f) {
+        /* The form is on this page -- the homepage. Fill it in directly. */
+        f.value = named;
+        var t = $('#q-type');
+        if (t) t.value = 'car';
+        return;
+      }
+      /* No form here, so this link is leaving for the contact page. Hand the
+         car over the way the car pages do, or a buyer who pressed Enquire on
+         one particular car arrives at an empty box. */
+      try {
+        sessionStorage.setItem('vesla-enq', JSON.stringify({
+          car: named, type: 'car', details: null
+        }));
+      } catch (e) {}
     });
 
     // If a photo 404s, drop back to the placeholder rather than a broken icon.

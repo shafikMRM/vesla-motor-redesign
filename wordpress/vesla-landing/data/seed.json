@@ -482,6 +482,10 @@
     "enabled": 1,
     "eyebrow": "Why buy here",
     "heading": "What a certified car actually buys you.",
+    "page_enabled": 0,
+    "page_heading": "Why Vesla",
+    "page_intro": "[Open the Why Vesla page here — what a buyer gets that they would not get elsewhere. Two or three sentences.]",
+    "page_more_label": "What a certified car buys you",
     "cards": [
       {
         "title": "Inspected, not just cleaned",
@@ -588,6 +592,10 @@
     "enabled": 1,
     "eyebrow": "Asked before buying",
     "heading": "Straight answers.",
+    "page_enabled": 0,
+    "page_heading": "Questions and answers",
+    "page_intro": "[Open the questions page here — one or two sentences before the questions themselves.]",
+    "page_more_label": "Read the questions",
     "items": [
       {
         "q": "What does a Vesla Certified Pre Owned car include?",

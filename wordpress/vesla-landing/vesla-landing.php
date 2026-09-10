@@ -382,14 +382,15 @@ class Vesla_Schema {
 								'help'  => __( 'Picking from the list is why a menu link cannot point at a section that does not exist. Where a section has a page of its own, the menu link goes to that page instead of scrolling down this one, so the menu means the same thing wherever the reader is standing.', 'vesla-landing' ),
 								'choices' => array(
 									'' => __( '— not set —', 'vesla-landing' ),
-									'#stock' => __( 'Stock — the car grid', 'vesla-landing' ),
-									'#certified' => __( 'Certified — the five stages', 'vesla-landing' ),
-									'#why' => __( 'Why Vesla — the four points', 'vesla-landing' ),
-									'#record' => __( 'Record — the figures', 'vesla-landing' ),
-									'#chairman' => __( 'Ownership — the chairman', 'vesla-landing' ),
-									'#sell' => __( 'Sell your car — the estimator', 'vesla-landing' ),
+									'#stock' => __( 'Stock — the cars', 'vesla-landing' ),
+									'#certified' => __( 'Certified — how a car is checked', 'vesla-landing' ),
+									'#why' => __( 'Why Vesla', 'vesla-landing' ),
+									'#record' => __( 'About — the record and the ownership', 'vesla-landing' ),
+									'#chairman' => __( 'About — the ownership (the same page as above)', 'vesla-landing' ),
+									'#sell' => __( 'Sell your car', 'vesla-landing' ),
+									'#finance' => __( 'Finance', 'vesla-landing' ),
 									'#faq' => __( 'Questions and answers', 'vesla-landing' ),
-									'#contact' => __( 'Contact — the enquiry form', 'vesla-landing' ),
+									'#contact' => __( 'Contact', 'vesla-landing' ),
 									'#top' => __( 'Back to the top', 'vesla-landing' ),
 								),
 								
@@ -1145,6 +1146,26 @@ class Vesla_Schema {
 					'enabled' => array( 'type' => 'toggle', 'label' => __( 'Show this section', 'vesla-landing' ), ),
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /why/ showing this section in full. The homepage keeps its copy of the same section, and both read the fields on this screen. Until this is on, a menu link pointing here scrolls down the homepage instead.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Say where it goes rather than "read more".', 'vesla-landing' ),
+					),
 					'cards'   => array(
 						'type'   => 'repeater',
 						'label'  => __( 'Points', 'vesla-landing' ),
@@ -1335,6 +1356,26 @@ class Vesla_Schema {
 					'enabled' => array( 'type' => 'toggle', 'label' => __( 'Show this section', 'vesla-landing' ), ),
 					'eyebrow' => array( 'type' => 'text', 'label' => __( 'Small line above the heading', 'vesla-landing' ), ),
 					'heading' => array( 'type' => 'text', 'label' => __( 'Heading', 'vesla-landing' ), ),
+					'page_enabled' => array(
+						'type'  => 'toggle',
+						'label' => __( 'Give this section a page of its own', 'vesla-landing' ),
+						'help'  => __( 'Publishes /faq/ showing this section in full. The homepage keeps its copy of the same section, and both read the fields on this screen. Until this is on, a menu link pointing here scrolls down the homepage instead.', 'vesla-landing' ),
+					),
+					'page_heading' => array(
+						'type'  => 'text',
+						'label' => __( 'Page heading', 'vesla-landing' ),
+						'help'  => __( 'The heading at the top of the page and the title a search engine shows. Leave it empty to use the section heading above.', 'vesla-landing' ),
+					),
+					'page_intro' => array(
+						'type'  => 'textarea',
+						'label' => __( 'Opening paragraph on the page', 'vesla-landing' ),
+						'help'  => __( 'PLACEHOLDER — replace before the page goes live.', 'vesla-landing' ),
+					),
+					'page_more_label' => array(
+						'type'  => 'text',
+						'label' => __( 'Link on the homepage through to the page', 'vesla-landing' ),
+						'help'  => __( 'Say where it goes rather than "read more".', 'vesla-landing' ),
+					),
 					'items'   => array(
 						'type'   => 'repeater',
 						'label'  => __( 'Questions', 'vesla-landing' ),
@@ -6575,10 +6616,22 @@ class Vesla_Render {
 		return $url;
 	}
 	/** Is this render a car's own page rather than the front page? */
-	private static function on_car_page() {
-		/* $forced is set while the publisher writes a car's file; the query
-			   var is what WordPress goes by when it is answering a request. */
-		return ( null !== self::$forced ) || ( ! self::$static_build && self::is_vehicle() );
+	private static function away_from_home() {
+		/* Anywhere a '#section' link cannot resolve, because the sections are on
+		   the homepage and the reader is not.
+		
+		   $forced is set while the publisher writes a car's file; the query var
+		   is what WordPress goes by when it is answering a request; $page_key is
+		   set while it writes one of the other pages.
+		
+		   The pages were the gap. A car page has always turned '#contact' into an
+		   absolute link back to the homepage, and the new pages did not -- so the
+		   footer's Contact link, the back-to-top and the skip link all pointed at
+		   ids that only exist on a page the reader had left. Three dead links on
+		   every page, in the chrome, where they are on every page at once. */
+		return ( null !== self::$forced )
+			|| ( '' !== self::$page_key )
+			|| ( ! self::$static_build && self::is_vehicle() );
 	}
 
 	/**
@@ -6625,13 +6678,34 @@ class Vesla_Render {
 				'#chairman'  => 'about',
 				'#sell'      => 'sell',
 				'#stock'     => 'stock',
+				'#why'       => 'why',
+				'#faq'       => 'faq',
+				'#finance'   => 'finance',
 			);
 			if ( isset( $moved[ $link ] ) && self::page_live( $moved[ $link ] ) ) {
 				return self::rel( self::page_url( $moved[ $link ] ) );
 			}
+
+			/* Contact is the exception: it had a page of its own long before any of
+			   these, written by its own publisher step rather than listed in
+			   pages(), so page_live() does not know about it. The menu pointed at
+			   the homepage's contact section while /contact/ sat there published --
+			   the one menu item with a page that was not being used. */
+			if ( '#contact' === $link && Vesla_Settings::get( 'contact', 'page_enabled', 1 ) ) {
+				return self::rel( trailingslashit( Vesla_Publisher::site_url() ) . 'contact/' );
+			}
 		}
 
-		if ( '' === $link || '#' !== $link[0] || ! self::on_car_page() ) {
+		/* Finance is the one choice with no section on the homepage, so there is
+		   nothing for '#finance' to scroll to. With the page off the link would
+		   point at an id that does not exist -- the dangling-anchor fault this
+		   whole map exists to avoid -- so it goes to the top of the site instead,
+		   which is somewhere real. */
+		if ( $navigate && '#finance' === $link ) {
+			return self::site_link();
+		}
+
+		if ( '' === $link || '#' !== $link[0] || ! self::away_from_home() ) {
 			return $link;
 		}
 		/* '#top' is the top of the page, and the top of the front page is the
@@ -7983,6 +8057,16 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 				'owner'    => 'stock',
 				'sections' => array( 'brand_strip', 'stock' ),
 			),
+			'why' => array(
+				'slug'     => 'why',
+				'owner'    => 'why',
+				'sections' => array( 'why' ),
+			),
+			'faq' => array(
+				'slug'     => 'faq',
+				'owner'    => 'faq',
+				'sections' => array( 'faq' ),
+			),
 			/* Finance has no section on the homepage at all -- it is reached from
 			   the menu, not scrolled to. Its renderer exists only for this page. */
 			'finance' => array(
@@ -8386,7 +8470,7 @@ gtag('config', <?php echo wp_json_encode( $id ); ?>);
 						</ul>
 					<?php endif; ?>
 					<div class="card-act">
-						<a class="btn btn-line js-enq" href="#contact"><?php echo esc_html( $enquire ); ?></a>
+						<a class="btn btn-line js-enq" href="<?php echo esc_url( self::menu_href( '#contact' ) ); ?>"><?php echo esc_html( $enquire ); ?></a>
 						<?php if ( $wa ) : ?>
 							<a class="btn btn-wa"
 							   href="<?php echo esc_url( 'https://wa.me/' . $wa . '?text=' . rawurlencode( sprintf( $wa_text, $name, $price ) ) ); ?>"
@@ -13813,12 +13897,19 @@ class Vesla_Publisher {
 	private static function build_contact() {
 		$name = Vesla_Settings::get( 'seo', 'business_name', get_bloginfo( 'name' ) );
 		$head = Vesla_Settings::get( 'contact', 'page_heading', __( 'Come and see the car.', 'vesla-landing' ) );
-		return self::document(
+		/* Contact is away from the homepage too, and its skip link said so:
+		   "Skip to the cars" pointed at #stock, which is not on it. Borrowing
+		   $page_key is what tells menu_href that -- contact is not in pages(), so
+		   nothing else reads the value, only away_from_home() does. */
+		Vesla_Render::$page_key = 'contact';
+		$html = self::document(
 			trim( $head . ' — ' . $name ),
 			array( 'Vesla_Render', 'contact_head' ),
 			array( 'Vesla_Render', 'contact_page' ),
 			'contact'
 		);
+		Vesla_Render::$page_key = '';
+		return $html;
 	}
 
 	private static function build_car( $car ) {
